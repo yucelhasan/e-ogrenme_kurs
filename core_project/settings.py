@@ -81,3 +81,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # 7. Diğer Önemli Ayarlar
 AUTH_USER_MODEL = 'lms_app.CustomUser'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]

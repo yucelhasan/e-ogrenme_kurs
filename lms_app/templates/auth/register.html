@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Kayıt Ol - KTÜ LMS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow border-0 mt-5">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-primary">Hesap Oluştur</h2>
+                    <p class="text-muted">KTÜ E-Öğrenme dünyasına katılın.</p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.as_p }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">
+                        <i class="fa-solid fa-user-plus me-2"></i>Kayıt İşlemini Tamamla
+                    </button>
+                </form>
+
+                <hr class="my-4">
+
+                <div class="text-center">
+                    <p class="mb-0">Zaten hesabın var mı?
+                        <a href="{% url 'login' %}" class="text-decoration-none fw-bold">Giriş Yap</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
