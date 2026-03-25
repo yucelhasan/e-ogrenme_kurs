@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from .forms import CustomUserCreationForm
+from django.contrib.auth.decorators import login_required
 
 # Kayıt Olma Görünümü
 def register_view(request):
@@ -44,3 +45,8 @@ def logout_view(request):
 
 def home_view(request):
     return render(request, 'home.html')
+
+@login_required
+def profile_view(request):
+    # Giriş yapan kullanıcının bilgileri zaten 'request.user' içinde hazır gelir
+    return render(request, 'profile.html')

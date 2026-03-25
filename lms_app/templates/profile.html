@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Profilim - LMS{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 text-center p-4 mb-4">
+                <div class="mb-3">
+                    <i class="fa-solid fa-circle-user fa-6x text-primary"></i>
+                </div>
+                <h4 class="fw-bold mb-0">{{ user.username }}</h4>
+                <p class="text-muted">{{ user.get_role_display }}</p>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm">Fotoğrafı Değiştir</button>
+                </div>
+            </div>
+
+            <div class="row g-2">
+                <div class="col-6">
+                    <div class="card shadow-sm border-0 text-center p-3">
+                        <h3 class="fw-bold text-primary mb-0">0</h3>
+                        <small class="text-muted">Kurslarım</small>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card shadow-sm border-0 text-center p-3">
+                        <h3 class="fw-bold text-success mb-0">0</h3>
+                        <small class="text-muted">Tamamlanan</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3 border-0">
+                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-id-card me-2 text-primary"></i>Kişisel Bilgiler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Tam Adı:</div>
+                        <div class="col-sm-8 fw-bold">{{ user.first_name }} {{ user.last_name|default:"-" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">E-posta:</div>
+                        <div class="col-sm-8 fw-bold">{{ user.email }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Telefon:</div>
+                        <div class="col-sm-8 fw-bold">{{ user.phone|default:"Belirtilmedi" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Üyelik Rolü:</div>
+                        <div class="col-sm-8">
+                            <span class="badge {% if user.role == 'instructor' %}bg-warning{% else %}bg-info{% endif %} text-dark">
+                                {{ user.get_role_display }}
+                            </span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        <a href="#" class="btn btn-primary px-4 shadow-sm">Bilgileri Güncelle</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-graduation-cap me-2 text-primary"></i>Aktif Kurslarım</h5>
+                    <a href="{% url 'home' %}" class="btn btn-link btn-sm text-decoration-none text-primary">Tüm Kursları Gör</a>
+                </div>
+                <div class="card-body text-center py-5">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2436/2436636.png" style="width: 80px; opacity: 0.3;" alt="No Courses">
+                    <p class="text-muted mt-3">Henüz bir kursa kayıt olmamışsınız.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

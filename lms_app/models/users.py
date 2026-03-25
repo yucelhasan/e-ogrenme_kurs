@@ -9,14 +9,11 @@ class CustomUser(AbstractUser):
         ('student', 'Öğrenci'),
     )
 
-    # Mevcut rol alanın
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='student')
 
-    # Yeni eklediğimiz alanlar
     email = models.EmailField(unique=True, verbose_name="E-posta Adresi")
     phone = models.CharField(max_length=15, blank=True, null=True, verbose_name="Telefon Numarası")
 
-    # Kayıt sırasında kullanıcı adı dışında e-postayı da zorunlu kılıyoruz
     REQUIRED_FIELDS = ['email', 'role']
 
     def __str__(self):

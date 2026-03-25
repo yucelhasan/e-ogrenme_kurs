@@ -1,9 +1,11 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser
+from .models.users import CustomUser
 
 class CustomUserCreationForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30, label="Adınız", required=True)
+    last_name = forms.CharField(max_length=30, label="Soyadınız", required=True)
+
     class Meta(UserCreationForm.Meta):
         model = CustomUser
-        # Formda görünmesini istediğin alanları buraya ekle
-        fields = UserCreationForm.Meta.fields + ('email', 'phone',)
+        fields = ("username", "first_name", "last_name", "email", "phone", "role")
