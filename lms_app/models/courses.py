@@ -1,11 +1,11 @@
 from django.db import models
 from .users import CustomUser
-from django.utils.text import slugify  # Slug oluşturmak için
+from django.utils.text import slugify
 
 
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Kategori Adı")
-    slug = models.SlugField(unique=True, blank=True)  # URL için
+    slug = models.SlugField(unique=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
@@ -19,15 +19,15 @@ class Category(models.Model):
 
 class Course(models.Model):
     title = models.CharField(max_length=200, verbose_name="Kurs Başlığı")
-    slug = models.SlugField(unique=True, blank=True)  # URL için
+    slug = models.SlugField(unique=True, blank=True)
     description = models.TextField(verbose_name="Açıklama")
 
-    # related_name='taught_courses' yaparak öğrenci kayıtlarından ayırdık
     instructor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='taught_courses')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='courses')
 
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    # EKRAN İÇİN KRİTİK: Kursun kapak fotoğrafı
+
+    # Yeni eklediğimiz Kapak Fotoğrafı alanı
     image = models.ImageField(upload_to='course_images/', null=True, blank=True, verbose_name="Kapak Resmi")
 
     is_active = models.BooleanField(default=True)
@@ -45,7 +45,7 @@ class Module(models.Model):
     title = models.CharField(max_length=200)
     order = models.PositiveIntegerField(default=1)
 
-    class Meta: ordering = ['order']  # Modüller sırasına göre dizilsin
+    class Meta: ordering = ['order']
 
     def __str__(self): return f"{self.course.title} - {self.title}"
 
@@ -55,6 +55,6 @@ class Lesson(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField(blank=True)
     video_url = models.URLField(blank=True, null=True)
-    duration = models.CharField(max_length=20, blank=True, help_text="Örn: 10:45")  # Ekstra bilgi
+    duration = models.CharField(max_length=20, blank=True, help_text="Örn: 10:45")
 
     def __str__(self): return self.title

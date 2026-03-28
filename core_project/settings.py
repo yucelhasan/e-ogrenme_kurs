@@ -85,6 +85,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
+# 8. Medya Dosyaları (Yüklenen Resimler İçin)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # 8. Medya Dosyaları (Yüklenen Resimler İçin)
 MEDIA_URL = '/media/'

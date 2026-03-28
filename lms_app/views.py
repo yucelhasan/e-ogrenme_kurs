@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from .forms import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
+from .models import Course  # KURSLARI ÇEKMEK İÇİN EKLENDİ
 
 # Kayıt Olma Görünümü
 def register_view(request):
@@ -12,7 +13,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "CustomUser olarak kaydınız tamamlandı!")
+            messages.success(request, "Kaydınız başarıyla tamamlandı!")
             return redirect('home')
     else:
         form = CustomUserCreationForm()
@@ -23,13 +24,11 @@ def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            # Form zaten authenticate yaptı, kullanıcıyı direkt içinden çekelim
             user = form.get_user()
             login(request, user)
             messages.info(request, f"Tekrar hoş geldin, {user.username}!")
             return redirect('home')
         else:
-            # Hata varsa terminale yazdıralım ki ne olduğunu görelim
             print("Form hataları:", form.errors)
             messages.error(request, "Kullanıcı adı veya şifre hatalı.")
     else:
@@ -42,10 +41,13 @@ def logout_view(request):
     messages.warning(request, "Başarıyla çıkış yaptınız.")
     return redirect('home')
 
+# Ana Sayfa ve Kurs Listeleme (Resimlerle Birlikte)
 def home_view(request):
-    return render(request, 'home.html')
+    # Sadece aktif olan kursları en yeniye göre sıralayarak alıyoruz
+    courses = Course.objects.filter(is_active=True).order_by('-created_at')
+    return render(request, 'home.html', {'courses': courses})
 
+# Profil Görünümü
 @login_required
 def profile_view(request):
-    # Giriş yapan kullanıcının bilgileri zaten 'request.user' içinde hazır gelir
     return render(request, 'profile.html')
