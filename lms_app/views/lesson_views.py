@@ -1,0 +1,1 @@
+#Öğrencinin video izlediği ders ekranı

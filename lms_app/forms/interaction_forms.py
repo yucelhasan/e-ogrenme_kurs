@@ -1,0 +1,1 @@
+#Öğrencinin kursa yıldız/yorum bırakırken kullanacağı form

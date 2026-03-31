@@ -1,10 +1,15 @@
 from django.urls import path
-from . import views
+from .views import auth_views, course_views, profile_views
 
 urlpatterns = [
-    path('', views.home_view, name='home'),
-    path('register/', views.register_view, name='register'),
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
-    path('profil/', views.profile_view, name='profile'),
+    # Kurs İşlemleri
+    path('', course_views.home_view, name='home'),
+
+    # Kimlik Doğrulama İşlemleri
+    path('register/', auth_views.register_view, name='register'),
+    path('login/', auth_views.login_view, name='login'),
+    path('logout/', auth_views.logout_view, name='logout'),
+
+    # Kullanıcı İşlemleri
+    path('profil/', profile_views.profile_view, name='profile'),
 ]

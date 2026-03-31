@@ -1,0 +1,1 @@
+#Bir öğrencinin kayıtlı olduğu kursların listesini getir

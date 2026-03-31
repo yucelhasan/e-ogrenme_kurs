@@ -1,0 +1,1 @@
+#Öğrencinin bir kurstaki % kaç ilerlediğini hesaplayıp getir

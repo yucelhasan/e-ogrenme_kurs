@@ -1,0 +1,1 @@
+#Eğitmenin verdiği kursları veya kullanıcı detaylarını getir

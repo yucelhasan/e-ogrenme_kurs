@@ -1,0 +1,1 @@
+#Öğrenci profili, kayıtlı olduğu kurslar, sertifikaları

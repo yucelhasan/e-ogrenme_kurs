@@ -1,0 +1,1 @@
+#Eğitmenin kendi kurslarını gördüğü ve yönettiği panel

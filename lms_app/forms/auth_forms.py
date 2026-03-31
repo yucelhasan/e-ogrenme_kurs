@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models.users import CustomUser
+from lms_app.models import CustomUser
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, label="Adınız", required=True)

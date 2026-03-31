@@ -1,6 +1,7 @@
 from django.db import models
 from .users import CustomUser
 from django.utils.text import slugify
+import uuid
 
 
 class Category(models.Model):
@@ -9,12 +10,17 @@ class Category(models.Model):
     is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        if not self.slug: self.slug = slugify(self.name)
+        if not self.slug:
+            # allow_unicode=True ile Türkçe karakterleri daha iyi anlar
+            base_slug = slugify(self.name, allow_unicode=True)
+
+            # Eğer isimden slug üretemezse (sadece sembol girildiyse vs.)
+            # Rastgele 8 haneli benzersiz bir slug üretir, DB'nin çökmesini %100 engeller.
+            if not base_slug:
+                base_slug = f"kategori-{uuid.uuid4().hex[:8]}"
+
+            self.slug = base_slug
         super().save(*args, **kwargs)
-
-    def __str__(self): return self.name
-
-    class Meta: verbose_name_plural = "Kategoriler"
 
 
 class Course(models.Model):
