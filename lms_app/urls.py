@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import auth_views, course_views, profile_views
+from .views import auth_views, course_views, profile_views, instructor_views
 
 urlpatterns = [
     # Kurs İşlemleri
@@ -12,4 +12,8 @@ urlpatterns = [
 
     # Kullanıcı İşlemleri
     path('profil/', profile_views.profile_view, name='profile'),
+    
+    # Eğitmen / Admin Paneli İşlemleri
+    path('panel/', instructor_views.dashboard_view, name='dashboard'),
+    path('panel/kurs-ekle/', instructor_views.add_course_view, name='add_course'),
 ]

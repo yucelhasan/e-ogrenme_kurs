@@ -1,10 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}Eğitmen Paneli - LMS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="list-group shadow-sm">
+            <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action active">
+                <i class="fa-solid fa-gauge me-2"></i>Panel
+            </a>
+            <a href="{% url 'add_course' %}" class="list-group-item list-group-item-action">
+                <i class="fa-solid fa-plus me-2"></i>Yeni Kurs Ekle
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <h3 class="fw-bold mb-4">Kurslarım</h3>
+        <div class="row g-3">
+            {% for course in my_courses %}
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">{{ course.title }}</h5>
+                        <p class="card-text text-muted">{{ course.category.name }}</p>
+                        <span class="badge {% if course.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                            {% if course.is_active %}Yayında{% else %}Taslak{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted">
+                <p>Henüz hiçbir kurs oluşturmadınız.</p>
+                <a href="{% url 'add_course' %}" class="btn btn-primary mt-2">İlk Kursunu Ekle</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

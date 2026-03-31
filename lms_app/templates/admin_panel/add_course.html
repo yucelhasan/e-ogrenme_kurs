@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Kurs Ekle - LMS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="list-group shadow-sm">
+            <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action">
+                <i class="fa-solid fa-gauge me-2"></i>Panel
+            </a>
+            <a href="{% url 'add_course' %}" class="list-group-item list-group-item-action active">
+                <i class="fa-solid fa-plus me-2"></i>Yeni Kurs Ekle
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="card shadow border-0">
+            <div class="card-header bg-white py-3">
+                <h4 class="mb-0 fw-bold text-primary">Yeni Kurs Oluştur</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label fw-bold">Kurs Başlığı</label>
+                            {{ form.title }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Kategori</label>
+                            {{ form.category }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Kurs Açıklaması</label>
+                        {{ form.description }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Fiyat (₺)</label>
+                            {{ form.price }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Kapak Fotoğrafı</label>
+                            {{ form.image }}
+                        </div>
+                    </div>
+
+                    <div class="form-check form-switch mb-4">
+                        {{ form.is_active }}
+                        <label class="form-check-label fw-bold">Kurs Yayında (Öğrenciler görebilir)</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary px-4 py-2 fw-bold w-100">
+                        <i class="fa-solid fa-save me-2"></i>Kursu Kaydet
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

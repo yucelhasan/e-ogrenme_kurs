@@ -22,6 +22,9 @@ class Category(models.Model):
             self.slug = base_slug
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return self.name
+
 
 class Course(models.Model):
     title = models.CharField(max_length=200, verbose_name="Kurs Başlığı")

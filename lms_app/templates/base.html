@@ -24,6 +24,14 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Kurslar</a></li>
 
                     {% if user.is_authenticated %}
+                        
+                        {% if user.role == 'admin' or user.role == 'instructor' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-warning fw-bold" href="{% url 'dashboard' %}">
+                                <i class="fa-solid fa-gauge me-1"></i>Admin Paneli
+                            </a>
+                        </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link text-info" href="{% url 'profile' %}">
                                 <i class="fa-solid fa-user-circle me-1"></i>{{ user.username }}
