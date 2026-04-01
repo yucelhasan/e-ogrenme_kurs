@@ -8,13 +8,14 @@
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 text-center p-4 mb-4">
                 <div class="mb-3">
-                    <i class="fa-solid fa-circle-user fa-6x text-primary"></i>
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="Profil" class="rounded-circle img-thumbnail shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <i class="fa-solid fa-circle-user fa-6x text-primary"></i>
+                    {% endif %}
                 </div>
                 <h4 class="fw-bold mb-0">{{ user.username }}</h4>
                 <p class="text-muted">{{ user.get_role_display }}</p>
-                <div class="d-grid gap-2">
-                    <button class="btn btn-outline-primary btn-sm">Fotoğrafı Değiştir</button>
-                </div>
             </div>
 
             <div class="row g-2">
@@ -61,7 +62,9 @@
                     </div>
                     <hr>
                     <div class="d-flex justify-content-end">
-                        <a href="#" class="btn btn-primary px-4 shadow-sm">Bilgileri Güncelle</a>
+                        <button type="button" class="btn btn-primary px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#profileEditModal">
+                            <i class="fa-solid fa-pen-to-square me-2"></i>Bilgileri Güncelle
+                        </button>
                     </div>
                 </div>
             </div>
@@ -76,6 +79,29 @@
                     <p class="text-muted mt-3">Henüz bir kursa kayıt olmamışsınız.</p>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="profileEditModal" tabindex="-1" aria-labelledby="profileEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="profileEditModalLabel"><i class="fa-solid fa-user-pen me-2"></i>Profili Düzenle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-success fw-bold"><i class="fa-solid fa-save me-2"></i>Değişiklikleri Kaydet</button>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
