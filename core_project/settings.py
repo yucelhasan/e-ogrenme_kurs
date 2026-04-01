@@ -85,6 +85,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+# Tarayıcı kapatıldığında oturumu (session) otomatik sonlandır
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 # 8. Medya Dosyaları (Yüklenen Resimler İçin)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
