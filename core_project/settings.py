@@ -92,7 +92,3 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # 8. Medya Dosyaları (Yüklenen Resimler İçin)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
-# 8. Medya Dosyaları (Yüklenen Resimler İçin)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
