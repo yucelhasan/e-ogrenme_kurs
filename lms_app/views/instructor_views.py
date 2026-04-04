@@ -23,7 +23,7 @@ def add_course_view(request):
         return redirect('home')
 
     if request.method == 'POST':
-        # Resim yükleme işlemi olacağı için request.FILES parametresini unutmuyoruz
+        # Resim yükleme işlemi olacağı için request.FILES parametresi
         form = CourseForm(request.POST, request.FILES)
         if form.is_valid():
             # Formu hemen kaydetme, önce eğitmeni (instructor) ata

@@ -1,5 +1,4 @@
 from django.contrib import admin
-# Tek bir yerden toplu import daha temizdir
 from .models import (
     CustomUser, Category, Course, Module,
     Lesson, Enrollment, LessonProgress,

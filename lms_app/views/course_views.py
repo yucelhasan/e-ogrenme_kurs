@@ -18,8 +18,6 @@ def course_list_view(request):
 
 
 def course_detail_view(request, slug):
-    # 1. Selector'dan o optimize edilmiş devasa sorguyu çağırıyoruz
     course = get_course_detail(slug)
 
-    # 2. Aldığımız veriyi kendi tasarlayacağın detail.html sayfasına gönderiyoruz
     return render(request, 'courses/detail.html', {'course': course})
