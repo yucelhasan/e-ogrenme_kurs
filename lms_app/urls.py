@@ -16,4 +16,5 @@ urlpatterns = [
     # Eğitmen / Admin Paneli İşlemleri
     path('panel/', instructor_views.dashboard_view, name='dashboard'),
     path('panel/kurs-ekle/', instructor_views.add_course_view, name='add_course'),
+    path('kurs/<slug:slug>/', course_views.course_detail_view, name='course_detail'),
 ]
