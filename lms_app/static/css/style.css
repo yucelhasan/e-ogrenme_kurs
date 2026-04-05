@@ -1,3 +1,75 @@
-body { background-color: #f8f9fa; }
-.navbar-brand { letter-spacing: 1px; }
-.btn-primary { border-radius: 25px; }
+/* =========================================
+   1. GENEL SİTE AYARLARI
+   ========================================= */
+body {
+    background-color: #f8f9fa;
+}
+.navbar-brand {
+    letter-spacing: 1px;
+}
+.btn-primary {
+    border-radius: 25px;
+}
+
+/* =========================================
+   2. DERS (LESSON) SAYFASI ÖZEL CLASS'LARI
+   ========================================= */
+
+/* Video Yoksa Gösterilecek Yedek Alan */
+.video-placeholder {
+    height: 450px;
+    background-color: #212529;
+    border-top-left-radius: var(--bs-border-radius);
+    border-top-right-radius: var(--bs-border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* Ders Metin İçeriği Okunabilirliği */
+.lesson-content-text {
+    line-height: 1.8;
+    font-size: 1.05rem;
+    color: #495057;
+}
+
+/* Yan Menü (Sidebar) Sabitleme Mesafesi */
+.sticky-sidebar {
+    top: 25px;
+    z-index: 1020;
+}
+
+/* Yan Menü - Accordion (Modüller) Özelleştirmeleri */
+.accordion-button:not(.collapsed) {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+    box-shadow: inset 0 calc(-1 * var(--bs-accordion-border-width)) 0 var(--bs-accordion-border-color);
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+/* Yan Menü - Ders Listesi (List Group) Özelleştirmeleri */
+.lesson-list-item {
+    transition: all 0.2s ease-in-out;
+    border-left: 4px solid transparent;
+}
+
+.lesson-list-item:hover:not(.active) {
+    background-color: #f8f9fa;
+    border-left-color: #dee2e6;
+}
+
+/* Aktif (Şu an izlenen) Dersin Görünümü */
+.lesson-list-item.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    border-left-color: #0a58ca;
+    font-weight: 600;
+}
+
+.lesson-list-item.active small {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
