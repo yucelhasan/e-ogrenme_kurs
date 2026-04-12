@@ -6,9 +6,18 @@ class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, label="Adınız", required=True)
     last_name = forms.CharField(max_length=30, label="Soyadınız", required=True)
 
+    # Sadece TEK BİR Meta sınıfı olmalı
     class Meta(UserCreationForm.Meta):
         model = CustomUser
-        fields = ("username", "first_name", "last_name", "email", "phone", "role")
+        fields = ("username", "first_name", "last_name", "email", "phone", "role", "expertise")
+
+        widgets = {
+            'role': forms.Select(attrs={'class': 'form-select', 'id': 'roleSelect'}),
+            'expertise': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Örn: Python, İngilizce, Yüzme...',
+                       'id': 'expertiseInput'}
+            ),
+        }
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:

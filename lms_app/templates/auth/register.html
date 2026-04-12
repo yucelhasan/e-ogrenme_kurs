@@ -50,4 +50,34 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const roleSelect = document.getElementById("roleSelect");
+        const expertiseInput = document.getElementById("expertiseInput");
+
+        if (roleSelect && expertiseInput) {
+            // Django formu <p> etiketleri içinde render ettiği için kapsayıcı elementi buluyoruz
+            const expertiseContainer = expertiseInput.closest('p');
+
+            function toggleExpertise() {
+                if (roleSelect.value === 'instructor') {
+                    // Eğitmen seçildiyse göster
+                    expertiseContainer.style.display = 'block';
+                    expertiseContainer.style.opacity = '1';
+                } else {
+                    // Diğer durumlarda gizle ve içini boşalt
+                    expertiseContainer.style.display = 'none';
+                    expertiseInput.value = '';
+                }
+            }
+
+            // Sayfa ilk yüklendiğinde durumu kontrol et
+            toggleExpertise();
+
+            // Dropdown menü değiştiğinde durumu tekrar kontrol et
+            roleSelect.addEventListener('change', toggleExpertise);
+        }
+    });
+</script>
 {% endblock %}

@@ -33,6 +33,14 @@
                             <label class="form-label fw-bold">Kategori</label>
                             {{ form.category }}
                         </div>
+
+                        {% if user.role == 'admin' %}
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label fw-bold text-danger">Eğitmen Ata (Admin)</label>
+                            {{ form.instructor }}
+                        </div>
+                        {% else %}
+                            {{ form.instructor }} {% endif %}
                     </div>
 
                     <div class="mb-3">

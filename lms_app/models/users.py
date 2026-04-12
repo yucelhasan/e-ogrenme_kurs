@@ -14,6 +14,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, verbose_name="E-posta Adresi")
     phone = models.CharField(max_length=15, blank=True, null=True, verbose_name="Telefon Numarası")
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True, verbose_name="Profil Fotoğrafı")
+    expertise = models.CharField(max_length=255, blank=True, null=True, verbose_name="Uzmanlık Alanı")
 
     REQUIRED_FIELDS = ['email', 'role']
 

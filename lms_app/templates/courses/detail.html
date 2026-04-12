@@ -1,10 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}{{ course.title }} - KTÜ LMS{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-lg-8 mb-4">
+        <h1 class="fw-bold mb-3">{{ course.title }}</h1>
+        <p class="text-muted lead mb-4">{{ course.description }}</p>
+
+        <div class="d-flex align-items-center mb-4 p-3 bg-white shadow-sm rounded border">
+            <div class="me-4 border-end pe-4">
+                <i class="fa-solid fa-user-tie text-primary me-2"></i>
+                <span class="text-muted">Eğitmen:</span> 
+                <strong class="ms-1">{{ course.instructor.get_full_name|default:course.instructor.username }}</strong>
+            </div>
+            <div>
+                <i class="fa-solid fa-folder text-warning me-2"></i>
+                <span class="text-muted">Kategori:</span>
+                <strong class="ms-1">{{ course.category.name|default:"Belirtilmedi" }}</strong>
+            </div>
+        </div>
+
+        <h3 class="fw-bold mb-3 border-bottom pb-2">Kurs İçeriği</h3>
+
+        <div class="accordion shadow-sm" id="curriculumAccordion">
+            {% for module in course.modules.all %}
+            <div class="accordion-item border-0 border-bottom">
+                <h2 class="accordion-header" id="heading{{ module.id }}">
+                    <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-bold bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ module.id }}">
+                        Bölüm {{ module.order }}: {{ module.title }}
+                    </button>
+                </h2>
+                <div id="collapse{{ module.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#curriculumAccordion">
+                    <div class="accordion-body p-0">
+                        <ul class="list-group list-group-flush">
+                            {% for lesson in module.lessons.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                <div>
+                                    <i class="fa-regular fa-circle-play text-primary me-2"></i>
+                                    {{ lesson.title }}
+                                </div>
+                                <span class="badge bg-secondary rounded-pill"><i class="fa-regular fa-clock me-1"></i>{{ lesson.duration|default:"-" }}</span>
+                            </li>
+                            {% empty %}
+                            <li class="list-group-item py-3 text-muted fst-italic">Bu bölüme henüz ders eklenmemiş.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info mt-3"><i class="fa-solid fa-info-circle me-2"></i>Bu kursa henüz müfredat eklenmemiş.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow border-0 sticky-top" style="top: 20px;">
+            {% if course.image %}
+                <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}" style="height: 250px; object-fit: cover;">
+            {% else %}
+                <div class="card-img-top bg-dark d-flex align-items-center justify-content-center text-white" style="height: 250px;">
+                    <i class="fa-solid fa-laptop-code fa-4x text-muted"></i>
+                </div>
+            {% endif %}
+
+            <div class="card-body p-4 text-center">
+                <h2 class="fw-bold text-success mb-3">
+                    {% if course.price == 0 %}
+                        Ücretsiz
+                    {% else %}
+                        ₺{{ course.price }}
+                    {% endif %}
+                </h2>
+
+                <button class="btn btn-primary btn-lg w-100 fw-bold mb-3 rounded-pill shadow-sm py-3">
+                    Kursa Kayıt Ol
+                </button>
+
+                <div class="text-start mt-4">
+                    <p class="text-muted small mb-2"><i class="fa-solid fa-infinity me-2 text-primary"></i> Ömür boyu erişim</p>
+                    <p class="text-muted small mb-2"><i class="fa-solid fa-mobile-screen-button me-2 text-primary"></i> Telefon ve bilgisayardan izleme</p>
+                    <p class="text-muted small mb-0"><i class="fa-solid fa-certificate me-2 text-primary"></i> Bitirme Sertifikası</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

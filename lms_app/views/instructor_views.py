@@ -16,6 +16,7 @@ def dashboard_view(request):
     
     return render(request, 'admin_panel/dashboard.html', {'my_courses': my_courses})
 
+
 @login_required
 def add_course_view(request):
     if request.user.role not in ['instructor', 'admin']:
@@ -23,16 +24,21 @@ def add_course_view(request):
         return redirect('home')
 
     if request.method == 'POST':
-        # Resim yükleme işlemi olacağı için request.FILES parametresi
-        form = CourseForm(request.POST, request.FILES)
+        # Formu oluştururken user=request.user parametresini ekledik
+        form = CourseForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
-            # Formu hemen kaydetme, önce eğitmeni (instructor) ata
             course = form.save(commit=False)
-            course.instructor = request.user 
+
+            # Eğer kullanıcı Admin ise, formdan gelen eğitmeni kullan
+            # Değilse, kursun eğitmeni bizzat kendisidir
+            if request.user.role != 'admin':
+                course.instructor = request.user
+
             course.save()
-            messages.success(request, "Kursunuz başarıyla oluşturuldu!")
+            messages.success(request, "Kurs başarıyla oluşturuldu!")
             return redirect('dashboard')
     else:
-        form = CourseForm()
+        # GET isteğinde de user parametresini gönderiyoruz
+        form = CourseForm(user=request.user)
 
     return render(request, 'admin_panel/add_course.html', {'form': form})
