@@ -5,6 +5,11 @@ urlpatterns = [
     # Kurs İşlemleri
     path('', course_views.home_view, name='home'),
     path('kurslar/', course_views.course_list_view, name='courses'),
+
+    # KURS DETAY VE KAYIT İŞLEMLERİ (Sorunu çözen satırlar burada)
+    path('kurs/<slug:slug>/', course_views.course_detail_view, name='course_detail'),
+    path('kurs/<slug:slug>/kayit/', course_views.enroll_course_view, name='enroll_course'),
+
     # Kimlik Doğrulama İşlemleri
     path('register/', auth_views.register_view, name='register'),
     path('login/', auth_views.login_view, name='login'),
@@ -12,9 +17,8 @@ urlpatterns = [
 
     # Kullanıcı İşlemleri
     path('profil/', profile_views.profile_view, name='profile'),
-    
+
     # Eğitmen / Admin Paneli İşlemleri
     path('panel/', instructor_views.dashboard_view, name='dashboard'),
     path('panel/kurs-ekle/', instructor_views.add_course_view, name='add_course'),
-    path('kurs/<slug:slug>/', course_views.course_detail_view, name='course_detail'),
 ]
