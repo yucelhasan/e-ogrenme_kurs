@@ -73,3 +73,28 @@ body {
 .lesson-list-item.active small {
     color: rgba(255, 255, 255, 0.8) !important;
 }
+
+/* =========================================
+   3. YILDIZ DEĞERLENDİRME (STAR RATING) TASARIMI
+   ========================================= */
+.star-rating {
+    display: inline-flex;
+    flex-direction: row-reverse; /* Yıldızların sağdan sola dolmasını sağlar */
+    justify-content: flex-end;
+}
+.star-rating input[type=radio] {
+    display: none; /* Radio butonları gizleriz */
+}
+.star-rating label {
+    color: #dcdcdc; /* Boş yıldız rengi (Açık Gri) */
+    font-size: 2rem;
+    padding: 0 0.1rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+/* Mouse ile üstüne gelince ve seçili olanları sarı yap */
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input[type=radio]:checked ~ label {
+    color: #ffc107; /* Bootstrap Warning Sarısı */
+}

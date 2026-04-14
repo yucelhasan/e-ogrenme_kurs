@@ -6,9 +6,10 @@ urlpatterns = [
     path('', course_views.home_view, name='home'),
     path('kurslar/', course_views.course_list_view, name='courses'),
 
-    # KURS DETAY VE KAYIT İŞLEMLERİ (Sorunu çözen satırlar burada)
+    # Kurs Detay Ve Kayıt İşlemleri
     path('kurs/<slug:slug>/', course_views.course_detail_view, name='course_detail'),
     path('kurs/<slug:slug>/kayit/', course_views.enroll_course_view, name='enroll_course'),
+    path('kurs/<slug:slug>/yorum-yap/', course_views.add_review_view, name='add_review'),
 
     # Kimlik Doğrulama İşlemleri
     path('register/', auth_views.register_view, name='register'),
