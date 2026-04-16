@@ -54,18 +54,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core_project.wsgi.application'
 
-# 5. AWS RDS (MSSQL) Veritabanı
+# 5. LOKAL MSSQL Veritabanı (Windows Authentication ile)
 DATABASES = {
     'default': {
         'ENGINE': 'mssql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
+        'NAME': os.environ.get('DB_NAME', 'lms_db'),
+        'USER': os.environ.get('DB_USER', ''),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '1433'),
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
-            'extra_params': 'Connection Timeout=30;',
+            # Trusted_Connection=yes parametresi ile Windows hesabınla giriş yapar
+            'extra_params': 'Trusted_Connection=yes;Connection Timeout=30;',
         },
     }
 }
