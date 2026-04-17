@@ -9,7 +9,7 @@ load_dotenv(BASE_DIR / '.env')
 # GÜVENLİK NOTU: Gerçek projede bunu .env içine almalısın
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG') == 'True'
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 
 # 2. Uygulamalar
 INSTALLED_APPS = [

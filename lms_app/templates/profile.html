@@ -21,13 +21,13 @@
             <div class="row g-2">
                 <div class="col-6">
                     <div class="card shadow-sm border-0 text-center p-3">
-                        <h3 class="fw-bold text-primary mb-0">0</h3>
+                        <h3 class="fw-bold text-primary mb-0">{{ enrollments|length }}</h3>
                         <small class="text-muted">Kurslarım</small>
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="card shadow-sm border-0 text-center p-3">
-                        <h3 class="fw-bold text-success mb-0">0</h3>
+                        <h3 class="fw-bold text-success mb-0">{{ completed_count }}</h3>
                         <small class="text-muted">Tamamlanan</small>
                     </div>
                 </div>
@@ -72,11 +72,53 @@
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold"><i class="fa-solid fa-graduation-cap me-2 text-primary"></i>Aktif Kurslarım</h5>
-                    <a href="{% url 'home' %}" class="btn btn-link btn-sm text-decoration-none text-primary">Tüm Kursları Gör</a>
+                    <a href="{% url 'courses' %}" class="btn btn-link btn-sm text-decoration-none text-primary">Tüm Kursları Gör</a>
                 </div>
-                <div class="card-body text-center py-5">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2436/2436636.png" style="width: 80px; opacity: 0.3;" alt="No Courses">
-                    <p class="text-muted mt-3">Henüz bir kursa kayıt olmamışsınız.</p>
+                <div class="card-body py-4">
+                    {% if enrollments %}
+                        <div class="row row-cols-1 row-cols-md-2 g-3">
+                            {% for enrollment in enrollments %}
+                            <div class="col">
+                                <div class="card h-100 shadow-sm border-0 bg-light">
+                                    <div class="card-body p-3 d-flex align-items-center">
+                                        {% if enrollment.course.image %}
+                                            <img src="{{ enrollment.course.image.url }}" alt="course" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                        {% else %}
+                                            <div class="rounded me-3 bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                                <i class="fa-solid fa-book"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div class="w-100">
+                                            <h6 class="fw-bold mb-1 text-truncate" style="max-width: 150px;">{{ enrollment.course.title }}</h6>
+                                            <small class="text-muted d-block mb-2">{{ enrollment.course.category.name }}</small>
+
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar {% if enrollment.progress == 100 %}bg-success{% else %}bg-primary{% endif %}"
+                                                     role="progressbar"
+                                                     style="width: {{ enrollment.progress }}%;"
+                                                     aria-valuenow="{{ enrollment.progress }}"
+                                                     aria-valuemin="0"
+                                                     aria-valuemax="100"></div>
+                                            </div>
+                                            <small class="text-muted" style="font-size: 0.7rem;">%{{ enrollment.progress }} Tamamlandı</small>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0 text-end pb-3">
+                                        <a href="{% url 'course_detail' enrollment.course.slug %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                            <i class="fa-solid fa-play me-1"></i>Derse Git
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <img src="https://cdn-icons-png.flaticon.com/512/2436/2436636.png" style="width: 80px; opacity: 0.3;" alt="No Courses">
+                            <p class="text-muted mt-3">Henüz bir kursa kayıt olmamışsınız.</p>
+                            <a href="{% url 'courses' %}" class="btn btn-primary mt-2 shadow-sm rounded-pill px-4">Kursları Keşfet</a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -90,7 +132,6 @@
                 <h5 class="modal-title fw-bold" id="profileEditModalLabel"><i class="fa-solid fa-user-pen me-2"></i>Profili Düzenle</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
             <form method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     {% csrf_token %}
@@ -101,7 +142,6 @@
                     <button type="submit" class="btn btn-success fw-bold"><i class="fa-solid fa-save me-2"></i>Değişiklikleri Kaydet</button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
