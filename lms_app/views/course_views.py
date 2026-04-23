@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from lms_app.selectors.course_selectors import get_active_courses, get_course_detail
 from lms_app.models import Course, Enrollment, Review
 from lms_app.forms.interaction_forms import ReviewForm
 from lms_app.services.enrollment_services import enroll_user_to_course
+from lms_app.selectors.course_selectors import get_active_courses, get_course_detail, get_all_categories
 
 def home_view(request):
     courses = get_active_courses()
@@ -74,3 +74,45 @@ def add_review_view(request, slug):
             messages.error(request, "Lütfen yıldız seçtiğinizden ve yorum yazdığınızdan emin olun.")
 
     return redirect('course_detail', slug=slug)
+
+def course_list_view(request):
+    # 1. URL'den gelen değerleri yakala
+    search_query = request.GET.get('q', '')
+    category_slug = request.GET.get('category', '')
+    min_price_str = request.GET.get('min_price', '')
+    max_price_str = request.GET.get('max_price', '')
+    sort_by = request.GET.get('sort', 'newest')
+
+    # 2. Fiyat string'lerini (metin) güvenli bir şekilde sayıya (float) çevir
+    try:
+        min_price = float(min_price_str) if min_price_str else None
+    except ValueError:
+        min_price = None
+
+    try:
+        max_price = float(max_price_str) if max_price_str else None
+    except ValueError:
+        max_price = None
+
+    # 3. Selector'a değerleri yolla ve filtrelenmiş veriyi al
+    courses = get_active_courses(
+        search_query=search_query,
+        category_slug=category_slug,
+        min_price=min_price,
+        max_price=max_price,
+        sort_by=sort_by
+    )
+
+    # 4. Formdaki seçenekler için kategorileri çek
+    categories = get_all_categories()
+
+    # 5. HTML'e tüm değerleri geri gönder (Kullanıcı formu gönderdiğinde seçtiği değerler kaybolmasın diye)
+    return render(request, 'courses/list.html', {
+        'courses': courses,
+        'categories': categories,
+        'search_query': search_query,
+        'selected_category': category_slug,
+        'min_price': min_price_str,
+        'max_price': max_price_str,
+        'sort_by': sort_by
+    })
