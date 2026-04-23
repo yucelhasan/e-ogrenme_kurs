@@ -79,7 +79,7 @@ STATICFILES_DIRS = [
 # Canlıya geçişte (collectstatic) dosyaların toplanacağı yer
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# 7. Diğer Önemli Ayarlar
+# 7. Diğer Önemli Ayarlar (Kimlik Doğrulama ve Oturum)
 AUTH_USER_MODEL = 'lms_app.CustomUser'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -87,9 +87,24 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-# Tarayıcı kapatıldığında oturumu (session) otomatik sonlandır
+# Tarayıcı kapatıldığında oturumu (session) otomatik sonlandır (Beni Hatırla özelliği için temel)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # 8. Medya Dosyaları (Yüklenen Resimler İçin)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# ==========================================
+# 9. GERÇEK E-POSTA (SMTP) AYARLARI
+# ==========================================
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# Bilgileri güvenli bir şekilde .env dosyasından çekiyoruz
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+# Maillerin kime aitmiş gibi görüneceği
+DEFAULT_FROM_EMAIL = f"KTÜ LMS <{EMAIL_HOST_USER}>"
