@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Eğitmenlik Başvurusu - LMS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white p-4 text-center border-0">
+                    <i class="fa-solid fa-chalkboard-user fa-3x mb-2"></i>
+                    <h4 class="fw-bold mb-0">Eğitmen Ailemize Katılın</h4>
+                </div>
+                <div class="card-body p-4 p-md-5 bg-light">
+                    <p class="text-muted text-center mb-4">
+                        Bilgi ve tecrübelerinizi binlerce öğrenciyle paylaşmak için ilk adımı atın. Uzmanlık alanınızı detaylıca yazarak başvurunuzu tamamlayın.
+                    </p>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold"><i class="fa-solid fa-star me-2 text-warning"></i>Uzmanlık Alanınız ve Tecrübeleriniz</label>
+                            {{ form.expertise }}
+                            <div class="form-text text-muted mt-2">
+                                Örn: "5 yıldır Senior Python Developer olarak çalışıyorum. Daha önce XYZ kurumunda web geliştirme üzerine mentörlük yaptım."
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold shadow-sm">
+                                <i class="fa-solid fa-paper-plane me-2"></i> Başvurumu Gönder
+                            </button>
+                            <a href="{% url 'profile' %}" class="btn btn-link text-muted text-decoration-none mt-2">İptal et ve Profile Dön</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

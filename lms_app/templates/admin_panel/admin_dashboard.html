@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Sistem Yönetimi - LMS{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
+        <h2 class="fw-bold mb-0 text-primary"><i class="fa-solid fa-crown me-2"></i>Sistem Yönetim ve Onay Merkezi</h2>
+        <a href="/admin/" target="_blank" class="btn btn-outline-dark"><i class="fa-solid fa-database me-2"></i>Gelişmiş Veritabanı Paneli</a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-warning text-dark py-3 fw-bold">
+                    <i class="fa-solid fa-chalkboard-user me-2"></i>Bekleyen Eğitmen Başvuruları ({{ pending_applications|length }})
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for app in pending_applications %}
+                        <div class="list-group-item p-3">
+                            <h6 class="fw-bold text-primary">{{ app.user.first_name }} {{ app.user.last_name }} ({{ app.user.username }})</h6>
+                            <p class="small text-muted mb-2"><strong>Uzmanlık:</strong> {{ app.expertise }}</p>
+                            <p class="small mb-3"><i class="fa-regular fa-clock me-1"></i>{{ app.applied_at|date:"d M Y H:i" }}</p>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'approve_application' app.id 'approve' %}" class="btn btn-sm btn-success w-50 fw-bold"><i class="fa-solid fa-check me-1"></i>Onayla (Eğitmen Yap)</a>
+                                <a href="{% url 'approve_application' app.id 'reject' %}" class="btn btn-sm btn-outline-danger w-50 fw-bold"><i class="fa-solid fa-times me-1"></i>Reddet</a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="p-4 text-center text-muted">
+                            <i class="fa-solid fa-check-double fa-2x mb-2 text-success"></i>
+                            <p class="mb-0">Bekleyen eğitmen başvurusu bulunmuyor.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-info text-white py-3 fw-bold">
+                    <i class="fa-solid fa-video me-2"></i>Yayına Çıkmayı Bekleyen Kurslar ({{ pending_courses|length }})
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for course in pending_courses %}
+                        <div class="list-group-item p-3">
+                            <h6 class="fw-bold">{{ course.title }}</h6>
+                            <p class="small text-muted mb-2">
+                                <strong>Eğitmen:</strong> {{ course.instructor.username }} | <strong>Fiyat:</strong> ₺{{ course.price }}
+                            </p>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'approve_course' course.id 'approve' %}" class="btn btn-sm btn-success w-50 fw-bold"><i class="fa-solid fa-thumbs-up me-1"></i>Yayına Al</a>
+                                <a href="{% url 'approve_course' course.id 'reject' %}" class="btn btn-sm btn-outline-danger w-50 fw-bold"><i class="fa-solid fa-thumbs-down me-1"></i>Reddet</a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="p-4 text-center text-muted">
+                            <i class="fa-solid fa-check-double fa-2x mb-2 text-success"></i>
+                            <p class="mb-0">Onay bekleyen yeni kurs bulunmuyor.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

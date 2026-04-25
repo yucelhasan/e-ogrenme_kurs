@@ -25,10 +25,16 @@
 
                     {% if user.is_authenticated %}
                         
-                        {% if user.role == 'admin' or user.role == 'instructor' %}
+                        {% if user.role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link text-warning fw-bold" href="{% url 'admin_dashboard' %}">
+                                <i class="fa-solid fa-crown me-1"></i>Sistem Yönetimi
+                            </a>
+                        </li>
+                        {% elif user.role == 'instructor' %}
                         <li class="nav-item">
                             <a class="nav-link text-warning fw-bold" href="{% url 'dashboard' %}">
-                                <i class="fa-solid fa-gauge me-1"></i>Admin Paneli
+                                <i class="fa-solid fa-chalkboard-user me-1"></i>Eğitmen Paneli
                             </a>
                         </li>
                         {% endif %}

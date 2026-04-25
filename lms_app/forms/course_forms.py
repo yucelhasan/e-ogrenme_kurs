@@ -5,17 +5,14 @@ from lms_app.models import Course, CustomUser
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        # instructor alanını listeye ekledik
-        fields = ['title', 'category', 'instructor', 'description', 'price', 'image', 'is_active']
+        fields = ['title', 'category', 'description', 'price', 'image']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Kursun Adı'}),
             'category': forms.Select(attrs={'class': 'form-select'}),
-            'instructor': forms.Select(attrs={'class': 'form-select'}),  # Yeni widget
             'description': forms.Textarea(
                 attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Kurs detaylarını anlatın...'}),
             'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
     def __init__(self, *args, **kwargs):

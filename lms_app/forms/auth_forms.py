@@ -1,23 +1,15 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from lms_app.models import CustomUser
+from lms_app.models import CustomUser, InstructorApplication
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, label="Adınız", required=True)
     last_name = forms.CharField(max_length=30, label="Soyadınız", required=True)
 
-    # Sadece TEK BİR Meta sınıfı olmalı
     class Meta(UserCreationForm.Meta):
         model = CustomUser
-        fields = ("username", "first_name", "last_name", "email", "phone", "role", "expertise")
-
-        widgets = {
-            'role': forms.Select(attrs={'class': 'form-select', 'id': 'roleSelect'}),
-            'expertise': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': 'Örn: Python, İngilizce, Yüzme...',
-                       'id': 'expertiseInput'}
-            ),
-        }
+        # DİKKAT: 'role' ve 'expertise' alanları çıkarıldı. Herkes 'student' olarak kaydedilecek.
+        fields = ("username", "first_name", "last_name", "email", "phone")
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:
@@ -28,4 +20,16 @@ class UserUpdateForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Soyadınız'}),
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefon Numaranız'}),
             'profile_picture': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
+
+class InstructorApplicationForm(forms.ModelForm):
+    class Meta:
+        model = InstructorApplication
+        fields = ['expertise']
+        widgets = {
+            'expertise': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 5,
+                'placeholder': 'Hangi alanlarda uzmansınız? Daha önce nerede eğitim verdiniz? Lütfen kısaca kendinizden bahsedin...'
+            })
         }

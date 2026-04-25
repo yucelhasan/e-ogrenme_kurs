@@ -11,14 +11,9 @@ class Category(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            # allow_unicode=True ile Türkçe karakterleri daha iyi anlar
             base_slug = slugify(self.name, allow_unicode=True)
-
-            # Eğer isimden slug üretemezse (sadece sembol girildiyse vs.)
-            # Rastgele 8 haneli benzersiz bir slug üretir, DB'nin çökmesini %100 engeller.
             if not base_slug:
                 base_slug = f"kategori-{uuid.uuid4().hex[:8]}"
-
             self.slug = base_slug
         super().save(*args, **kwargs)
 
@@ -27,6 +22,14 @@ class Category(models.Model):
 
 
 class Course(models.Model):
+    # YENİ: Durum Seçenekleri
+    STATUS_CHOICES = (
+        ('draft', 'Taslak'),
+        ('pending', 'Onay Bekliyor'),
+        ('published', 'Yayınlandı'),
+        ('rejected', 'Reddedildi'),
+    )
+
     title = models.CharField(max_length=200, verbose_name="Kurs Başlığı")
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField(verbose_name="Açıklama")
@@ -35,10 +38,12 @@ class Course(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='courses')
 
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-
     image = models.ImageField(upload_to='course_images/', null=True, blank=True, verbose_name="Kapak Resmi")
 
-    is_active = models.BooleanField(default=True)
+    # YENİ: is_active silindi, status ve admin_note eklendi
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    admin_note = models.TextField(blank=True, null=True, verbose_name="Admin Notu (Red sebebi vb.)")
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):

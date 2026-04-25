@@ -1,72 +1,80 @@
 {% extends 'base.html' %}
 
-{% block title %}Kurs Ekle - LMS{% endblock %}
+{% block title %}Yeni Kurs Ekle - LMS{% endblock %}
 
 {% block content %}
 <div class="row">
-    <div class="col-md-3">
-        <div class="list-group shadow-sm">
-            <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action">
-                <i class="fa-solid fa-gauge me-2"></i>Panel
+    <div class="col-md-3 mb-4">
+        <div class="list-group shadow-sm border-0">
+            <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action py-3">
+                <i class="fa-solid fa-gauge me-2 text-primary"></i>Eğitmen Paneli
             </a>
-            <a href="{% url 'add_course' %}" class="list-group-item list-group-item-action active">
+            <a href="{% url 'add_course' %}" class="list-group-item list-group-item-action active py-3">
                 <i class="fa-solid fa-plus me-2"></i>Yeni Kurs Ekle
             </a>
         </div>
     </div>
 
     <div class="col-md-9">
-        <div class="card shadow border-0">
-            <div class="card-header bg-white py-3">
-                <h4 class="mb-0 fw-bold text-primary">Yeni Kurs Oluştur</h4>
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-4 border-bottom">
+                <h4 class="mb-0 fw-bold text-primary">
+                    <i class="fa-solid fa-pen-nib me-2"></i>Yeni Kurs Oluştur
+                </h4>
             </div>
-            <div class="card-body p-4">
+            <div class="card-body p-4 p-md-5">
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    
+
                     <div class="row">
-                        <div class="col-md-8 mb-3">
-                            <label class="form-label fw-bold">Kurs Başlığı</label>
+                        <div class="col-md-8 mb-4">
+                            <label class="form-label fw-bold text-dark">Kurs Başlığı</label>
                             {{ form.title }}
+                            <div class="form-text">Öğrencilerin ilgisini çekecek net bir başlık seçin.</div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">Kategori</label>
+
+                        <div class="col-md-4 mb-4">
+                            <label class="form-label fw-bold text-dark">Kategori</label>
                             {{ form.category }}
                         </div>
-
-                        {% if user.role == 'admin' %}
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-bold text-danger">Eğitmen Ata (Admin)</label>
-                            {{ form.instructor }}
-                        </div>
-                        {% else %}
-                            {{ form.instructor }} {% endif %}
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Kurs Açıklaması</label>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark">Kurs Hakkında Detaylı Bilgi</label>
                         {{ form.description }}
                     </div>
 
-                    <div class="row">
+                    <div class="row mb-5">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Fiyat (₺)</label>
-                            {{ form.price }}
+                            <label class="form-label fw-bold text-dark">Fiyat (₺)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">₺</span>
+                                {{ form.price }}
+                            </div>
+                            <div class="form-text">Ücretsiz yapmak için 0.00 bırakın.</div>
                         </div>
+
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Kapak Fotoğrafı</label>
+                            <label class="form-label fw-bold text-dark">Kapak Fotoğrafı</label>
                             {{ form.image }}
                         </div>
                     </div>
 
-                    <div class="form-check form-switch mb-4">
-                        {{ form.is_active }}
-                        <label class="form-check-label fw-bold">Kurs Yayında (Öğrenciler görebilir)</label>
+                    <div class="alert alert-info border-0 shadow-sm d-flex align-items-center mb-4 py-3">
+                        <i class="fa-solid fa-circle-info fa-lg me-3"></i>
+                        <small class="fw-semibold">
+                            Kursu kaydettiğinizde doğrudan yayına alınmaz. Sistem yöneticilerimiz tarafından incelendikten sonra öğrencilere açılacaktır.
+                        </small>
                     </div>
 
-                    <button type="submit" class="btn btn-primary px-4 py-2 fw-bold w-100">
-                        <i class="fa-solid fa-save me-2"></i>Kursu Kaydet
-                    </button>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold shadow-sm">
+                            <i class="fa-solid fa-paper-plane me-2"></i> Kursu Kaydet ve Onaya Gönder
+                        </button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-link text-muted mt-3 text-decoration-none">
+                            Vazgeç ve Panele Dön
+                        </a>
+                    </div>
                 </form>
             </div>
         </div>
