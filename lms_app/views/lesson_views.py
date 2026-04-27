@@ -8,7 +8,7 @@ from lms_app.services.certificate_services import check_and_generate_certificate
 @login_required
 def lesson_detail_view(request, course_slug, lesson_id):
     # Kursun ve dersin varlığını kontrol et
-    course = get_object_or_404(Course, slug=course_slug, is_active=True)
+    course = get_object_or_404(Course, slug=course_slug, status='published')
     lesson = get_object_or_404(Lesson, id=lesson_id, module__course=course)
 
     # Yetki Kontrolü:

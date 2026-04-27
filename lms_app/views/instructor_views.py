@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from lms_app.forms.course_forms import CourseForm
-from lms_app.models import Course, InstructorApplication, CustomUser
+from lms_app.forms.course_forms import CourseForm, ModuleForm, LessonForm
+from lms_app.models import Course, InstructorApplication, Module, Lesson
 
 
 # ==========================================
@@ -28,19 +28,19 @@ def add_course_view(request):
         return redirect('home')
 
     if request.method == 'POST':
-        form = CourseForm(request.POST, request.FILES, user=request.user)
+        form = CourseForm(request.POST, request.FILES) # user=request.user parametresini formdan sildiysen burayı da sadeleştir
         if form.is_valid():
             course = form.save(commit=False)
             course.instructor = request.user
-            course.status = 'pending'  # YENİ: Eğitmen kurs eklediğinde doğrudan Onay Bekliyor durumuna düşer
+            course.status = 'draft'  # Kursu 'Taslak' olarak başlatıyoruz
             course.save()
-            messages.success(request, "Kurs başarıyla oluşturuldu ve Admin onayına sunuldu!")
-            return redirect('dashboard')
+            messages.success(request, "Kurs taslağı oluşturuldu. Şimdi bölümleri ve dersleri ekleyebilirsiniz!")
+            # Kullanıcıyı direkt müfredat yönetimi sayfasına yönlendiriyoruz
+            return redirect('manage_curriculum', course_id=course.id)
     else:
-        form = CourseForm(user=request.user)
+        form = CourseForm()
 
     return render(request, 'admin_panel/add_course.html', {'form': form})
-
 
 # ==========================================
 # 2. ADMİN ONAY PANELİ (SADECE ADMİNLER İÇİN)
@@ -92,3 +92,55 @@ def approve_course_view(request, course_id, action):
 
     course.save()
     return redirect('admin_dashboard')
+
+
+@login_required
+def manage_curriculum_view(request, course_id):
+    # Sadece kendi kursuysa görebilir
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    return render(request, 'admin_panel/manage_curriculum.html', {
+        'course': course,
+        'module_form': ModuleForm(),
+        'lesson_form': LessonForm()
+    })
+
+
+@login_required
+def add_module_view(request, course_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    if request.method == 'POST':
+        form = ModuleForm(request.POST)
+        if form.is_valid():
+            module = form.save(commit=False)
+            module.course = course
+            module.save()
+            messages.success(request, "Bölüm başarıyla eklendi!")
+    return redirect('manage_curriculum', course_id=course.id)
+
+
+@login_required
+def add_lesson_view(request, module_id):
+    module = get_object_or_404(Module, id=module_id, course__instructor=request.user)
+    if request.method == 'POST':
+        form = LessonForm(request.POST)
+        if form.is_valid():
+            lesson = form.save(commit=False)
+            lesson.module = module
+            lesson.save()
+            messages.success(request, "Ders başarıyla eklendi!")
+    return redirect('manage_curriculum', course_id=module.course.id)
+
+
+@login_required
+def submit_course_view(request, course_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+
+    # Kural: İçinde hiç modül yoksa onaya gönderilemez!
+    if not course.modules.exists():
+        messages.error(request, "Admin onayına göndermek için en az 1 Bölüm ve Ders eklemelisiniz.")
+        return redirect('manage_curriculum', course_id=course.id)
+
+    course.status = 'pending'
+    course.save()
+    messages.success(request, "Kursunuz başarıyla Admin onayına gönderildi. Teşekkürler!")
+    return redirect('dashboard')

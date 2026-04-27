@@ -4,7 +4,7 @@ from .models import (
     CustomUser, Category, Course, Module,
     Lesson, Enrollment, LessonProgress,
     Review, Certificate, SystemLog,
-    InstructorApplication
+    InstructorApplication,Coupon, Cart, Order, OrderItem
 )
 
 # 1. Modülleri kursun içinde satır içi (inline) göstermek için
@@ -37,6 +37,24 @@ class InstructorApplicationAdmin(admin.ModelAdmin):
     list_filter = ('status', 'applied_at')
     search_fields = ('user__username', 'user__email', 'expertise')
     readonly_fields = ('user', 'applied_at', 'expertise')
+@admin.register(Coupon)
+class CouponAdmin(admin.ModelAdmin):
+    list_display = ('code', 'discount_percent', 'valid_until', 'is_active')
+    list_filter = ('is_active',)
+    search_fields = ('code',)
+
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 0
+    readonly_fields = ('course', 'price') # Fatura değiştirilemez
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'final_amount', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('user__username',)
+    inlines = [OrderItemInline]
+    readonly_fields = ('user', 'total_amount', 'discount_amount', 'final_amount', 'status')
 
 # 5. Diğer Modülleri Kaydet
 admin.site.register(Category)

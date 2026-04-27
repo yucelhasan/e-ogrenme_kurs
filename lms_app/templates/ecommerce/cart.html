@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Sepetim - LMS{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="fw-bold mb-4"><i class="fa-solid fa-cart-shopping me-2 text-primary"></i>Alışveriş Sepetim</h2>
+
+    <div class="row">
+        <div class="col-lg-8">
+            {% if items %}
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            {% for item in items %}
+                            <li class="list-group-item p-4 d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    {% if item.course.image %}
+                                        <img src="{{ item.course.image.url }}" alt="{{ item.course.title }}" class="rounded me-3 shadow-sm" style="width: 90px; height: 90px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="rounded me-3 bg-secondary text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 90px; height: 90px;">
+                                            <i class="fa-solid fa-laptop-code fa-2x"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <h5 class="fw-bold mb-1">{{ item.course.title }}</h5>
+                                        <p class="text-muted small mb-0"><i class="fa-solid fa-user-tie me-1"></i> Eğitmen: {{ item.course.instructor.get_full_name|default:item.course.instructor.username }}</p>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <h4 class="fw-bold text-success mb-2">₺{{ item.course.price }}</h4>
+                                    <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-sm btn-outline-danger shadow-sm rounded-pill px-3">
+                                        <i class="fa-solid fa-trash me-1"></i> Kaldır
+                                    </a>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center py-5 bg-white rounded shadow-sm border-0">
+                    <i class="fa-solid fa-basket-shopping fa-5x text-muted mb-4 opacity-50"></i>
+                    <h4 class="fw-bold text-secondary">Sepetiniz şu an boş.</h4>
+                    <p class="text-muted">Binlerce kurs arasından size uygun olanı hemen bulun ve öğrenmeye başlayın!</p>
+                    <a href="{% url 'courses' %}" class="btn btn-primary mt-3 px-5 py-3 fw-bold shadow-sm rounded-pill">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>Kursları Keşfet
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold border-bottom pb-3 mb-4">Sipariş Özeti</h4>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Ara Toplam:</span>
+                        <span class="fw-bold fs-5">₺{{ total_price }}</span>
+                    </div>
+
+                    {% if discount_amount > 0 %}
+                    <div class="d-flex justify-content-between mb-3 text-success">
+                        <span>İndirim (%{{ cart.coupon.discount_percent }}):</span>
+                        <span class="fw-bold fs-5">- ₺{{ discount_amount }}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-4 mb-4 bg-light p-3 rounded">
+                        <label class="form-label fw-bold small text-muted"><i class="fa-solid fa-ticket me-2"></i>İndirim Kuponu</label>
+                        <form method="POST" action="">
+                            {% csrf_token %}
+                            <div class="input-group shadow-sm">
+                                <input type="text" name="coupon_code" class="form-control border-primary" placeholder="Kodu girin...">
+                                <button class="btn btn-primary fw-bold" type="submit">Uygula</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="d-flex justify-content-between border-top border-2 pt-3 mb-4">
+                        <span class="fw-bold fs-5">Ödenecek Tutar:</span>
+                        <span class="fw-bold fs-3 text-primary">₺{{ final_price }}</span>
+                    </div>
+
+                    <a href="{% url 'checkout' %}" class="btn btn-success btn-lg w-100 fw-bold shadow-sm rounded-pill py-3 {% if not items %}disabled{% endif %}">
+                        <i class="fa-solid fa-shield-halved me-2"></i> Güvenli Ödeme Yap
+                    </a>
+
+                    <p class="text-center text-muted small mt-3 mb-0">
+                        <i class="fa-solid fa-lock me-1"></i> 256-bit SSL ile şifrelenmiştir.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -24,7 +24,18 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'courses' %}">Kurslar</a></li>
 
                     {% if user.is_authenticated %}
-                        
+
+                        <li class="nav-item me-lg-3">
+                            <a class="nav-link position-relative text-white" href="{% url 'view_cart' %}">
+                                <i class="fa-solid fa-cart-shopping fa-lg"></i>
+                                {% if cart_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                                    {{ cart_count }}
+                                </span>
+                                {% endif %}
+                            </a>
+                        </li>
+
                         {% if user.role == 'admin' %}
                         <li class="nav-item">
                             <a class="nav-link text-warning fw-bold" href="{% url 'admin_dashboard' %}">
@@ -38,6 +49,7 @@
                             </a>
                         </li>
                         {% endif %}
+
                         <li class="nav-item">
                             <a class="nav-link text-info" href="{% url 'profile' %}">
                                 <i class="fa-solid fa-user-circle me-1"></i>{{ user.username }}
@@ -46,6 +58,7 @@
                         <li class="nav-item">
                             <a class="btn btn-outline-danger btn-sm ms-lg-3" href="{% url 'logout' %}">Çıkış</a>
                         </li>
+
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'login' %}">Giriş Yap</a>

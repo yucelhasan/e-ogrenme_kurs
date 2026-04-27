@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import auth_views, course_views, profile_views, instructor_views, lesson_views
+from .views import cart_views,auth_views, course_views, profile_views, instructor_views, lesson_views
 
 # YENİ IMPORT: Django'nun hazır auth view'larını "django_auth_views" adıyla içeri alıyoruz
 from django.contrib.auth import views as django_auth_views
@@ -38,4 +38,16 @@ urlpatterns = [
     path('sistem-yonetimi/', instructor_views.admin_dashboard_view, name='admin_dashboard'),
     path('sistem-yonetimi/basvuru-onayla/<int:app_id>/<str:action>/', instructor_views.approve_application_view, name='approve_application'),
     path('sistem-yonetimi/kurs-onayla/<int:course_id>/<str:action>/', instructor_views.approve_course_view, name='approve_course'),
+
+    # --- SEPET İŞLEMLERİ ---
+    path('sepet/', cart_views.view_cart_view, name='view_cart'),
+    path('sepet/ekle/<slug:slug>/', cart_views.add_to_cart_view, name='add_to_cart'),
+    path('sepet/cikar/<int:item_id>/', cart_views.remove_from_cart_view, name='remove_from_cart'),
+    path('sepet/odeme/', cart_views.checkout_view, name='checkout'),
+
+# Eğitmen Müfredat (Curriculum) Yönetimi
+    path('panel/kurs/<int:course_id>/mufredat/', instructor_views.manage_curriculum_view, name='manage_curriculum'),
+    path('panel/kurs/<int:course_id>/modul-ekle/', instructor_views.add_module_view, name='add_module'),
+    path('panel/modul/<int:module_id>/ders-ekle/', instructor_views.add_lesson_view, name='add_lesson'),
+    path('panel/kurs/<int:course_id>/onaya-gonder/', instructor_views.submit_course_view, name='submit_course'),
 ]

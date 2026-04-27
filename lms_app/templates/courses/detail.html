@@ -159,50 +159,35 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="card shadow border-0 sticky-top" style="top: 20px;">
-                {% if course.image %}
-                    <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}" style="height: 250px; object-fit: cover;">
-                {% else %}
-                    <div class="card-img-top bg-dark d-flex align-items-center justify-content-center text-white" style="height: 250px;">
-                        <i class="fa-solid fa-laptop-code fa-4x text-muted"></i>
-                    </div>
-                {% endif %}
-
+            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
                 <div class="card-body p-4 text-center">
-                    <h2 class="fw-bold text-success mb-3">
-                        {% if course.price == 0 %}Ücretsiz{% else %}₺{{ course.price }}{% endif %}
-                    </h2>
+                    {% if course.price == 0 %}
+                        <h2 class="fw-bold text-success mb-3">ÜCRETSİZ</h2>
+                    {% else %}
+                        <h2 class="fw-bold mb-3">₺{{ course.price }}</h2>
+                    {% endif %}
 
-                    {% if request.user.is_authenticated %}
+                    {% if user.is_authenticated %}
                         {% if is_enrolled %}
-                            <div class="alert alert-success border-0 shadow-sm py-3 mb-3">
-                                <i class="fa-solid fa-circle-check fa-lg me-2"></i><strong>Kursa Kayıtlısınız</strong>
-                            </div>
-                            <a href="#" class="btn btn-outline-primary btn-lg w-100 fw-bold rounded-pill py-3">
+                            <a href="{% url 'lesson_detail' course.slug course.modules.first.lessons.first.id|default:0 %}" class="btn btn-success btn-lg w-100 fw-bold shadow-sm rounded-pill mb-3">
                                 <i class="fa-solid fa-play me-2"></i>Derse Devam Et
                             </a>
                         {% else %}
-                            <form method="POST" action="{% url 'enroll_course' course.slug %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold mb-3 rounded-pill shadow-sm py-3">
-                                    <i class="fa-solid fa-bolt me-2"></i>Kursa Kayıt Ol
-                                </button>
-                            </form>
+                            <a href="{% url 'add_to_cart' course.slug %}" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm rounded-pill mb-3">
+                                <i class="fa-solid fa-cart-plus me-2"></i> {% if course.price == 0 %}Ücretsiz Kayıt Ol{% else %}Sepete Ekle{% endif %}
+                            </a>
                         {% endif %}
                     {% else %}
-                        <div class="alert alert-warning border-0 shadow-sm py-2 mb-3 small text-start">
-                            <i class="fa-solid fa-lock me-2"></i>Kayıt olmak için oturum açmalısınız.
-                        </div>
-                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-primary btn-lg w-100 fw-bold mb-3 rounded-pill shadow-sm py-3">
-                            Giriş Yap ve Kayıt Ol
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-primary btn-lg w-100 fw-bold rounded-pill mb-3">
+                            Kayıt Olmak İçin Giriş Yap
                         </a>
                     {% endif %}
 
-                    <div class="text-start mt-4 border-top pt-3">
-                        <p class="text-muted small mb-2"><i class="fa-solid fa-infinity me-2 text-primary"></i> Ömür boyu erişim</p>
-                        <p class="text-muted small mb-2"><i class="fa-solid fa-mobile-screen-button me-2 text-primary"></i> Mobil uyumlu içerik</p>
-                        <p class="text-muted small mb-0"><i class="fa-solid fa-certificate me-2 text-primary"></i> Bitirme Sertifikası</p>
-                    </div>
+                    <ul class="list-unstyled text-start text-muted small mt-4 mb-0">
+                        <li class="mb-2"><i class="fa-solid fa-infinity me-2 text-primary"></i> Ömür boyu tam erişim</li>
+                        <li class="mb-2"><i class="fa-solid fa-mobile-screen-button me-2 text-primary"></i> Mobil ve TV'den erişim</li>
+                        <li><i class="fa-solid fa-certificate me-2 text-primary"></i> Bitirme sertifikası</li>
+                    </ul>
                 </div>
             </div>
         </div>

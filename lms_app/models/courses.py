@@ -71,3 +71,21 @@ class Lesson(models.Model):
     duration = models.CharField(max_length=20, blank=True, help_text="Örn: 10:45")
 
     def __str__(self): return self.title
+
+    @property
+    def embed_video_url(self):
+        if not self.video_url:
+            return ""
+
+        # Eğer link "youtube.com/watch?v=" içeriyorsa
+        if "youtube.com/watch?v=" in self.video_url:
+            video_id = self.video_url.split("v=")[1].split("&")[0]
+            return f"https://www.youtube.com/embed/{video_id}"
+
+        # Eğer link kısaltılmış "youtu.be/" formatındaysa
+        elif "youtu.be/" in self.video_url:
+            video_id = self.video_url.split("youtu.be/")[1].split("?")[0]
+            return f"https://www.youtube.com/embed/{video_id}"
+
+        # Zaten embed linki girilmişse veya başka bir platformsa direkt döndür
+        return self.video_url

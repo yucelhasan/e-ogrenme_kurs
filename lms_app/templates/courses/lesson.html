@@ -10,7 +10,7 @@
         <div class="card shadow-sm border-0">
             {% if lesson.video_url %}
             <div class="ratio ratio-16x9 rounded-top overflow-hidden bg-dark">
-                <iframe src="{{ lesson.video_url }}" title="{{ lesson.title }}" allowfullscreen></iframe>
+                <iframe src="{{ lesson.embed_video_url }}" title="{{ lesson.title }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
             {% else %}
             <div class="video-placeholder">

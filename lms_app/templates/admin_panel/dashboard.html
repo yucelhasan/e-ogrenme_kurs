@@ -24,9 +24,18 @@
                     <div class="card-body">
                         <h5 class="card-title fw-bold">{{ course.title }}</h5>
                         <p class="card-text text-muted">{{ course.category.name }}</p>
-                        <span class="badge {% if course.is_active %}bg-success{% else %}bg-secondary{% endif %}">
-                            {% if course.is_active %}Yayında{% else %}Taslak{% endif %}
-                        </span>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="badge {% if course.status == 'published' %}bg-success{% elif course.status == 'pending' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                                {{ course.get_status_display }}
+                            </span>
+
+                            {% if course.status == 'draft' %}
+                            <a href="{% url 'manage_curriculum' course.id %}" class="btn btn-sm btn-outline-primary fw-bold">
+                                <i class="fa-solid fa-list-check me-1"></i>Müfredatı Düzenle
+                            </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>

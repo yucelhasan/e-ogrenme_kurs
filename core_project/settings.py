@@ -19,7 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'lms_app',  # Senin uygulaman
+    'lms_app',
 ]
 
 # 3. Ara Katmanlar (Middleware) - Hataları çözen kısım
@@ -47,6 +47,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'lms_app.context_processors.cart_processor',
             ],
         },
     },

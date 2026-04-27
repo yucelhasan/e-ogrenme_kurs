@@ -1,5 +1,5 @@
 from django import forms
-from lms_app.models import Course
+from lms_app.models import Course, Module, Lesson
 
 
 class CourseForm(forms.ModelForm):
@@ -20,4 +20,22 @@ class CourseForm(forms.ModelForm):
         kwargs.pop('user', None)
         super(CourseForm, self).__init__(*args, **kwargs)
 
-        # DİKKAT: Eski self.fields['instructor'] ayarlarının TAMAMINI sildik!
+class ModuleForm(forms.ModelForm):
+    class Meta:
+        model = Module
+        fields = ['title', 'order']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Örn: Bölüm 1: Python'a Giriş"}),
+            'order': forms.NumberInput(attrs={'class': 'form-control', 'value': 1}),
+        }
+
+class LessonForm(forms.ModelForm):
+    class Meta:
+        model = Lesson
+        fields = ['title', 'content', 'video_url', 'duration']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Örn: Değişkenler ve Veri Tipleri'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Dersin metin içeriği veya açıklaması...'}),
+            'video_url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://www.youtube.com/watch?v=...'}),
+            'duration': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Örn: 10:45'}),
+        }
