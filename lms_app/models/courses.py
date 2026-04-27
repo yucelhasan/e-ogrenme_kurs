@@ -22,7 +22,6 @@ class Category(models.Model):
 
 
 class Course(models.Model):
-    # YENİ: Durum Seçenekleri
     STATUS_CHOICES = (
         ('draft', 'Taslak'),
         ('pending', 'Onay Bekliyor'),
@@ -40,7 +39,6 @@ class Course(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     image = models.ImageField(upload_to='course_images/', null=True, blank=True, verbose_name="Kapak Resmi")
 
-    # YENİ: is_active silindi, status ve admin_note eklendi
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
     admin_note = models.TextField(blank=True, null=True, verbose_name="Admin Notu (Red sebebi vb.)")
 

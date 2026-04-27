@@ -40,7 +40,7 @@ def course_detail_view(request, slug):
 @login_required
 def enroll_course_view(request, slug):
     if request.method == 'POST':
-        course = get_object_or_404(Course, slug=slug, is_active=True)
+        course = get_object_or_404(Course, slug=slug, status='published')
         success, message = enroll_user_to_course(request.user, course)
         if success:
             messages.success(request, message)
@@ -50,7 +50,7 @@ def enroll_course_view(request, slug):
 
 @login_required
 def add_review_view(request, slug):
-    course = get_object_or_404(Course, slug=slug, is_active=True)
+    course = get_object_or_404(Course, slug=slug, status='published')
 
     # 1. KURAL: Kullanıcı bu kursa kayıtlı mı?
     if not Enrollment.objects.filter(student=request.user, course=course).exists():
