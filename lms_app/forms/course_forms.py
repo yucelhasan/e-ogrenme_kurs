@@ -1,5 +1,5 @@
 from django import forms
-from lms_app.models import Course, CustomUser
+from lms_app.models import Course
 
 
 class CourseForm(forms.ModelForm):
@@ -16,14 +16,8 @@ class CourseForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        # View'dan gönderdiğimiz 'user' bilgisini alıyoruz
-        user = kwargs.pop('user', None)
+        # View'dan gönderilen 'user' bilgisini yakalayıp formdan koparıyoruz ki Django hata vermesin
+        kwargs.pop('user', None)
         super(CourseForm, self).__init__(*args, **kwargs)
 
-        # Sadece 'instructor' rolündeki kullanıcıları seçilebilir yap
-        self.fields['instructor'].queryset = CustomUser.objects.filter(role='instructor')
-
-        # Eğer kullanıcı Admin DEĞİLSE, eğitmen seçimini gizle veya sadece kendini seçtir
-        if user and user.role != 'admin':
-            self.fields['instructor'].initial = user.id
-            self.fields['instructor'].widget = forms.HiddenInput()  # Eğitmense bu alanı görmesin
+        # DİKKAT: Eski self.fields['instructor'] ayarlarının TAMAMINI sildik!
