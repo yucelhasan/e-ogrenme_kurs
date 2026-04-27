@@ -5,6 +5,7 @@
 {% block content %}
 <div class="container py-4">
     <div class="row">
+        
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 text-center p-4 mb-4">
                 <div class="mb-3">
@@ -41,6 +42,7 @@
         </div>
 
         <div class="col-lg-8">
+            
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3 border-0">
                     <h5 class="mb-0 fw-bold"><i class="fa-solid fa-id-card me-2 text-primary"></i>Kişisel Bilgiler</h5>
@@ -99,13 +101,9 @@
                                             <small class="text-muted d-block mb-2">{{ enrollment.course.category.name }}</small>
 
                                             <div class="progress" style="height: 6px;">
-                                                <div class="progress-bar {% if enrollment.progress == 100 %}bg-success{% else %}bg-primary{% endif %}"
-                                                     role="progressbar"
-                                                     style="width: {{ enrollment.progress }}%;"
-                                                     aria-valuenow="{{ enrollment.progress }}"
-                                                     aria-valuemin="0"
-                                                     aria-valuemax="100"></div>
+                                                <div class="progress-bar {% if enrollment.progress == 100 %}bg-success{% else %}bg-primary{% endif %}" role="progressbar" style="width: {{ enrollment.progress }}%;" aria-valuenow="{{ enrollment.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
                                             </div>
+                                            
                                             <small class="text-muted" style="font-size: 0.7rem;">%{{ enrollment.progress }} Tamamlandı</small>
                                         </div>
                                     </div>
@@ -127,11 +125,43 @@
                     {% endif %}
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<div class="modal fade" id="profileEditModal" tabindex="-1" aria-labelledby="profileEditModalLabel" aria-hidden="true">
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header bg-white py-3 border-0">
+                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-award me-2 text-warning"></i>Sertifikalarım</h5>
+                </div>
+                <div class="card-body py-4">
+                    {% if certificates %}
+                        <div class="row row-cols-1 row-cols-md-2 g-3">
+                            {% for cert in certificates %}
+                            <div class="col">
+                                <div class="card h-100 shadow-sm border-0 bg-light border-start border-warning border-4">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fa-solid fa-certificate fa-3x text-warning me-3"></i>
+                                            <div>
+                                                <h6 class="fw-bold mb-1 text-truncate" style="max-width: 200px;" title="{{ cert.course.title }}">
+                                                    {{ cert.course.title }}
+                                                </h6>
+                                                <small class="text-muted d-block">Sertifika Kodu:</small>
+                                                <small class="fw-bold text-dark user-select-all">{{ cert.certificate_code }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fa-solid fa-award fa-3x text-muted mb-3" style="opacity: 0.3;"></i>
+                            <p class="text-muted">Henüz kazandığınız bir sertifika bulunmuyor.<br>Kursları %100 tamamlayarak sistemin size özel ürettiği sertifikaları burada görebilirsiniz.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div> </div> </div> <div class="modal fade" id="profileEditModal" tabindex="-1" aria-labelledby="profileEditModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
