@@ -16,6 +16,29 @@
     </div>
     
     <div class="col-md-9">
+        <h3 class="fw-bold mb-4">Eğitmen İstatistikleri</h3>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card bg-primary text-white shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fa-solid fa-users fa-3x mb-2"></i>
+                        <h5>Toplam Öğrencim</h5>
+                        <h2>{{ total_students }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card bg-success text-white shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fa-solid fa-wallet fa-3x mb-2"></i>
+                        <h5>Net Kazancım</h5>
+                        <h2>₺{{ net_income }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <h3 class="fw-bold mb-4">Kurslarım</h3>
         <div class="row g-3">
             {% for course in my_courses %}
@@ -26,15 +49,23 @@
                         <p class="card-text text-muted">{{ course.category.name }}</p>
 
                         <div class="d-flex justify-content-between align-items-center mt-3">
-                            <span class="badge {% if course.status == 'published' %}bg-success{% elif course.status == 'pending' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                            <span class="badge {% if course.status == 'published' %}bg-success{% elif course.status == 'archived' %}bg-danger{% elif course.status == 'pending' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
                                 {{ course.get_status_display }}
                             </span>
 
-                            {% if course.status == 'draft' %}
-                            <a href="{% url 'manage_curriculum' course.id %}" class="btn btn-sm btn-outline-primary fw-bold">
-                                <i class="fa-solid fa-list-check me-1"></i>Müfredatı Düzenle
-                            </a>
-                            {% endif %}
+                            <div class="btn-group">
+                                {% if course.status == 'draft' %}
+                                <a href="{% url 'manage_curriculum' course.id %}" class="btn btn-sm btn-outline-primary fw-bold">
+                                    <i class="fa-solid fa-list-check me-1"></i>Düzenle
+                                </a>
+                                {% endif %}
+
+                                {% if course.status == 'published' %}
+                                <a href="{% url 'archive_course' course.id %}" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Bu kursu mağazadan kaldırmak istediğinize emin misiniz? (Satın alanlar erişmeye devam edecek)');">
+                                    <i class="fa-solid fa-box-archive me-1"></i>Arşivle
+                                </a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>

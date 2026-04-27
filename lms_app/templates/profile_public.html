@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Kullanıcı Profili - LMS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0 text-center p-5">
+
+                {% if is_admin %}
+                    <i class="fa-solid fa-user-secret fa-6x text-dark mb-4"></i>
+                    <h3 class="fw-bold">Sistem Yöneticisi</h3>
+                    <p class="text-muted">{{ message }}</p>
+
+                {% elif is_private %}
+                    <i class="fa-solid fa-lock fa-6x text-secondary mb-4"></i>
+                    <h3 class="fw-bold">{{ target_user.username }}</h3>
+                    <p class="text-danger fw-bold"><i class="fa-solid fa-eye-slash me-2"></i>{{ message }}</p>
+
+                {% else %}
+                    {% if target_user.profile_picture %}
+                        <img src="{{ target_user.profile_picture.url }}" alt="Profil" class="rounded-circle img-thumbnail shadow-sm mx-auto mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <i class="fa-solid fa-circle-user fa-6x text-primary mb-3"></i>
+                    {% endif %}
+
+                    <h3 class="fw-bold">{{ target_user.first_name }} {{ target_user.last_name }}</h3>
+                    <p class="text-muted">@{{ target_user.username }} | {{ target_user.get_role_display }}</p>
+                    {% if target_user.expertise %}
+                        <p class="badge bg-warning text-dark">{{ target_user.expertise }}</p>
+                    {% endif %}
+
+                    <div class="mt-4 d-flex justify-content-center gap-2">
+                        <button class="btn btn-primary"><i class="fa-solid fa-user-plus me-2"></i>Takip Et</button>
+                        <button class="btn btn-outline-secondary"><i class="fa-solid fa-envelope me-2"></i>Mesaj Gönder</button>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

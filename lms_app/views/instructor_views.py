@@ -1,16 +1,35 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Sum
 from lms_app.forms.course_forms import CourseForm, ModuleForm, LessonForm
 from lms_app.models import Course, InstructorApplication, CustomUser, Module, Lesson
+from lms_app.models.ecommerce import OrderItem  # Gelir için eklendi
+
 
 # 1. EĞİTMEN PANELİ
 @login_required
 def dashboard_view(request):
     if request.user.role == 'admin': return redirect('admin_dashboard')
     if request.user.role != 'instructor': return redirect('home')
+
     my_courses = Course.objects.filter(instructor=request.user).order_by('-created_at')
-    return render(request, 'admin_panel/dashboard.html', {'my_courses': my_courses})
+
+    # YENİ: Gelir ve İstatistik Hesaplamaları
+    total_students = OrderItem.objects.filter(course__instructor=request.user, order__status='completed').values(
+        'order__user').distinct().count()
+    gross_income = \
+    OrderItem.objects.filter(course__instructor=request.user, order__status='completed').aggregate(Sum('price'))[
+        'price__sum'] or 0
+    # %20 Admin komisyonu düşülerek net kazanç hesaplanıyor
+    net_income = float(gross_income) * 0.80
+
+    return render(request, 'admin_panel/dashboard.html', {
+        'my_courses': my_courses,
+        'total_students': total_students,
+        'net_income': net_income
+    })
+
 
 @login_required
 def add_course_view(request):
@@ -20,14 +39,15 @@ def add_course_view(request):
         if form.is_valid():
             course = form.save(commit=False)
             course.instructor = request.user
-            course.status = 'draft' # Önce Taslak
+            course.status = 'draft'  # Önce Taslak
             course.save()
             return redirect('manage_curriculum', course_id=course.id)
     else:
         form = CourseForm()
     return render(request, 'admin_panel/add_course.html', {'form': form})
 
-# --- MÜFREDAT YÖNETİMİ (EKSİK OLAN KISIM) ---
+
+# --- MÜFREDAT YÖNETİMİ ---
 @login_required
 def manage_curriculum_view(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
@@ -36,6 +56,7 @@ def manage_curriculum_view(request, course_id):
         'module_form': ModuleForm(),
         'lesson_form': LessonForm()
     })
+
 
 @login_required
 def add_module_view(request, course_id):
@@ -49,6 +70,7 @@ def add_module_view(request, course_id):
             messages.success(request, "Bölüm eklendi!")
     return redirect('manage_curriculum', course_id=course.id)
 
+
 @login_required
 def add_lesson_view(request, module_id):
     module = get_object_or_404(Module, id=module_id, course__instructor=request.user)
@@ -61,16 +83,30 @@ def add_lesson_view(request, module_id):
             messages.success(request, "Ders eklendi!")
     return redirect('manage_curriculum', course_id=module.course.id)
 
+
 @login_required
 def submit_course_view(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
     if not course.modules.exists():
         messages.error(request, "Lütfen önce içerik ekleyin.")
         return redirect('manage_curriculum', course_id=course.id)
-    course.status = 'pending' # Onaya gönder
+    course.status = 'pending'  # Onaya gönder
     course.save()
     messages.success(request, "Kurs onay için gönderildi!")
     return redirect('dashboard')
+
+
+# YENİ: KURS ARŞİVLEME VIEW
+@login_required
+def archive_course_view(request, course_id):
+    if request.user.role != 'instructor': return redirect('home')
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    course.status = 'archived'
+    course.save()
+    messages.info(request,
+                  f"{course.title} kursu mağazadan kaldırıldı (Arşivlendi). Daha önce satın alanlar erişebilir.")
+    return redirect('dashboard')
+
 
 # 2. ADMİN ONAY PANELİ
 @login_required
@@ -83,6 +119,7 @@ def admin_dashboard_view(request):
         'pending_courses': pending_courses
     })
 
+
 @login_required
 def approve_application_view(request, app_id, action):
     if request.user.role != 'admin': return redirect('home')
@@ -91,15 +128,19 @@ def approve_application_view(request, app_id, action):
         app.status = 'approved'
         app.user.role = 'instructor'
         app.user.save()
-    else: app.status = 'rejected'
+    else:
+        app.status = 'rejected'
     app.save()
     return redirect('admin_dashboard')
+
 
 @login_required
 def approve_course_view(request, course_id, action):
     if request.user.role != 'admin': return redirect('home')
     course = get_object_or_404(Course, id=course_id)
-    if action == 'approve': course.status = 'published'
-    else: course.status = 'rejected'
+    if action == 'approve':
+        course.status = 'published'
+    else:
+        course.status = 'rejected'
     course.save()
     return redirect('admin_dashboard')

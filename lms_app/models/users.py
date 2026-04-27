@@ -15,11 +15,13 @@ class CustomUser(AbstractUser):
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True,
                                         verbose_name="Profil Fotoğrafı")
     expertise = models.CharField(max_length=255, blank=True, null=True, verbose_name="Uzmanlık Alanı")
+    is_private = models.BooleanField(default=False, verbose_name="Gizli Profil")  # YENİ EKLENEN
 
     REQUIRED_FIELDS = ['email', 'role']
 
     def __str__(self):
         return f"{self.username} ({self.get_role_display()})"
+
 
 class InstructorApplication(models.Model):
     STATUS_CHOICES = (
@@ -36,3 +38,21 @@ class InstructorApplication(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.get_status_display()}"
+
+
+# YENİ EKLENEN BAĞLANTI (TAKİPLEŞME) VE MESAJLAŞMA MODELLERİ
+class Connection(models.Model):
+    follower = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='following')
+    following = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='followers')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'following')
+
+
+class Message(models.Model):
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='received_messages')
+    content = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)

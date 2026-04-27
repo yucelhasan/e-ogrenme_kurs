@@ -3,7 +3,6 @@ from .users import CustomUser
 from django.utils.text import slugify
 import uuid
 
-
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Kategori Adı")
     slug = models.SlugField(unique=True, blank=True)
@@ -20,13 +19,13 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-
 class Course(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Taslak'),
         ('pending', 'Onay Bekliyor'),
         ('published', 'Yayınlandı'),
         ('rejected', 'Reddedildi'),
+        ('archived', 'Arşivlendi/Kaldırıldı'), # YENİ EKLENEN DURUM
     )
 
     title = models.CharField(max_length=200, verbose_name="Kurs Başlığı")
@@ -50,7 +49,6 @@ class Course(models.Model):
 
     def __str__(self): return self.title
 
-
 class Module(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='modules')
     title = models.CharField(max_length=200)
@@ -59,7 +57,6 @@ class Module(models.Model):
     class Meta: ordering = ['order']
 
     def __str__(self): return f"{self.course.title} - {self.title}"
-
 
 class Lesson(models.Model):
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='lessons')
@@ -75,15 +72,11 @@ class Lesson(models.Model):
         if not self.video_url:
             return ""
 
-        # Eğer link "youtube.com/watch?v=" içeriyorsa
         if "youtube.com/watch?v=" in self.video_url:
             video_id = self.video_url.split("v=")[1].split("&")[0]
             return f"https://www.youtube.com/embed/{video_id}"
-
-        # Eğer link kısaltılmış "youtu.be/" formatındaysa
         elif "youtu.be/" in self.video_url:
             video_id = self.video_url.split("youtu.be/")[1].split("?")[0]
             return f"https://www.youtube.com/embed/{video_id}"
 
-        # Zaten embed linki girilmişse veya başka bir platformsa direkt döndür
         return self.video_url

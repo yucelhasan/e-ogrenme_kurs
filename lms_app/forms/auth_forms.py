@@ -8,18 +8,21 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = CustomUser
-        # DİKKAT: 'role' ve 'expertise' alanları çıkarıldı. Herkes 'student' olarak kaydedilecek.
         fields = ("username", "first_name", "last_name", "email", "phone")
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'phone', 'profile_picture']
+        fields = ['first_name', 'last_name', 'phone', 'profile_picture', 'is_private'] # is_private EKLENDİ
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Adınız'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Soyadınız'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefon Numaranız'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
             'profile_picture': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'is_private': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+        labels = {
+            'is_private': 'Profilimi Gizli Yap (Sadece takipçilerim görebilir)',
         }
 
 class InstructorApplicationForm(forms.ModelForm):
@@ -30,6 +33,6 @@ class InstructorApplicationForm(forms.ModelForm):
             'expertise': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 5,
-                'placeholder': 'Hangi alanlarda uzmansınız? Daha önce nerede eğitim verdiniz? Lütfen kısaca kendinizden bahsedin...'
+                'placeholder': 'Tecrübelerinizden bahsedin...'
             })
         }
