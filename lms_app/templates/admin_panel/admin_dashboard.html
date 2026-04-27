@@ -22,8 +22,19 @@
                             <p class="small text-muted mb-2"><strong>Uzmanlık:</strong> {{ app.expertise }}</p>
                             <p class="small mb-3"><i class="fa-regular fa-clock me-1"></i>{{ app.applied_at|date:"d M Y H:i" }}</p>
                             <div class="d-flex gap-2">
-                                <a href="{% url 'approve_application' app.id 'approve' %}" class="btn btn-sm btn-success w-50 fw-bold"><i class="fa-solid fa-check me-1"></i>Onayla (Eğitmen Yap)</a>
-                                <a href="{% url 'approve_application' app.id 'reject' %}" class="btn btn-sm btn-outline-danger w-50 fw-bold"><i class="fa-solid fa-times me-1"></i>Reddet</a>
+                                <form action="{% url 'approve_application' app.id 'approve' %}" method="POST" class="w-50">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success w-100 fw-bold">
+                                        <i class="fa-solid fa-check me-1"></i>Onayla
+                                    </button>
+                                </form>
+                                
+                                <form action="{% url 'approve_application' app.id 'reject' %}" method="POST" class="w-50">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-bold">
+                                        <i class="fa-solid fa-times me-1"></i>Reddet
+                                    </button>
+                                </form>
                             </div>
                         </div>
                         {% empty %}
@@ -51,8 +62,19 @@
                                 <strong>Eğitmen:</strong> {{ course.instructor.username }} | <strong>Fiyat:</strong> ₺{{ course.price }}
                             </p>
                             <div class="d-flex gap-2">
-                                <a href="{% url 'approve_course' course.id 'approve' %}" class="btn btn-sm btn-success w-50 fw-bold"><i class="fa-solid fa-thumbs-up me-1"></i>Yayına Al</a>
-                                <a href="{% url 'approve_course' course.id 'reject' %}" class="btn btn-sm btn-outline-danger w-50 fw-bold"><i class="fa-solid fa-thumbs-down me-1"></i>Reddet</a>
+                                <form action="{% url 'approve_course' course.id 'approve' %}" method="POST" class="w-50">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success w-100 fw-bold">
+                                        <i class="fa-solid fa-thumbs-up me-1"></i>Yayına Al
+                                    </button>
+                                </form>
+
+                                <form action="{% url 'approve_course' course.id 'reject' %}" method="POST" class="w-50">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-bold">
+                                        <i class="fa-solid fa-thumbs-down me-1"></i>Reddet
+                                    </button>
+                                </form>
                             </div>
                         </div>
                         {% empty %}

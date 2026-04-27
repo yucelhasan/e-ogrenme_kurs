@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from lms_app.forms.course_forms import CourseForm
 from lms_app.models import Course, InstructorApplication, CustomUser
+from django.views.decorators.http import require_POST
 
 
 # ==========================================
@@ -61,13 +62,14 @@ def admin_dashboard_view(request):
 
 
 @login_required
+@require_POST  # YENİ: Sadece form üzerinden (POST) gelen isteklere izin ver
 def approve_application_view(request, app_id, action):
     if request.user.role != 'admin': return redirect('home')
 
     application = get_object_or_404(InstructorApplication, id=app_id)
     if action == 'approve':
         application.status = 'approved'
-        application.user.role = 'instructor'  # Kullanıcının rolünü Eğitmen yap!
+        application.user.role = 'instructor'
         application.user.save()
         messages.success(request, f"{application.user.username} artık bir Eğitmen!")
     elif action == 'reject':
@@ -79,12 +81,13 @@ def approve_application_view(request, app_id, action):
 
 
 @login_required
+@require_POST  # YENİ: Sadece form üzerinden (POST) gelen isteklere izin ver
 def approve_course_view(request, course_id, action):
     if request.user.role != 'admin': return redirect('home')
 
     course = get_object_or_404(Course, id=course_id)
     if action == 'approve':
-        course.status = 'published'  # Kursu yayına al!
+        course.status = 'published'
         messages.success(request, f"'{course.title}' adlı kurs yayına alındı ve öğrencilere açıldı.")
     elif action == 'reject':
         course.status = 'rejected'
