@@ -4,8 +4,8 @@
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow border-0 text-center p-5">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 text-center p-5 mb-4">
 
                 {% if is_admin %}
                     <i class="fa-solid fa-user-secret fa-6x text-dark mb-4"></i>
@@ -17,6 +17,18 @@
                     <h3 class="fw-bold">{{ target_user.username }}</h3>
                     <p class="text-danger fw-bold"><i class="fa-solid fa-eye-slash me-2"></i>{{ message }}</p>
 
+                    {% if request.user != target_user and user.is_authenticated %}
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-center gap-2 mt-3">
+                        <form action="{% url 'follow_user' target_user.username %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary shadow-sm fw-bold">
+                                <i class="fa-solid fa-user-plus me-2"></i>Takip Et
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+
                 {% else %}
                     {% if target_user.profile_picture %}
                         <img src="{{ target_user.profile_picture.url }}" alt="Profil" class="rounded-circle img-thumbnail shadow-sm mx-auto mb-3" style="width: 150px; height: 150px; object-fit: cover;">
@@ -24,20 +36,66 @@
                         <i class="fa-solid fa-circle-user fa-6x text-primary mb-3"></i>
                     {% endif %}
 
-                    <h3 class="fw-bold">{{ target_user.first_name }} {{ target_user.last_name }}</h3>
-                    <p class="text-muted">@{{ target_user.username }} | {{ target_user.get_role_display }}</p>
+                    <h3 class="fw-bold">{{ target_user.first_name }} {{ target_user.last_name|default:"" }}</h3>
+                    <p class="text-muted mb-2">@{{ target_user.username }}</p>
+
+                    <span class="badge {% if target_user.role == 'instructor' %}bg-warning text-dark{% else %}bg-info{% endif %} mb-3 px-3 py-2">
+                        {{ target_user.get_role_display }}
+                    </span>
+
                     {% if target_user.expertise %}
-                        <p class="badge bg-warning text-dark">{{ target_user.expertise }}</p>
+                        <p class="text-muted fw-semibold mt-2"><i class="fa-solid fa-briefcase me-2"></i>{{ target_user.expertise }}</p>
                     {% endif %}
 
-                    <div class="mt-4 d-flex justify-content-center gap-2">
-                        <button class="btn btn-primary"><i class="fa-solid fa-user-plus me-2"></i>Takip Et</button>
-                        <button class="btn btn-outline-secondary"><i class="fa-solid fa-envelope me-2"></i>Mesaj Gönder</button>
+                    {% if request.user != target_user and user.is_authenticated %}
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-center gap-2 mt-3">
+                        <form action="{% url 'follow_user' target_user.username %}" method="POST">
+                            {% csrf_token %}
+                            {% if is_following %}
+                                <button type="submit" class="btn btn-danger shadow-sm fw-bold">
+                                    <i class="fa-solid fa-user-minus me-2"></i>Takipten Çık
+                                </button>
+                            {% else %}
+                                <button type="submit" class="btn btn-primary shadow-sm fw-bold">
+                                    <i class="fa-solid fa-user-plus me-2"></i>Takip Et
+                                </button>
+                            {% endif %}
+                        </form>
+
+                        <button class="btn btn-outline-secondary shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#messageModal">
+                            <i class="fa-solid fa-envelope me-2"></i>Mesaj Gönder
+                        </button>
                     </div>
+                    {% endif %}
                 {% endif %}
 
             </div>
         </div>
     </div>
 </div>
+
+{% if not is_admin and not is_private and request.user != target_user and user.is_authenticated %}
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold" id="messageModalLabel"><i class="fa-solid fa-paper-plane me-2"></i>@{{ target_user.username }}'a Mesaj Gönder</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'send_message' target_user.username %}" method="POST">
+          {% csrf_token %}
+          <div class="modal-body p-4">
+            <label class="form-label fw-bold text-muted mb-2">Mesaj İçeriği</label>
+            <textarea name="content" class="form-control" rows="4" placeholder="Mesajınızı buraya yazın..." required></textarea>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">İptal</button>
+            <button type="submit" class="btn btn-primary fw-bold">Gönder <i class="fa-solid fa-paper-plane ms-1"></i></button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}

@@ -1,7 +1,18 @@
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from lms_app.models import CustomUser, Connection, Message
+
+
+@login_required
+def inbox_view(request):
+    messages_received = Message.objects.filter(receiver=request.user).order_by('-created_at')
+    messages_sent = Message.objects.filter(sender=request.user).order_by('-created_at')
+
+    return render(request, 'social/inbox.html', {
+        'messages_received': messages_received,
+        'messages_sent': messages_sent
+    })
 
 
 @login_required
@@ -29,3 +40,25 @@ def send_message_view(request, username):
             Message.objects.create(sender=request.user, receiver=receiver, content=content)
             messages.success(request, "Mesajınız başarıyla gönderildi.")
     return redirect('public_profile', username=username)
+
+
+# YENİ EKLENEN: Gelen kutusu içinden isimle direkt mesaj atma
+@login_required
+def send_message_direct_view(request):
+    if request.method == 'POST':
+        target_username = request.POST.get('username')
+        content = request.POST.get('content')
+
+        if target_username == request.user.username:
+            messages.error(request, "Kendinize mesaj gönderemezsiniz.")
+            return redirect('inbox')
+
+        receiver = CustomUser.objects.filter(username=target_username).first()
+        if receiver:
+            Message.objects.create(sender=request.user, receiver=receiver, content=content)
+            messages.success(request, f"Mesajınız '{target_username}' adlı kullanıcıya başarıyla ulaştı.")
+        else:
+            messages.error(request,
+                           f"'{target_username}' adında bir kullanıcı bulunamadı. Lütfen kullanıcı adını doğru yazdığınızdan emin olun.")
+
+    return redirect('inbox')

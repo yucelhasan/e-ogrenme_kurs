@@ -5,6 +5,8 @@ from django.db.models import Sum
 from lms_app.forms.course_forms import CourseForm, ModuleForm, LessonForm
 from lms_app.models import Course, InstructorApplication, CustomUser, Module, Lesson
 from lms_app.models.ecommerce import OrderItem  # Gelir için eklendi
+from lms_app.forms.system_forms import AnnouncementForm
+from lms_app.models.system import Announcement
 
 
 # 1. EĞİTMEN PANELİ
@@ -144,3 +146,21 @@ def approve_course_view(request, course_id, action):
         course.status = 'rejected'
     course.save()
     return redirect('admin_dashboard')
+
+
+@login_required
+def create_announcement_view(request, course_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST)
+        if form.is_valid():
+            announcement = form.save(commit=False)
+            announcement.course = course
+            announcement.instructor = request.user
+            announcement.save()
+            messages.success(request, "Duyuru başarıyla yayınlandı!")
+            return redirect('dashboard')
+    else:
+        form = AnnouncementForm()
+
+    return render(request, 'admin_panel/create_announcement.html', {'form': form, 'course': course})
