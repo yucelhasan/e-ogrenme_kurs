@@ -4,6 +4,7 @@ from .views import (
     profile_views, instructor_views, lesson_views, social_views
 )
 from django.contrib.auth import views as django_auth_views
+from .views import assessment_views
 
 urlpatterns = [
     # --- KURS VE ANA SAYFA ---
@@ -55,8 +56,12 @@ urlpatterns = [
     path('panel/modul/<int:module_id>/ders-ekle/', instructor_views.add_lesson_view, name='add_lesson'),
     path('panel/kurs/<int:course_id>/onaya-gonder/', instructor_views.submit_course_view, name='submit_course'),
     path('panel/kurs/<int:course_id>/arsivle/', instructor_views.archive_course_view, name='archive_course'),
-    path('panel/kurs/<int:course_id>/duyuru-ekle/', instructor_views.create_announcement_view,
-         name='create_announcement'),
+    path('panel/kurs/<int:course_id>/duyuru-ekle/', instructor_views.create_announcement_view, name='create_announcement'),
+    path('panel/kurs/<int:course_id>/quiz-ekle/', instructor_views.add_quiz_view, name='add_quiz'),
+    path('panel/kurs/<int:course_id>/odev-ekle/', instructor_views.add_assignment_view, name='add_assignment'),
+    path('panel/quiz/<int:quiz_id>/sorular/', instructor_views.manage_quiz_questions_view, name='manage_quiz_questions'),
+    path('panel/odev/<int:assignment_id>/teslimler/', instructor_views.view_assignment_submissions_view, name='view_assignment_submissions'),
+    path('panel/teslim/<int:submission_id>/notlandir/', instructor_views.grade_submission_view, name='grade_submission'),
 
     # --- ADMİN PANELİ ---
     path('sistem-yonetimi/', instructor_views.admin_dashboard_view, name='admin_dashboard'),
@@ -70,4 +75,7 @@ urlpatterns = [
     path('sepet/ekle/<slug:slug>/', cart_views.add_to_cart_view, name='add_to_cart'),
     path('sepet/cikar/<int:item_id>/', cart_views.remove_from_cart_view, name='remove_from_cart'),
     path('sepet/odeme/', cart_views.checkout_view, name='checkout'),
+
+    path('odev/<int:assignment_id>/teslim/', assessment_views.submit_assignment_view, name='submit_assignment'),
+    path('quiz/<int:quiz_id>/coz/', assessment_views.take_quiz_view, name='take_quiz'),
 ]

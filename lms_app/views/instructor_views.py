@@ -7,6 +7,9 @@ from lms_app.models import Course, InstructorApplication, CustomUser, Module, Le
 from lms_app.models.ecommerce import OrderItem  # Gelir için eklendi
 from lms_app.forms.system_forms import AnnouncementForm
 from lms_app.models.system import Announcement
+from lms_app.forms.assessment_forms import QuizForm, AssignmentForm
+from lms_app.models.assessments import Quiz, QuizQuestion, QuizChoice, Assignment, AssignmentSubmission
+from lms_app.forms.assessment_forms import GradeSubmissionForm
 
 
 # 1. EĞİTMEN PANELİ
@@ -56,7 +59,9 @@ def manage_curriculum_view(request, course_id):
     return render(request, 'admin_panel/manage_curriculum.html', {
         'course': course,
         'module_form': ModuleForm(),
-        'lesson_form': LessonForm()
+        'lesson_form': LessonForm(),
+        'quiz_form': QuizForm(),          # EKLENDİ
+        'assignment_form': AssignmentForm() # EKLENDİ
     })
 
 
@@ -164,3 +169,78 @@ def create_announcement_view(request, course_id):
         form = AnnouncementForm()
 
     return render(request, 'admin_panel/create_announcement.html', {'form': form, 'course': course})
+
+@login_required
+def add_quiz_view(request, course_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    if request.method == 'POST':
+        form = QuizForm(request.POST)
+        if form.is_valid():
+            quiz = form.save(commit=False)
+            quiz.course = course
+            quiz.save()
+            messages.success(request, "Quiz eklendi! İlerleyen aşamada soruları ekleyebilirsiniz.")
+    return redirect('manage_curriculum', course_id=course.id)
+
+@login_required
+def add_assignment_view(request, course_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    if request.method == 'POST':
+        form = AssignmentForm(request.POST)
+        if form.is_valid():
+            assignment = form.save(commit=False)
+            assignment.course = course
+            assignment.save()
+            messages.success(request, "Ödev sisteme başarıyla eklendi!")
+    return redirect('manage_curriculum', course_id=course.id)
+
+@login_required
+def manage_quiz_questions_view(request, quiz_id):
+    if request.user.role != 'instructor': return redirect('home')
+    quiz = get_object_or_404(Quiz, id=quiz_id, course__instructor=request.user)
+    
+    if request.method == 'POST':
+        # Yeni bir soru ve 4 şık ekleme işlemi
+        question_text = request.POST.get('question_text')
+        if question_text:
+            question = QuizQuestion.objects.create(quiz=quiz, text=question_text)
+            
+            # Şıkları döngü ile kaydet
+            for i in range(1, 5):
+                choice_text = request.POST.get(f'choice_{i}')
+                # Hangi şıkkın doğru olduğunu kontrol et (radio button'dan gelen değer)
+                is_correct = request.POST.get('correct_choice') == str(i)
+                
+                if choice_text:
+                    QuizChoice.objects.create(question=question, text=choice_text, is_correct=is_correct)
+                    
+            messages.success(request, "Soru başarıyla eklendi!")
+            return redirect('manage_quiz_questions', quiz_id=quiz.id)
+
+    return render(request, 'admin_panel/manage_quiz.html', {'quiz': quiz})
+
+@login_required
+def view_assignment_submissions_view(request, assignment_id):
+    if request.user.role != 'instructor': return redirect('home')
+    assignment = get_object_or_404(Assignment, id=assignment_id, course__instructor=request.user)
+    
+    # Tüm teslimleri getir
+    submissions = assignment.submissions.all().select_related('student').order_by('-submitted_at')
+    
+    return render(request, 'admin_panel/view_submissions.html', {
+        'assignment': assignment, 
+        'submissions': submissions,
+        'grade_form': GradeSubmissionForm()
+    })
+
+@login_required
+def grade_submission_view(request, submission_id):
+    if request.user.role != 'instructor': return redirect('home')
+    submission = get_object_or_404(AssignmentSubmission, id=submission_id, assignment__course__instructor=request.user)
+    
+    if request.method == 'POST':
+        form = GradeSubmissionForm(request.POST, instance=submission)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"{submission.student.username} adlı öğrencinin ödevi notlandırıldı!")
+    return redirect('view_assignment_submissions', assignment_id=submission.assignment.id)

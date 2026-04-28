@@ -4,3 +4,4 @@ from .enrollements import Enrollment, LessonProgress
 from .interactions import Review, Certificate, Question, Answer
 from .system import SystemLog, PasswordResetRequest, Announcement
 from .ecommerce import Coupon, Cart, CartItem, Order, OrderItem
+from .assessments import Quiz, QuizQuestion, QuizChoice, QuizAttempt, Assignment, AssignmentSubmission
