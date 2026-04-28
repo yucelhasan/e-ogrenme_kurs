@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3 class="fw-bold mb-4"><i class="fa-solid fa-magnifying-glass text-primary me-2"></i>Kullanıcı Ara</h3>
+            
+            <form method="GET" action="{% url 'search_users' %}" class="mb-4">
+                <div class="input-group input-group-lg shadow-sm">
+                    <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Arkadaşının kullanıcı adını yaz..." required>
+                    <button type="submit" class="btn btn-primary fw-bold px-4">Ara</button>
+                </div>
+            </form>
+
+            {% if query %}
+                <h6 class="text-muted mb-3">"{{ query }}" için sonuçlar:</h6>
+                <div class="list-group shadow-sm border-0">
+                    {% for u in users %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+                            <div>
+                                <i class="fa-solid fa-user-circle fa-2x text-secondary me-2 align-middle"></i>
+                                <span class="fw-bold fs-5">{{ u.username }}</span>
+                            </div>
+                            <div>
+                                <a href="{% url 'public_profile' u.username %}" class="btn btn-sm btn-outline-secondary me-2">Profili Gör</a>                                <a href="{% url 'chat' u.username %}" class="btn btn-sm btn-primary"><i class="fa-solid fa-paper-plane me-1"></i> Mesaj At</a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="alert alert-warning text-center">Böyle bir kullanıcı bulunamadı.</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

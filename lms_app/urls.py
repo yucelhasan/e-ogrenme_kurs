@@ -40,6 +40,9 @@ urlpatterns = [
     path('gelen-kutusu/yeni-mesaj/', social_views.send_message_direct_view, name='send_message_direct'),  # YENİ
     path('kullanici/<str:username>/takip/', social_views.follow_user_view, name='follow_user'),
     path('kullanici/<str:username>/mesaj-gonder/', social_views.send_message_view, name='send_message'),
+    path('kullanici-ara/', social_views.search_users_view, name='search_users'),
+    path('sohbet/<str:username>/', social_views.chat_view, name='chat'),
+    path('mesajlar/', social_views.inbox_view, name='inbox'),
 
     # --- DERS İÇİ SORU & CEVAP ---
     path('soru/<int:question_id>/cevapla/', lesson_views.add_answer_view, name='add_answer'),

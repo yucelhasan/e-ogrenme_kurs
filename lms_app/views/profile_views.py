@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Q  # YENİ: Çift yönlü arkadaşlık sorgusu için eklendi
 from lms_app.forms.auth_forms import UserUpdateForm, InstructorApplicationForm
 from lms_app.selectors.progress_selectors import get_user_enrolled_courses_with_progress
-# YENİ EKLENEN: Connection (Bağlantılar) modelini import ettik
-from lms_app.models import InstructorApplication, Certificate, CustomUser, Connection
+from lms_app.models import InstructorApplication, Certificate, CustomUser, Connection, Friendship
 
 
 @login_required
@@ -22,17 +22,30 @@ def profile_view(request):
     completed_count = sum(1 for e in enrollments if e['progress'] == 100)
     certificates = Certificate.objects.filter(student=request.user).select_related('course')
 
-    # YENİ: Arkadaş Listesini (Takip Ettiklerim ve Takipçilerim) çekiyoruz
     following_conns = Connection.objects.filter(follower=request.user).select_related('following')
     follower_conns = Connection.objects.filter(following=request.user).select_related('follower')
+
+    friendships = Friendship.objects.filter(
+        (Q(from_user=request.user) | Q(to_user=request.user)),
+        is_accepted=True
+    ).select_related('from_user', 'to_user')
+
+    # İlişkilerden "Arkadaş" olan temiz kullanıcı nesnelerini ayıkla
+    friend_list = []
+    for f in friendships:
+        if f.from_user == request.user:
+            friend_list.append(f.to_user)
+        else:
+            friend_list.append(f.from_user)
 
     return render(request, 'profile.html', {
         'form': form,
         'enrollments': enrollments,
         'completed_count': completed_count,
         'certificates': certificates,
-        'following_conns': following_conns,  # HTML'e gönder
-        'follower_conns': follower_conns  # HTML'e gönder
+        'following_conns': following_conns,
+        'follower_conns': follower_conns,
+        'friends': friend_list,  # YENİ: Arama ve Sohbet ekranı için HTML'e gönderildi
     })
 
 
@@ -66,7 +79,7 @@ def apply_instructor_view(request):
 def public_profile_view(request, username):
     target_user = get_object_or_404(CustomUser, username=username)
 
-    # YENİ: Kullanıcıyı takip edip etmediğimizi kontrol ediyoruz
+    # Kullanıcıyı takip edip etmediğimizi kontrol ediyoruz
     is_following = False
     if request.user.is_authenticated:
         is_following = Connection.objects.filter(follower=request.user, following=target_user).exists()

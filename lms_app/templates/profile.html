@@ -43,7 +43,60 @@
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-primary">
+                        <i class="fa-solid fa-user-group me-2"></i>Arkadaşlarım
+                    </h5>
+                    <span class="badge bg-light text-dark rounded-pill border">{{ friends|length }}</span>
+                </div>
+                <div class="card-body p-4 pt-0">
+
+                    <form method="GET" action="{% url 'search_users' %}" class="mb-4">
+                        <div class="input-group shadow-sm border rounded-pill overflow-hidden">
+                            <input type="text" name="q" class="form-control border-0 px-3 form-control-sm" placeholder="Kullanıcı ara..." required>
+                            <button class="btn btn-primary px-3 btn-sm" type="submit">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="friend-list overflow-auto" style="max-height: 250px;">
+                        {% if friends %}
+                            {% for friend in friends %}
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="d-flex align-items-center">
+                                        {% if friend.profile_picture %}
+                                            <img src="{{ friend.profile_picture.url }}" class="rounded-circle me-2 shadow-sm" style="width: 40px; height: 40px; object-fit: cover;">
+                                        {% else %}
+                                            <i class="fa-solid fa-circle-user fa-2x text-muted me-2"></i>
+                                        {% endif %}
+                                        <div>
+                                            <h6 class="mb-0 fw-bold small">{{ friend.username }}</h6>
+                                            <small class="text-muted" style="font-size: 0.70rem;">{{ friend.get_role_display }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-1">
+                                        <a href="{% url 'chat' friend.username %}" class="btn btn-sm btn-outline-primary rounded-circle" title="Mesaj Gönder">
+                                            <i class="fa-solid fa-comment-dots"></i>
+                                        </a>
+                                        <a href="{% url 'public_profile' friend.username %}" class="btn btn-sm btn-outline-secondary rounded-circle" title="Profili Gör">
+                                            <i class="fa-solid fa-user"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-3 bg-light rounded shadow-sm border-dashed">
+                                <i class="fa-solid fa-user-plus fa-2x text-muted mb-2 opacity-25"></i>
+                                <p class="text-muted small mb-0">Henüz arkadaşınız yok.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            </div>
 
         <div class="col-lg-8">
 

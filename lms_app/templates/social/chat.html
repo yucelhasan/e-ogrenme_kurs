@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0" style="height: 75vh;">
+                <div class="card-header bg-primary text-white py-3 d-flex align-items-center">
+                    <i class="fa-solid fa-user-circle fa-2x me-2"></i>
+                    <h5 class="mb-0 fw-bold">{{ other_user.username }} ile Sohbet</h5>
+                </div>
+
+                <div class="card-body overflow-auto bg-light" id="chat-box" style="display: flex; flex-direction: column; gap: 10px;">
+                    {% for msg in chat_messages %}
+                        {% if msg.sender == request.user %}
+                            <div class="align-self-end bg-success text-white p-3 rounded-3 shadow-sm" style="max-width: 75%;">
+                                {{ msg.content }}
+                                <div class="text-end small opacity-75 mt-1" style="font-size: 0.7rem;">{{ msg.created_at|date:"H:i" }}</div>
+                            </div>
+                        {% else %}
+                            <div class="align-self-start bg-white p-3 rounded-3 shadow-sm border" style="max-width: 75%;">
+                                {{ msg.content }}
+                                <div class="text-start small text-muted mt-1" style="font-size: 0.7rem;">{{ msg.created_at|date:"H:i" }}</div>
+                            </div>
+                        {% endif %}
+                    {% empty %}
+                        <div class="text-center text-muted mt-5">
+                            <i class="fa-regular fa-comments fa-3x mb-2 opacity-50"></i>
+                            <p>Henüz mesajlaşmadınız. Bir "Merhaba" deyin!</p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="card-footer bg-white p-3">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" name="content" class="form-control" placeholder="Bir mesaj yazın..." autocomplete="off" required>
+                            <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var chatBox = document.getElementById("chat-box");
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+</script>
+{% endblock %}

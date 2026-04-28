@@ -25,7 +25,7 @@ class Course(models.Model):
         ('pending', 'Onay Bekliyor'),
         ('published', 'Yayınlandı'),
         ('rejected', 'Reddedildi'),
-        ('archived', 'Arşivlendi/Kaldırıldı'), # YENİ EKLENEN DURUM
+        ('archived', 'Arşivlendi/Kaldırıldı'),
     )
 
     title = models.CharField(max_length=200, verbose_name="Kurs Başlığı")
