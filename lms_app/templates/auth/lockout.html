@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Hesap Kilitlendi{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <i class="fa-solid fa-shield-cat fa-5x text-danger mb-4"></i>
+            <h2 class="fw-bold text-dark">Güvenlik Uyarısı: Çok Fazla Hatalı Deneme</h2>
+            <p class="text-muted mt-3">
+                Sistemlerimizin güvenliği gereği, hesabınıza 5 kez hatalı giriş denemesi yapıldığı için IP adresiniz geçici olarak engellenmiştir.
+            </p>
+            <p class="text-muted">
+                Lütfen <strong>1 saat</strong> sonra tekrar deneyin veya şifrenizi unuttuysanız aşağıdaki butonu kullanarak sıfırlayın.
+            </p>
+            <div class="mt-4">
+                <a href="{% url 'password_reset' %}" class="btn btn-primary px-4 fw-bold shadow-sm">Şifremi Unuttum</a>
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary px-4 fw-bold shadow-sm ms-2">Ana Sayfaya Dön</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -5,6 +5,7 @@ from lms_app.models import Course, Lesson, Enrollment, Question, Answer
 from lms_app.forms.interaction_forms import QuestionForm, AnswerForm
 from lms_app.services.progress_services import mark_lesson_as_completed
 from lms_app.services.certificate_services import check_and_generate_certificate
+from lms_app.services.system_services import create_log # YENİ: Log servisi eklendi
 
 @login_required
 def lesson_detail_view(request, course_slug, lesson_id):
@@ -35,10 +36,11 @@ def lesson_detail_view(request, course_slug, lesson_id):
         mark_lesson_as_completed(request.user, lesson)
         cert_created, certificate = check_and_generate_certificate(request.user, course)
         if cert_created:
+            # YENİ: Sertifika Kazanımı Logu
+            create_log(request, "Sertifika Kazanımı", f"{request.user.username}, '{course.title}' kursunu tamamlayarak sertifika kazandı.")
             messages.success(request, f"Tebrikler! Sertifika Kodunuz: {certificate.certificate_code}")
         return redirect('lesson_detail', course_slug=course.slug, lesson_id=lesson.id)
 
-    # Mevcut soruları ve cevapları çek
     questions = Question.objects.filter(lesson=lesson).prefetch_related('answers', 'answers__user').order_by('-created_at')
 
     return render(request, 'courses/lesson.html', {
@@ -49,7 +51,6 @@ def lesson_detail_view(request, course_slug, lesson_id):
         'a_form': AnswerForm(),
     })
 
-# Cevap eklemek için ayrı bir view
 @login_required
 def add_answer_view(request, question_id):
     question = get_object_or_404(Question, id=question_id)

@@ -4,12 +4,15 @@ from django.contrib import messages
 from django.db.models import Sum
 from lms_app.forms.course_forms import CourseForm, ModuleForm, LessonForm
 from lms_app.models import Course, InstructorApplication, CustomUser, Module, Lesson
-from lms_app.models.ecommerce import OrderItem  # Gelir için eklendi
+from lms_app.models.ecommerce import OrderItem
 from lms_app.forms.system_forms import AnnouncementForm
 from lms_app.models.system import Announcement
 from lms_app.forms.assessment_forms import QuizForm, AssignmentForm
 from lms_app.models.assessments import Quiz, QuizQuestion, QuizChoice, Assignment, AssignmentSubmission
 from lms_app.forms.assessment_forms import GradeSubmissionForm
+from lms_app.models import SystemLog
+from django.contrib.auth.decorators import user_passes_test
+from lms_app.services.system_services import create_log
 
 
 # 1. EĞİTMEN PANELİ
@@ -20,7 +23,6 @@ def dashboard_view(request):
 
     my_courses = Course.objects.filter(instructor=request.user).order_by('-created_at')
 
-    # YENİ: Gelir ve İstatistik Hesaplamaları
     total_students = OrderItem.objects.filter(course__instructor=request.user, order__status='completed').values(
         'order__user').distinct().count()
     gross_income = \
@@ -46,6 +48,7 @@ def add_course_view(request):
             course.instructor = request.user
             course.status = 'draft'  # Önce Taslak
             course.save()
+            create_log(request, "Kurs Eklendi",f"{request.user.username}, '{course.title}' isimli kursu taslak olarak oluşturdu.")
             return redirect('manage_curriculum', course_id=course.id)
     else:
         form = CourseForm()
@@ -147,9 +150,11 @@ def approve_course_view(request, course_id, action):
     course = get_object_or_404(Course, id=course_id)
     if action == 'approve':
         course.status = 'published'
+        create_log(request, "Kurs Onayı", f"Admin, '{course.title}' isimli kursu yayına aldı.")
     else:
         course.status = 'rejected'
     course.save()
+    create_log(request, "Kurs Reddi", f"Admin, '{course.title}' isimli kursu reddetti.")
     return redirect('admin_dashboard')
 
 
@@ -244,3 +249,11 @@ def grade_submission_view(request, submission_id):
             form.save()
             messages.success(request, f"{submission.student.username} adlı öğrencinin ödevi notlandırıldı!")
     return redirect('view_assignment_submissions', assignment_id=submission.assignment.id)
+
+@login_required
+def admin_system_logs_view(request):
+    if request.user.role != 'admin':
+        return redirect('home')
+
+    logs = SystemLog.objects.all().order_by('-created_at')  # En yeni log en üstte
+    return render(request, 'admin_panel/system_logs.html', {'logs': logs})

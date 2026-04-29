@@ -1,3 +1,5 @@
+# lms_app/views/course_views.py
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -5,27 +7,22 @@ from lms_app.models import Course, Enrollment, Review
 from lms_app.forms.interaction_forms import ReviewForm
 from lms_app.services.enrollment_services import enroll_user_to_course
 from lms_app.selectors.course_selectors import get_active_courses, get_course_detail, get_all_categories
+from lms_app.services.system_services import create_log  # YENİ: Log servisi eklendi
+
 
 def home_view(request):
     courses = get_active_courses()
     return render(request, 'home.html', {'courses': courses})
 
-def course_list_view(request):
-    search_query = request.GET.get('q', '')
-    courses = get_active_courses(search_query=search_query)
-    return render(request, 'courses/list.html', {
-        'courses': courses,
-        'search_query': search_query
-    })
 
 def course_detail_view(request, slug):
     course = get_course_detail(slug)
-    
+
     # Kullanıcının kursa kayıtlı olup olmadığını kontrol et
     is_enrolled = False
     if request.user.is_authenticated:
         is_enrolled = Enrollment.objects.filter(student=request.user, course=course).exists()
-    
+
     # Kursa ait yorumları çek
     reviews = Review.objects.filter(course=course).select_related('student').order_by('-id')
     review_form = ReviewForm()
@@ -37,16 +34,21 @@ def course_detail_view(request, slug):
         'review_form': review_form
     })
 
+
 @login_required
 def enroll_course_view(request, slug):
     if request.method == 'POST':
         course = get_object_or_404(Course, slug=slug, status='published')
         success, message = enroll_user_to_course(request.user, course)
         if success:
+            # YENİ: Kayıt işlemi başarılı olduğunda log tut
+            create_log(request, "Direkt Kursa Kayıt",
+                       f"{request.user.username}, '{course.title}' kursuna başarıyla kayıt oldu.")
             messages.success(request, message)
         else:
             messages.warning(request, message)
     return redirect('course_detail', slug=slug)
+
 
 @login_required
 def add_review_view(request, slug):
@@ -69,11 +71,17 @@ def add_review_view(request, slug):
             review.course = course
             review.student = request.user
             review.save()
+
+            # YENİ: Kursa yorum yapıldığında log tut
+            create_log(request, "Kurs Değerlendirmesi",
+                       f"{request.user.username}, '{course.title}' kursuna yorum ve puan bıraktı.")
+
             messages.success(request, "Değerlendirmeleriniz başarıyla eklendi, teşekkür ederiz!")
         else:
             messages.error(request, "Lütfen yıldız seçtiğinizden ve yorum yazdığınızdan emin olun.")
 
     return redirect('course_detail', slug=slug)
+
 
 def course_list_view(request):
     # 1. URL'den gelen değerleri yakala

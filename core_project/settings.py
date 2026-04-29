@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'axes',
     'lms_app',
 ]
 
@@ -31,6 +32,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'core_project.urls'
@@ -86,6 +88,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+    'axes.backends.AxesStandaloneBackend',
 ]
 
 # Tarayıcı kapatıldığında oturumu (session) otomatik sonlandır (Beni Hatırla özelliği için temel)
@@ -109,3 +112,8 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 # Maillerin kime aitmiş gibi görüneceği
 DEFAULT_FROM_EMAIL = f"KTÜ LMS <{EMAIL_HOST_USER}>"
+
+AXES_FAILURE_LIMIT = 5  # 5 hatalı şifre denemesinde hesabı kilitler
+AXES_COOLOFF_TIME = 1  # Hesap 1 saat (veya timedelta(minutes=15) gibi) kilitli kalır
+AXES_RESET_ON_SUCCESS = True  # Kullanıcı doğru şifreyle girerse sayacı hemen sıfırlar
+AXES_LOCKOUT_TEMPLATE = 'auth/lockout.html'  # Kilitlendiğinde gösterilecek özel ekran

@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Q  # YENİ: Çift yönlü arkadaşlık sorgusu için eklendi
+from django.db.models import Q
+from lms_app.services.system_services import create_log
 from lms_app.forms.auth_forms import UserUpdateForm, InstructorApplicationForm
 from lms_app.selectors.progress_selectors import get_user_enrolled_courses_with_progress
 from lms_app.models import InstructorApplication, Certificate, CustomUser, Connection, Friendship
@@ -13,6 +14,7 @@ def profile_view(request):
         form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
+            create_log(request, "Profil Güncelleme", f"{request.user.username} profil bilgilerini güncelledi.")
             messages.success(request, "Profil bilgileriniz başarıyla güncellendi!")
             return redirect('profile')
     else:

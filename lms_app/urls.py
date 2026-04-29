@@ -78,4 +78,5 @@ urlpatterns = [
 
     path('odev/<int:assignment_id>/teslim/', assessment_views.submit_assignment_view, name='submit_assignment'),
     path('quiz/<int:quiz_id>/coz/', assessment_views.take_quiz_view, name='take_quiz'),
+    path('admin-panel/loglar/', instructor_views.admin_system_logs_view, name='admin_system_logs'),
 ]
