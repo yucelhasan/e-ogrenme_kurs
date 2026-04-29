@@ -257,3 +257,52 @@ def admin_system_logs_view(request):
 
     logs = SystemLog.objects.all().order_by('-created_at')  # En yeni log en üstte
     return render(request, 'admin_panel/system_logs.html', {'logs': logs})
+
+@login_required
+def edit_course_view(request, course_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+
+    if request.method == 'POST':
+        form = CourseForm(request.POST, request.FILES, instance=course)
+        if form.is_valid():
+            form.save()
+            create_log(request, "Kurs Güncelleme", f"'{course.title}' kurs bilgileri güncellendi.")
+            messages.success(request, "Kurs bilgileri başarıyla güncellendi.")
+            return redirect('dashboard')
+    else:
+        form = CourseForm(instance=course)
+
+    return render(request, 'admin_panel/add_course.html', {
+        'form': form,
+        'edit_mode': True,
+        'course': course
+    })
+
+@login_required
+def delete_course_view(request, course_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    title = course.title
+    course.delete()
+    create_log(request, "Kurs Silme", f"'{title}' isimli kurs ve tüm içeriği silindi.")
+    messages.warning(request, f"'{title}' kursu tamamen silindi.")
+    return redirect('dashboard')
+
+@login_required
+def delete_module_view(request, module_id):
+    module = get_object_or_404(Module, id=module_id, course__instructor=request.user)
+    course_slug = module.course.slug
+    module_title = module.title
+    module.delete()
+    create_log(request, "Bölüm Silme", f"'{module_title}' bölümü kurstan kaldırıldı.")
+    messages.info(request, "Bölüm başarıyla silindi.")
+    return redirect('manage_curriculum', slug=course_slug)
+
+@login_required
+def delete_lesson_view(request, lesson_id):
+    lesson = get_object_or_404(Lesson, id=lesson_id, module__course__instructor=request.user)
+    course_slug = lesson.module.course.slug
+    lesson_title = lesson.title
+    lesson.delete()
+    create_log(request, "Ders Silme", f"'{lesson_title}' dersi müfredattan kaldırıldı.")
+    messages.info(request, "Ders başarıyla silindi.")
+    return redirect('manage_curriculum', slug=course_slug)

@@ -9,13 +9,13 @@
             <p class="text-muted mb-0"><strong>{{ course.title }}</strong> kursuna içerik ekliyorsunuz.</p>
         </div>
         <div>
-            <button class="btn btn-outline-primary fw-bold me-2" data-bs-toggle="modal" data-bs-target="#addModuleModal">
+            <button class="btn btn-outline-primary fw-bold me-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#addModuleModal">
                 <i class="fa-solid fa-folder-plus me-1"></i> Bölüm
             </button>
-            <button class="btn btn-outline-warning fw-bold me-2 text-dark" data-bs-toggle="modal" data-bs-target="#addQuizModal">
+            <button class="btn btn-outline-warning fw-bold me-2 text-dark shadow-sm" data-bs-toggle="modal" data-bs-target="#addQuizModal">
                 <i class="fa-solid fa-clipboard-question me-1"></i> Quiz
             </button>
-            <button class="btn btn-outline-info fw-bold me-2 text-dark" data-bs-toggle="modal" data-bs-target="#addAssignmentModal">
+            <button class="btn btn-outline-info fw-bold me-2 text-dark shadow-sm" data-bs-toggle="modal" data-bs-target="#addAssignmentModal">
                 <i class="fa-solid fa-file-arrow-up me-1"></i> Ödev
             </button>
             <a href="{% url 'submit_course' course.id %}" class="btn btn-success fw-bold shadow-sm">
@@ -25,16 +25,23 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-10 mx-auto">
+        <div class="col-lg-8">
             {% for module in course.modules.all %}
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
-                        <h5 class="mb-0 fw-bold">Bölüm {{ module.order }}: {{ module.title }}</h5>
-                        <button class="btn btn-sm btn-light fw-bold" data-bs-toggle="modal" data-bs-target="#addLessonModal{{ module.id }}">
+
+                        <h5 class="mb-0 fw-bold d-flex align-items-center">
+                            Bölüm {{ module.order }}: {{ module.title }}
+                            <a href="{% url 'delete_module' module.id %}" class="btn btn-sm btn-outline-danger border-0 ms-3" title="Bu bölümü sil" onclick="return confirm('DİKKAT: Bu bölümü silerseniz içindeki TÜM DERSLER de kalıcı olarak silinir! Emin misiniz?')">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </h5>
+
+                        <button class="btn btn-sm btn-light fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addLessonModal{{ module.id }}">
                             <i class="fa-solid fa-file-video me-1 text-danger"></i> Yeni Ders Ekle
                         </button>
                     </div>
-                    
+
                     <ul class="list-group list-group-flush">
                         {% for lesson in module.lessons.all %}
                             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
@@ -43,10 +50,15 @@
                                     <strong>{{ lesson.title }}</strong>
                                     {% if lesson.duration %}<small class="text-muted ms-2"><i class="fa-regular fa-clock me-1"></i>{{ lesson.duration }}</small>{% endif %}
                                 </div>
-                                <span class="badge bg-success rounded-pill">Yayına Hazır</span>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-success rounded-pill me-3 shadow-sm">Yayına Hazır</span>
+                                    <a href="{% url 'delete_lesson' lesson.id %}" class="btn btn-sm btn-outline-danger border-0" title="Dersi Sil" onclick="return confirm('Bu dersi kalıcı olarak silmek istediğinize emin misiniz?')">
+                                        <i class="fa-solid fa-xmark fs-5"></i>
+                                    </a>
+                                </div>
                             </li>
                         {% empty %}
-                            <li class="list-group-item text-center text-muted py-4 fst-italic bg-light">
+                            <li class="list-group-item text-center text-muted py-4 fst-italic bg-light border-0">
                                 <i class="fa-solid fa-arrow-up text-secondary me-2"></i>Bu bölüme henüz ders eklenmedi. Sağ üstten ders ekleyebilirsiniz.
                             </li>
                         {% endfor %}
@@ -55,18 +67,18 @@
 
                 <div class="modal fade" id="addLessonModal{{ module.id }}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
+                        <div class="modal-content border-0 shadow">
                             <div class="modal-header bg-danger text-white">
                                 <h5 class="modal-title fw-bold"><i class="fa-solid fa-file-video me-2"></i>"{{ module.title }}" İçin Ders Ekle</h5>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                             </div>
                             <form action="{% url 'add_lesson' module.id %}" method="POST">
                                 {% csrf_token %}
-                                <div class="modal-body">
+                                <div class="modal-body p-4">
                                     {{ lesson_form.as_p }}
                                 </div>
                                 <div class="modal-footer bg-light">
-                                    <button type="submit" class="btn btn-danger fw-bold"><i class="fa-solid fa-save me-1"></i>Dersi Kaydet</button>
+                                    <button type="submit" class="btn btn-danger fw-bold shadow-sm"><i class="fa-solid fa-save me-1"></i>Dersi Kaydet</button>
                                 </div>
                             </form>
                         </div>
@@ -74,86 +86,90 @@
                 </div>
 
             {% empty %}
-                <div class="text-center py-5 border rounded bg-white shadow-sm">
-                    <i class="fa-solid fa-box-open fa-4x text-muted mb-3 opacity-50"></i>
+                <div class="text-center py-5 border rounded bg-white shadow-sm border-dashed">
+                    <i class="fa-solid fa-box-open fa-4x text-muted mb-3 opacity-25"></i>
                     <h4 class="fw-bold text-secondary">Müfredatınız tamamen boş!</h4>
                     <p class="text-muted">Kursa ders ekleyebilmek için öncelikle yukarıdan yeni bir "Bölüm" oluşturmalısınız.</p>
                 </div>
             {% endfor %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 mb-4 border-warning border-start border-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-clipboard-question text-warning me-2"></i>Kursa Ait Quizler</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for quiz in course.quizzes.all %}
+                        <li class="list-group-item p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong>{{ quiz.title }}</strong>
+                                <a href="{% url 'manage_quiz_questions' quiz.id %}" class="btn btn-sm btn-outline-warning fw-bold">Yönet</a>
+                            </div>
+                            <small class="text-muted d-block"><i class="fa-solid fa-check-double me-1"></i>Geçme Notu: {{ quiz.passing_score }}</small>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted fst-italic py-3 text-center bg-light border-0">Henüz quiz eklenmemiş.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="card shadow-sm border-0 mb-4 border-info border-start border-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-file-signature text-info me-2"></i>Kursa Ait Ödevler</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for assignment in course.assignments.all %}
+                        <li class="list-group-item p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong>{{ assignment.title }}</strong>
+                                <a href="{% url 'view_assignment_submissions' assignment.id %}" class="btn btn-sm btn-outline-info fw-bold">Teslimler</a>
+                            </div>
+                            <small class="text-muted d-block"><i class="fa-regular fa-clock me-1"></i>Son Teslim: {{ assignment.due_date|date:"d M Y H:i" }}</small>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted fst-italic py-3 text-center bg-light border-0">Henüz ödev eklenmemiş.</li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="addModuleModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content border-0 shadow">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title fw-bold"><i class="fa-solid fa-folder-plus me-2"></i>Yeni Bölüm Ekle</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form action="{% url 'add_module' course.id %}" method="POST">
                 {% csrf_token %}
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     {{ module_form.as_p }}
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="submit" class="btn btn-primary fw-bold"><i class="fa-solid fa-save me-1"></i>Bölümü Kaydet</button>
+                    <button type="submit" class="btn btn-primary fw-bold shadow-sm"><i class="fa-solid fa-save me-1"></i>Bölümü Kaydet</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<div class="card shadow-sm border-0 mb-4 border-warning border-start border-4">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-        <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-clipboard-question text-warning me-2"></i>Kursa Ait Quizler</h5>
-    </div>
-    <ul class="list-group list-group-flush">
-        {% for quiz in course.quizzes.all %}
-            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                <div>
-                    <strong>{{ quiz.title }}</strong> <small class="text-muted">(Geçme Notu: {{ quiz.passing_score }})</small>
-                </div>
-                <a href="{% url 'manage_quiz_questions' quiz.id %}" class="btn btn-sm btn-outline-warning fw-bold">Soruları Yönet</a>
-            </li>
-        {% empty %}
-            <li class="list-group-item text-muted fst-italic">Henüz quiz eklenmemiş.</li>
-        {% endfor %}
-    </ul>
-</div>
-
-<div class="card shadow-sm border-0 mb-4 border-info border-start border-4">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-        <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-file-signature text-info me-2"></i>Kursa Ait Ödevler</h5>
-    </div>
-    <ul class="list-group list-group-flush">
-        {% for assignment in course.assignments.all %}
-            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                <div>
-                    <strong>{{ assignment.title }}</strong> <small class="text-muted">(Son Teslim: {{ assignment.due_date|date:"d M Y H:i" }})</small>
-                </div>
-                <a href="{% url 'view_assignment_submissions' assignment.id %}" class="btn btn-sm btn-outline-info fw-bold">Teslimleri Gör</a>
-            </li>
-        {% empty %}
-            <li class="list-group-item text-muted fst-italic">Henüz ödev eklenmemiş.</li>
-        {% endfor %}
-    </ul>
-</div>
-
 <div class="modal fade" id="addQuizModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content border-0 shadow">
             <div class="modal-header bg-warning text-dark">
                 <h5 class="modal-title fw-bold"><i class="fa-solid fa-clipboard-question me-2"></i>Yeni Quiz Ekle</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="{% url 'add_quiz' course.id %}" method="POST">
                 {% csrf_token %}
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     {{ quiz_form.as_p }}
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="submit" class="btn btn-warning fw-bold">Quizi Kaydet</button>
+                    <button type="submit" class="btn btn-warning fw-bold shadow-sm">Quizi Kaydet</button>
                 </div>
             </form>
         </div>
@@ -162,18 +178,18 @@
 
 <div class="modal fade" id="addAssignmentModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content border-0 shadow">
             <div class="modal-header bg-info text-dark">
                 <h5 class="modal-title fw-bold"><i class="fa-solid fa-file-arrow-up me-2"></i>Yeni Ödev Ekle</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="{% url 'add_assignment' course.id %}" method="POST">
                 {% csrf_token %}
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     {{ assignment_form.as_p }}
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="submit" class="btn btn-info fw-bold text-white">Ödevi Kaydet</button>
+                    <button type="submit" class="btn btn-info fw-bold text-white shadow-sm">Ödevi Kaydet</button>
                 </div>
             </form>
         </div>
