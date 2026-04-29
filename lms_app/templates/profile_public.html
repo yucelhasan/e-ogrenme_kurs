@@ -47,6 +47,19 @@
                         <p class="text-muted fw-semibold mt-2"><i class="fa-solid fa-briefcase me-2"></i>{{ target_user.expertise }}</p>
                     {% endif %}
 
+                    {% if target_badges %}
+                    <div class="mt-4 pt-3 border-top">
+                        <h6 class="fw-bold text-muted mb-3">Kazanılan Rozetler</h6>
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            {% for badge in target_badges %}
+                                <span class="badge {{ badge.bg }} p-2 d-flex align-items-center" data-bs-toggle="tooltip" title="{{ badge.description }}">
+                                    <i class="{{ badge.icon }} me-1"></i> {{ badge.name }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
                     {% if request.user != target_user and user.is_authenticated %}
                     <hr class="my-4">
                     <div class="d-flex justify-content-center gap-2 mt-3">

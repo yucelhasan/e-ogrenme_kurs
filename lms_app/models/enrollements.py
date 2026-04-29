@@ -11,3 +11,4 @@ class LessonProgress(models.Model):
     student = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     is_completed = models.BooleanField(default=False)
+    completed_at = models.DateTimeField(auto_now=True, null=True, blank=True)

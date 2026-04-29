@@ -6,6 +6,7 @@ from lms_app.services.system_services import create_log
 from lms_app.forms.auth_forms import UserUpdateForm, InstructorApplicationForm
 from lms_app.selectors.progress_selectors import get_user_enrolled_courses_with_progress
 from lms_app.models import InstructorApplication, Certificate, CustomUser, Connection, Friendship
+from lms_app.services.badge_services import get_user_badges
 
 
 @login_required
@@ -40,6 +41,8 @@ def profile_view(request):
         else:
             friend_list.append(f.from_user)
 
+    my_badges = get_user_badges(request.user)
+
     return render(request, 'profile.html', {
         'form': form,
         'enrollments': enrollments,
@@ -47,7 +50,8 @@ def profile_view(request):
         'certificates': certificates,
         'following_conns': following_conns,
         'follower_conns': follower_conns,
-        'friends': friend_list,  # YENİ: Arama ve Sohbet ekranı için HTML'e gönderildi
+        'friends': friend_list,
+        'my_badges': my_badges, # EKLENDİ
     })
 
 
@@ -103,10 +107,13 @@ def public_profile_view(request, username):
             'is_following': is_following
         })
 
-    # 3. KURAL: Normal görünüm (Açık profil veya takip ettiğimiz kişi)
+    target_badges = get_user_badges(target_user)
+
+    # 3. KURAL: Normal görünüm
     return render(request, 'profile_public.html', {
         'is_admin': False,
         'is_private': False,
         'target_user': target_user,
-        'is_following': is_following
+        'is_following': is_following,
+        'target_badges': target_badges, # EKLENDİ
     })
