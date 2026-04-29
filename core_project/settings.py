@@ -117,3 +117,15 @@ AXES_FAILURE_LIMIT = 5  # 5 hatalı şifre denemesinde hesabı kilitler
 AXES_COOLOFF_TIME = 1  # Hesap 1 saat (veya timedelta(minutes=15) gibi) kilitli kalır
 AXES_RESET_ON_SUCCESS = True  # Kullanıcı doğru şifreyle girerse sayacı hemen sıfırlar
 AXES_LOCKOUT_TEMPLATE = 'auth/lockout.html'  # Kilitlendiğinde gösterilecek özel ekran
+
+# ==========================================
+# OTURUM (SESSION) ZAMAN AŞIMI AYARLARI
+# ==========================================
+
+# Kullanıcının hareketsiz kalabileceği maksimum süre (saniye cinsinden). 
+# Örnek: 30 dakika = 30 * 60 = 1800 saniye
+SESSION_COOKIE_AGE = 1800 
+
+# Kullanıcı sitede her gezindiğinde (yeni bir sayfaya tıkladığında) süreyi baştan başlatır.
+# Eğer bu True olmazsa, kullanıcı aktif olsa bile 30 dakika sonra atılır.
+SESSION_SAVE_EVERY_REQUEST = True
