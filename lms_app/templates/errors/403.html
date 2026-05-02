@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Yetkisiz Erişim - 403{% endblock %}
+
+{% block content %}
+<div class="container text-center" style="margin-top: 100px; margin-bottom: 100px;">
+    <h1 class="display-1 fw-bold text-warning">403</h1>
+    <h2 class="mb-4">Erişim Reddedildi</h2>
+    <p class="lead mb-5">Bu kursu, dersi veya sayfayı görüntülemek için gerekli izinlere sahip değilsiniz.</p>
+    <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Ana Sayfaya Dön</a>
+</div>
+{% endblock %}

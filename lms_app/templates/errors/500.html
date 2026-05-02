@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Sunucu Hatası - 500{% endblock %}
+
+{% block content %}
+<div class="container text-center" style="margin-top: 100px; margin-bottom: 100px;">
+    <h1 class="display-1 fw-bold text-danger">500</h1>
+    <h2 class="mb-4">Sunucu Hatası</h2>
+    <p class="lead mb-5">Bizim tarafımızda beklenmedik bir şeyler ters gitti. Teknik ekibimiz bu hatayı kaydetti ve ilgileniyor.</p>
+    <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Ana Sayfaya Dön</a>
+</div>
+{% endblock %}

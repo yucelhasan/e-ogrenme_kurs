@@ -129,3 +129,7 @@ SESSION_COOKIE_AGE = 1800
 # Kullanıcı sitede her gezindiğinde (yeni bir sayfaya tıkladığında) süreyi baştan başlatır.
 # Eğer bu True olmazsa, kullanıcı aktif olsa bile 30 dakika sonra atılır.
 SESSION_SAVE_EVERY_REQUEST = True
+
+DEBUG = True
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']

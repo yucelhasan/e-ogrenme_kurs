@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Geçersiz İstek - 400{% endblock %}
+
+{% block content %}
+<div class="container text-center" style="margin-top: 100px; margin-bottom: 100px;">
+    <h1 class="display-1 fw-bold text-secondary">400</h1>
+    <h2 class="mb-4">Geçersiz İstek</h2>
+    <p class="lead mb-5">Sunucu, gönderdiğiniz isteği anlayamadı veya işleyemedi. Lütfen bağlantıyı kontrol edin.</p>
+    <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Ana Sayfaya Dön</a>
+</div>
+{% endblock %}
