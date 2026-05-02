@@ -33,7 +33,8 @@ class Course(models.Model):
     description = models.TextField(verbose_name="Açıklama")
 
     instructor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='taught_courses')
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='courses')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='courses')
+    new_category_request = models.CharField(max_length=100, blank=True, null=True, verbose_name="Yeni Kategori Talebi")
 
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     image = models.ImageField(upload_to='course_images/', null=True, blank=True, verbose_name="Kapak Resmi")

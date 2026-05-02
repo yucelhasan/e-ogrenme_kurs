@@ -2,20 +2,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Sum
+from django.utils.text import slugify
+
 from lms_app.forms.course_forms import CourseForm, ModuleForm, LessonForm
-from lms_app.models import Course, InstructorApplication, CustomUser, Module, Lesson
+from lms_app.models import Course, InstructorApplication, CustomUser, Module, Lesson, Category
 from lms_app.models.ecommerce import OrderItem
 from lms_app.forms.system_forms import AnnouncementForm
 from lms_app.models.system import Announcement
-from lms_app.forms.assessment_forms import QuizForm, AssignmentForm
+from lms_app.forms.assessment_forms import QuizForm, AssignmentForm, GradeSubmissionForm
 from lms_app.models.assessments import Quiz, QuizQuestion, QuizChoice, Assignment, AssignmentSubmission
-from lms_app.forms.assessment_forms import GradeSubmissionForm
 from lms_app.models import SystemLog
-from django.contrib.auth.decorators import user_passes_test
 from lms_app.services.system_services import create_log
 
-
-# 1. EĞİTMEN PANELİ
 @login_required
 def dashboard_view(request):
     if request.user.role == 'admin': return redirect('admin_dashboard')
@@ -26,9 +24,8 @@ def dashboard_view(request):
     total_students = OrderItem.objects.filter(course__instructor=request.user, order__status='completed').values(
         'order__user').distinct().count()
     gross_income = \
-    OrderItem.objects.filter(course__instructor=request.user, order__status='completed').aggregate(Sum('price'))[
-        'price__sum'] or 0
-    # %20 Admin komisyonu düşülerek net kazanç hesaplanıyor
+        OrderItem.objects.filter(course__instructor=request.user, order__status='completed').aggregate(Sum('price'))[
+            'price__sum'] or 0
     net_income = float(gross_income) * 0.80
 
     return render(request, 'admin_panel/dashboard.html', {
@@ -36,7 +33,6 @@ def dashboard_view(request):
         'total_students': total_students,
         'net_income': net_income
     })
-
 
 @login_required
 def add_course_view(request):
@@ -46,16 +42,15 @@ def add_course_view(request):
         if form.is_valid():
             course = form.save(commit=False)
             course.instructor = request.user
-            course.status = 'draft'  # Önce Taslak
+            course.status = 'draft'
             course.save()
-            create_log(request, "Kurs Eklendi",f"{request.user.username}, '{course.title}' isimli kursu taslak olarak oluşturdu.")
+            create_log(request, "Kurs Eklendi",
+                       f"{request.user.username}, '{course.title}' isimli kursu taslak olarak oluşturdu.")
             return redirect('manage_curriculum', course_id=course.id)
     else:
         form = CourseForm()
     return render(request, 'admin_panel/add_course.html', {'form': form})
 
-
-# --- MÜFREDAT YÖNETİMİ ---
 @login_required
 def manage_curriculum_view(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
@@ -63,10 +58,9 @@ def manage_curriculum_view(request, course_id):
         'course': course,
         'module_form': ModuleForm(),
         'lesson_form': LessonForm(),
-        'quiz_form': QuizForm(),          # EKLENDİ
-        'assignment_form': AssignmentForm() # EKLENDİ
+        'quiz_form': QuizForm(),
+        'assignment_form': AssignmentForm()
     })
-
 
 @login_required
 def add_module_view(request, course_id):
@@ -80,7 +74,6 @@ def add_module_view(request, course_id):
             messages.success(request, "Bölüm eklendi!")
     return redirect('manage_curriculum', course_id=course.id)
 
-
 @login_required
 def add_lesson_view(request, module_id):
     module = get_object_or_404(Module, id=module_id, course__instructor=request.user)
@@ -93,20 +86,17 @@ def add_lesson_view(request, module_id):
             messages.success(request, "Ders eklendi!")
     return redirect('manage_curriculum', course_id=module.course.id)
 
-
 @login_required
 def submit_course_view(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
     if not course.modules.exists():
         messages.error(request, "Lütfen önce içerik ekleyin.")
         return redirect('manage_curriculum', course_id=course.id)
-    course.status = 'pending'  # Onaya gönder
+    course.status = 'pending'
     course.save()
     messages.success(request, "Kurs onay için gönderildi!")
     return redirect('dashboard')
 
-
-# YENİ: KURS ARŞİVLEME VIEW
 @login_required
 def archive_course_view(request, course_id):
     if request.user.role != 'instructor': return redirect('home')
@@ -117,8 +107,6 @@ def archive_course_view(request, course_id):
                   f"{course.title} kursu mağazadan kaldırıldı (Arşivlendi). Daha önce satın alanlar erişebilir.")
     return redirect('dashboard')
 
-
-# 2. ADMİN ONAY PANELİ
 @login_required
 def admin_dashboard_view(request):
     if request.user.role != 'admin': return redirect('home')
@@ -128,7 +116,6 @@ def admin_dashboard_view(request):
         'pending_applications': pending_applications,
         'pending_courses': pending_courses
     })
-
 
 @login_required
 def approve_application_view(request, app_id, action):
@@ -143,20 +130,31 @@ def approve_application_view(request, app_id, action):
     app.save()
     return redirect('admin_dashboard')
 
-
 @login_required
 def approve_course_view(request, course_id, action):
     if request.user.role != 'admin': return redirect('home')
     course = get_object_or_404(Course, id=course_id)
+
     if action == 'approve':
+        if course.new_category_request:
+            new_cat, created = Category.objects.get_or_create(
+                name=course.new_category_request,
+                defaults={'slug': slugify(course.new_category_request)}
+            )
+            course.category = new_cat
+            course.new_category_request = None
+
         course.status = 'published'
+        course.save()
         create_log(request, "Kurs Onayı", f"Admin, '{course.title}' isimli kursu yayına aldı.")
+        messages.success(request, "Kurs başarıyla onaylandı ve yayına alındı.")
     else:
         course.status = 'rejected'
-    course.save()
-    create_log(request, "Kurs Reddi", f"Admin, '{course.title}' isimli kursu reddetti.")
-    return redirect('admin_dashboard')
+        course.save()
+        create_log(request, "Kurs Reddi", f"Admin, '{course.title}' isimli kursu reddetti.")
+        messages.warning(request, "Kurs reddedildi.")
 
+    return redirect('admin_dashboard')
 
 @login_required
 def create_announcement_view(request, course_id):
@@ -203,22 +201,19 @@ def add_assignment_view(request, course_id):
 def manage_quiz_questions_view(request, quiz_id):
     if request.user.role != 'instructor': return redirect('home')
     quiz = get_object_or_404(Quiz, id=quiz_id, course__instructor=request.user)
-    
+
     if request.method == 'POST':
-        # Yeni bir soru ve 4 şık ekleme işlemi
         question_text = request.POST.get('question_text')
         if question_text:
             question = QuizQuestion.objects.create(quiz=quiz, text=question_text)
-            
-            # Şıkları döngü ile kaydet
+
             for i in range(1, 5):
                 choice_text = request.POST.get(f'choice_{i}')
-                # Hangi şıkkın doğru olduğunu kontrol et (radio button'dan gelen değer)
                 is_correct = request.POST.get('correct_choice') == str(i)
-                
+
                 if choice_text:
                     QuizChoice.objects.create(question=question, text=choice_text, is_correct=is_correct)
-                    
+
             messages.success(request, "Soru başarıyla eklendi!")
             return redirect('manage_quiz_questions', quiz_id=quiz.id)
 
@@ -228,12 +223,11 @@ def manage_quiz_questions_view(request, quiz_id):
 def view_assignment_submissions_view(request, assignment_id):
     if request.user.role != 'instructor': return redirect('home')
     assignment = get_object_or_404(Assignment, id=assignment_id, course__instructor=request.user)
-    
-    # Tüm teslimleri getir
+
     submissions = assignment.submissions.all().select_related('student').order_by('-submitted_at')
-    
+
     return render(request, 'admin_panel/view_submissions.html', {
-        'assignment': assignment, 
+        'assignment': assignment,
         'submissions': submissions,
         'grade_form': GradeSubmissionForm()
     })
@@ -242,7 +236,7 @@ def view_assignment_submissions_view(request, assignment_id):
 def grade_submission_view(request, submission_id):
     if request.user.role != 'instructor': return redirect('home')
     submission = get_object_or_404(AssignmentSubmission, id=submission_id, assignment__course__instructor=request.user)
-    
+
     if request.method == 'POST':
         form = GradeSubmissionForm(request.POST, instance=submission)
         if form.is_valid():
@@ -255,7 +249,7 @@ def admin_system_logs_view(request):
     if request.user.role != 'admin':
         return redirect('home')
 
-    logs = SystemLog.objects.all().order_by('-created_at')  # En yeni log en üstte
+    logs = SystemLog.objects.all().order_by('-created_at')
     return render(request, 'admin_panel/system_logs.html', {'logs': logs})
 
 @login_required
@@ -290,19 +284,19 @@ def delete_course_view(request, course_id):
 @login_required
 def delete_module_view(request, module_id):
     module = get_object_or_404(Module, id=module_id, course__instructor=request.user)
-    course_slug = module.course.slug
+    course_id = module.course.id
     module_title = module.title
     module.delete()
     create_log(request, "Bölüm Silme", f"'{module_title}' bölümü kurstan kaldırıldı.")
     messages.info(request, "Bölüm başarıyla silindi.")
-    return redirect('manage_curriculum', slug=course_slug)
+    return redirect('manage_curriculum', course_id=course_id)
 
 @login_required
 def delete_lesson_view(request, lesson_id):
     lesson = get_object_or_404(Lesson, id=lesson_id, module__course__instructor=request.user)
-    course_slug = lesson.module.course.slug
+    course_id = lesson.module.course.id  # HATA ÖNLEME: slug yerine id kullanıldı
     lesson_title = lesson.title
     lesson.delete()
     create_log(request, "Ders Silme", f"'{lesson_title}' dersi müfredattan kaldırıldı.")
     messages.info(request, "Ders başarıyla silindi.")
-    return redirect('manage_curriculum', slug=course_slug)
+    return redirect('manage_curriculum', course_id=course_id)

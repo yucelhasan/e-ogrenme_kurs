@@ -53,6 +53,7 @@ urlpatterns = [
     path('instructor/course/delete/<int:course_id>/', instructor_views.delete_course_view, name='delete_course'),
     path('instructor/module/delete/<int:module_id>/', instructor_views.delete_module_view, name='delete_module'),
     path('instructor/lesson/delete/<int:lesson_id>/', instructor_views.delete_lesson_view, name='delete_lesson'),
+    path('instructor/course/<int:course_id>/announcement/', instructor_views.create_announcement_view, name='create_announcement'),
     path('panel/', instructor_views.dashboard_view, name='dashboard'),
     path('panel/kurs-ekle/', instructor_views.add_course_view, name='add_course'),
     path('panel/kurs/<int:course_id>/mufredat/', instructor_views.manage_curriculum_view, name='manage_curriculum'),

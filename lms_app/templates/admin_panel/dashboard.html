@@ -68,6 +68,9 @@
                             </a>
 
                             {% if course.status == 'published' %}
+                            <a href="{% url 'create_announcement' course.id %}" class="btn btn-sm btn-info text-white fw-bold shadow-sm flex-grow-1">
+                                <i class="fa-solid fa-bullhorn me-1"></i>Duyuru Yap
+                            </a>
                             <a href="{% url 'archive_course' course.id %}" class="btn btn-sm btn-outline-secondary fw-bold shadow-sm w-100 mt-1" onclick="return confirm('Bu kursu mağazadan kaldırmak istediğinize emin misiniz? (Satın alanlar erişmeye devam edecek)');">
                                 <i class="fa-solid fa-box-archive me-1"></i>Arşivle
                             </a>

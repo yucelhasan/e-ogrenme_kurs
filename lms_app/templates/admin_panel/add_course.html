@@ -37,6 +37,11 @@
                             <label class="form-label fw-bold text-dark">Kategori</label>
                             {{ form.category }}
                         </div>
+                        <div class="mb-4 border-start border-4 border-info ps-3 bg-light p-2 rounded">
+                            <label class="form-label fw-bold text-info"><i class="fa-solid fa-lightbulb me-1"></i>Aradığınızı bulamadınız mı?</label>
+                            <p class="small text-muted mb-1">Eğer kursunuz mevcut kategorilere uymuyorsa, aşağıya yeni bir kategori yazın. Admin onayından sonra sisteme eklenecektir.</p>
+                            <input type="text" name="new_category_request" class="form-control" placeholder="Örn: Yapay Zeka, Müzik Prodüksiyonu...">
+                        </div>
                     </div>
 
                     <div class="mb-4">
