@@ -96,7 +96,7 @@ AUTH_USER_MODEL = 'lms_app.CustomUser'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = [
-    'axes.backends.AxesBackend'
+    'axes.backends.AxesBackend',
     'django.contrib.auth.backends.ModelBackend',
     'axes.backends.AxesStandaloneBackend',
 ]
