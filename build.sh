@@ -11,5 +11,7 @@ if [ "$DJANGOSUPERUSER_USERNAME" ]; then
         --no-input \
         --username "$DJANGOSUPERUSER_USERNAME" \
         --email "$DJANGOSUPERUSER_EMAIL" \
-        --role admin
+        --role admin \
+        --phone "0500000000" \
+        --expertise "Yazilim"
 fi
