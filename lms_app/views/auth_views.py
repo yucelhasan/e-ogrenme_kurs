@@ -11,7 +11,7 @@ def register_view(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             create_log(request, "Yeni Kayıt", f"{user.username} sisteme yeni kayıt oldu.")
             messages.success(request, "Kaydınız başarıyla tamamlandı!")
             return redirect('home')
