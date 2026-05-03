@@ -26,6 +26,7 @@ INSTALLED_APPS = [
 # 3. Ara Katmanlar (Middleware) - Hataları çözen kısım
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -131,5 +132,3 @@ SESSION_COOKIE_AGE = 1800
 SESSION_SAVE_EVERY_REQUEST = True
 
 DEBUG = True
-
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
