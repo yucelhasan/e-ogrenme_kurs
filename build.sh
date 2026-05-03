@@ -3,13 +3,18 @@
 set -o errexit
 
 pip install -r requirements.txt
+
 python manage.py collectstatic --no-input
+
 python manage.py migrate
 
-if [ "$DJANGOSUPERUSER_USERNAME" ]; then
+python manage.py axes_reset
+
+if [ "$DJANGO_SUPERUSER_USERNAME" ]; then
     python manage.py createsuperuser \
         --no-input \
-        --username "$DJANGOSUPERUSER_USERNAME" \
-        --email "$DJANGOSUPERUSER_EMAIL" \
-        --role admin
+        --username "$DJANGO_SUPERUSER_USERNAME" \
+        --email "$DJANGO_SUPERUSER_EMAIL" \
+        --role admin \
+        --expertise "Sistem Yoneticisi" || true
 fi
