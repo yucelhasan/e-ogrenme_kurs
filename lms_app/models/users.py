@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (
         ('admin', 'Admin'),
@@ -22,7 +21,6 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f"{self.username} ({self.get_role_display()})"
 
-
 class InstructorApplication(models.Model):
     STATUS_CHOICES = (
         ('pending', 'İnceleniyor'),
@@ -39,8 +37,6 @@ class InstructorApplication(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.get_status_display()}"
 
-
-# YENİ EKLENEN BAĞLANTI (TAKİPLEŞME) VE MESAJLAŞMA MODELLERİ
 class Connection(models.Model):
     follower = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='following')
     following = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='followers')
@@ -48,7 +44,6 @@ class Connection(models.Model):
 
     class Meta:
         unique_together = ('follower', 'following')
-
 
 class Message(models.Model):
     sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_messages')

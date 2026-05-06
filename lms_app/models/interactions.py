@@ -13,7 +13,6 @@ class Certificate(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     certificate_code = models.CharField(max_length=100, unique=True)
 
-# YENİ EKLENEN SORU-CEVAP MODELLERİ
 class Question(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='questions')
     student = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

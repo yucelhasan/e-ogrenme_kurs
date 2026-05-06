@@ -1,6 +1,6 @@
 from django.db import models
 from .users import CustomUser
-from .courses import Course  # EKLENDİ
+from .courses import Course
 
 
 class SystemLog(models.Model):
@@ -16,8 +16,6 @@ class PasswordResetRequest(models.Model):
     token = models.CharField(max_length=100, unique=True)
     is_used = models.BooleanField(default=False)
 
-
-# YENİ EKLENEN DUYURU MODELİ
 class Announcement(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='announcements')
     instructor = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

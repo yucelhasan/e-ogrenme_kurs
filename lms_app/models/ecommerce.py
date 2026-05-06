@@ -1,11 +1,8 @@
-# lms_app/models/ecommerce.py
-
 from django.db import models
 from django.utils import timezone
 from .users import CustomUser
 from .courses import Course
 
-# 1. KUPON SİSTEMİ
 class Coupon(models.Model):
     code = models.CharField(max_length=50, unique=True, verbose_name="Kupon Kodu")
     discount_percent = models.PositiveIntegerField(verbose_name="İndirim Yüzdesi (%)")
@@ -21,7 +18,6 @@ class Coupon(models.Model):
     def __str__(self):
         return f"{self.code} - %{self.discount_percent} İndirim"
 
-# 2. SEPET SİSTEMİ
 class Cart(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='cart')
     coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, blank=True)
@@ -36,13 +32,11 @@ class CartItem(models.Model):
     added_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        # Bir öğrenci aynı kursu sepetine iki kez EKLEYEMEZ
         unique_together = ('cart', 'course')
 
     def __str__(self):
         return f"{self.cart.user.username} - {self.course.title}"
 
-# 3. SİPARİŞ VE FATURA SİSTEMİ (Ödeme Sonrası Kayıt)
 class Order(models.Model):
     STATUS_CHOICES = (
         ('pending', 'Ödeme Bekleniyor'),
@@ -61,7 +55,6 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    # DO_NOTHING: Kurs silinse bile faturada/siparişte geçmiş kayıt olarak kalmalı
     course = models.ForeignKey(Course, on_delete=models.DO_NOTHING)
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Satın Alınan Fiyat")
 

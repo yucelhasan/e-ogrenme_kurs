@@ -1,28 +1,27 @@
-# lms_app/services/badge_services.py
 from django.utils import timezone
 from datetime import timedelta
-from lms_app.models import Review, Course, Enrollment, LessonProgress
-from lms_app.selectors.progress_selectors import get_course_progress
+from lms_app.selectors.progress_selectors import get_course_progress, get_recent_lesson_progress
+from lms_app.selectors.enrollment_selectors import get_student_enrollments
+from lms_app.selectors.interaction_selectors import check_user_has_any_review
+from lms_app.selectors.course_selectors import get_instructor_published_course_count
+from lms_app.selectors.ecommerce_selectors import get_instructor_total_students
+
 
 def get_user_badges(user):
-    """Kullanıcının rolüne göre hak ettiği rozetleri hesaplar ve döndürür."""
     badges = []
 
-    # --- ÖĞRENCİ ROZETLERİ ---
     if user.role == 'student' or user.role == 'admin':
-        # 1. ELEŞTİRMEN ROZETİ: En az 1 yorum yapmışsa
-        if Review.objects.filter(student=user).exists():
+        if check_user_has_any_review(user):
             badges.append({
                 'name': 'Eleştirmen',
                 'description': 'İlk kurs değerlendirmesini yaptı.',
                 'icon': 'fa-solid fa-comment-dots text-info',
                 'bg': 'bg-info-subtle text-info'
             })
-            
-        # 2. BİLGE ROZETİ: En az 5 kursu %100 tamamlamışsa
-        enrollments = Enrollment.objects.filter(student=user)
+
+        enrollments = get_student_enrollments(user)
         completed_courses = sum(1 for e in enrollments if get_course_progress(user, e.course) == 100)
-        
+
         if completed_courses >= 5:
             badges.append({
                 'name': 'Bilge',
@@ -31,25 +30,18 @@ def get_user_badges(user):
                 'bg': 'bg-primary-subtle text-primary'
             })
 
-        # 3. İSTİKRARLI ROZETİ: Son 3 gün üst üste ders tamamlamışsa
         today = timezone.now().date()
         days_active = set()
-        
-        # Öğrencinin son 7 gündeki ders ilerlemelerini al
-        recent_progress = LessonProgress.objects.filter(
-            student=user, 
-            is_completed=True,
-            completed_at__gte=today - timedelta(days=7)
-        )
-        
+
+        recent_progress = get_recent_lesson_progress(user, days=7)
+
         for p in recent_progress:
             if p.completed_at:
                 days_active.add(p.completed_at.date())
-                
-        # 3 gün arka arkaya girip girmediğini kontrol et
-        if (today in days_active and 
-            (today - timedelta(days=1)) in days_active and 
-            (today - timedelta(days=2)) in days_active):
+
+        if (today in days_active and
+                (today - timedelta(days=1)) in days_active and
+                (today - timedelta(days=2)) in days_active):
             badges.append({
                 'name': 'İstikrarlı',
                 'description': 'Arka arkaya 3 gün ders çalıştı.',
@@ -57,11 +49,9 @@ def get_user_badges(user):
                 'bg': 'bg-danger-subtle text-danger'
             })
 
-    # --- EĞİTMEN ROZETLERİ ---
     if user.role == 'instructor' or user.role == 'admin':
-        published_courses = Course.objects.filter(instructor=user, status='published').count()
-        
-        # 1. ÜRETKEN EĞİTMEN ROZETİ: 3 ve üzeri kurs yayınlamışsa
+        published_courses = get_instructor_published_course_count(user)
+
         if published_courses >= 3:
             badges.append({
                 'name': 'Üretken',
@@ -69,9 +59,8 @@ def get_user_badges(user):
                 'icon': 'fa-solid fa-layer-group text-success',
                 'bg': 'bg-success-subtle text-success'
             })
-            
-        # 2. POPÜLER EĞİTMEN ROZETİ: Toplam 50'den fazla farklı öğrencisi varsa
-        total_students = Enrollment.objects.filter(course__instructor=user).values('student').distinct().count()
+
+        total_students = get_instructor_total_students(user)
         if total_students >= 50:
             badges.append({
                 'name': 'Popüler',

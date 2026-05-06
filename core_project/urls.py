@@ -6,7 +6,6 @@ urlpatterns = [
     path('', include('lms_app.urls')),
 ]
 
-# Hata sayfaları yönlendirmeleri
 handler400 = 'lms_app.views.error_views.custom_400_view'
 handler403 = 'lms_app.views.error_views.custom_403_view'
 handler404 = 'lms_app.views.error_views.custom_404_view'

@@ -10,3 +10,5 @@ env/
 .env
 
 profile_pics
+media
+db.sqlite3

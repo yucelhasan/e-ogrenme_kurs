@@ -1,17 +1,14 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from lms_app.models import Course
-from lms_app.models.assessments import Assignment, AssignmentSubmission, Quiz, QuizAttempt, QuizChoice
 from lms_app.forms.assessment_forms import AssignmentSubmissionForm
+from lms_app.selectors.assessment_selectors import get_assignment_by_id, get_student_submission, get_quiz_by_id
+from lms_app.services.assessment_services import evaluate_quiz_and_save_attempt
 
 @login_required
 def submit_assignment_view(request, assignment_id):
-    assignment = get_object_or_404(Assignment, id=assignment_id)
-    # Öğrenci bu kursa kayıtlı mı kontrolü eklenebilir...
-
-    # Varsa önceki teslimi bul (Güncelleme yapmak istiyorsa)
-    submission = AssignmentSubmission.objects.filter(assignment=assignment, student=request.user).first()
+    assignment = get_assignment_by_id(assignment_id)
+    submission = get_student_submission(assignment, request.user)
 
     if request.method == 'POST':
         form = AssignmentSubmissionForm(request.POST, request.FILES, instance=submission)
@@ -30,24 +27,10 @@ def submit_assignment_view(request, assignment_id):
 
 @login_required
 def take_quiz_view(request, quiz_id):
-    quiz = get_object_or_404(Quiz, id=quiz_id)
+    quiz = get_quiz_by_id(quiz_id)
 
     if request.method == 'POST':
-        correct_answers = 0
-        total_questions = quiz.questions.count()
-
-        for question in quiz.questions.all():
-            selected_choice_id = request.POST.get(f'question_{question.id}')
-            if selected_choice_id:
-                choice = QuizChoice.objects.get(id=selected_choice_id)
-                if choice.is_correct:
-                    correct_answers += 1
-
-        score = (correct_answers / total_questions) * 100 if total_questions > 0 else 0
-        is_passed = score >= quiz.passing_score
-
-        # Skoru veritabanına kaydet
-        QuizAttempt.objects.create(quiz=quiz, student=request.user, score=score, is_passed=is_passed)
+        score, is_passed = evaluate_quiz_and_save_attempt(quiz, request.user, request.POST)
 
         if is_passed:
             messages.success(request, f"Tebrikler! Quizi %{score} başarıyla geçtiniz.")

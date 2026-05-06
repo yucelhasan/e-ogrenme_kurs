@@ -7,7 +7,6 @@ from django.contrib.auth import views as django_auth_views
 from .views import assessment_views
 
 urlpatterns = [
-    # --- KURS VE ANA SAYFA ---
     path('', course_views.home_view, name='home'),
     path('kurslar/', course_views.course_list_view, name='courses'),
     path('kurs/<slug:slug>/', course_views.course_detail_view, name='course_detail'),
@@ -15,7 +14,6 @@ urlpatterns = [
     path('kurs/<slug:slug>/yorum-yap/', course_views.add_review_view, name='add_review'),
     path('kurs/<slug:course_slug>/ders/<int:lesson_id>/', lesson_views.lesson_detail_view, name='lesson_detail'),
 
-    # --- KİMLİK DOĞRULAMA ---
     path('register/', auth_views.register_view, name='register'),
     path('login/', auth_views.login_view, name='login'),
     path('logout/', auth_views.logout_view, name='logout'),
@@ -31,12 +29,10 @@ urlpatterns = [
          django_auth_views.PasswordResetCompleteView.as_view(template_name='auth/password_reset_complete.html'),
          name='password_reset_complete'),
 
-    # --- KULLANICI / PROFİL / SOSYAL ---
     path('profil/', profile_views.profile_view, name='profile'),
     path('profil/egitmen-basvurusu/', profile_views.apply_instructor_view, name='apply_instructor'),
     path('kullanici/<str:username>/', profile_views.public_profile_view, name='public_profile'),
 
-    # SOSYAL VE MESAJLAŞMA URL'LERİ
     path('gelen-kutusu/', social_views.inbox_view, name='inbox'),
     path('gelen-kutusu/yeni-mesaj/', social_views.send_message_direct_view, name='send_message_direct'),  # YENİ
     path('kullanici/<str:username>/takip/', social_views.follow_user_view, name='follow_user'),
@@ -45,10 +41,8 @@ urlpatterns = [
     path('sohbet/<str:username>/', social_views.chat_view, name='chat'),
     path('mesajlar/', social_views.inbox_view, name='inbox'),
 
-    # --- DERS İÇİ SORU & CEVAP ---
     path('soru/<int:question_id>/cevapla/', lesson_views.add_answer_view, name='add_answer'),
 
-    # --- EĞİTMEN PANELİ ---
     path('instructor/course/edit/<int:course_id>/', instructor_views.edit_course_view, name='edit_course'),
     path('instructor/course/delete/<int:course_id>/', instructor_views.delete_course_view, name='delete_course'),
     path('instructor/module/delete/<int:module_id>/', instructor_views.delete_module_view, name='delete_module'),
@@ -68,14 +62,12 @@ urlpatterns = [
     path('panel/odev/<int:assignment_id>/teslimler/', instructor_views.view_assignment_submissions_view, name='view_assignment_submissions'),
     path('panel/teslim/<int:submission_id>/notlandir/', instructor_views.grade_submission_view, name='grade_submission'),
 
-    # --- ADMİN PANELİ ---
     path('sistem-yonetimi/', instructor_views.admin_dashboard_view, name='admin_dashboard'),
     path('sistem-yonetimi/basvuru-onayla/<int:app_id>/<str:action>/', instructor_views.approve_application_view,
          name='approve_application'),
     path('sistem-yonetimi/kurs-onayla/<int:course_id>/<str:action>/', instructor_views.approve_course_view,
          name='approve_course'),
 
-    # --- SEPET VE ÖDEME ---
     path('sepet/', cart_views.view_cart_view, name='view_cart'),
     path('sepet/ekle/<slug:slug>/', cart_views.add_to_cart_view, name='add_to_cart'),
     path('sepet/cikar/<int:item_id>/', cart_views.remove_from_cart_view, name='remove_from_cart'),

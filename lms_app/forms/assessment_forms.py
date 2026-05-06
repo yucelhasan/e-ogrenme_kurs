@@ -1,6 +1,4 @@
-# lms_app/forms/assessment_forms.py
 from django import forms
-from lms_app.models.assessments import AssignmentSubmission
 from lms_app.models.assessments import Quiz, Assignment
 from lms_app.models.assessments import AssignmentSubmission
 

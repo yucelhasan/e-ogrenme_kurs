@@ -10,7 +10,6 @@ class ReviewForm(forms.ModelForm):
             'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Yorumunuz...'}),
         }
 
-# YENİ: Soru Sorma Formu
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
@@ -20,7 +19,6 @@ class QuestionForm(forms.ModelForm):
             'body': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Detaylı açıklama...'}),
         }
 
-# YENİ: Cevap Verme Formu
 class AnswerForm(forms.ModelForm):
     class Meta:
         model = Answer

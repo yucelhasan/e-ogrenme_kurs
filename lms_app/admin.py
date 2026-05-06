@@ -7,12 +7,10 @@ from .models import (
     InstructorApplication,Coupon, Cart, Order, OrderItem
 )
 
-# 1. Modülleri kursun içinde satır içi (inline) göstermek için
 class ModuleInline(admin.TabularInline):
     model = Module
     extra = 1
 
-# 2. CustomUser Admin Kaydı (Django'nun kendi UserAdmin'i ile daha güvenli)
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'role', 'is_staff')
@@ -21,7 +19,6 @@ class CustomUserAdmin(UserAdmin):
         ('LMS Ek Bilgiler', {'fields': ('role', 'phone', 'profile_picture', 'expertise')}),
     )
 
-# 3. Course Admin Kaydı
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
     list_display = ('title', 'instructor', 'category', 'price', 'status', 'created_at')
@@ -30,7 +27,6 @@ class CourseAdmin(admin.ModelAdmin):
     list_filter = ('category', 'status')
     search_fields = ('title', 'description')
 
-# 4. YENİ: Eğitmen Başvuruları için Admin Paneli
 @admin.register(InstructorApplication)
 class InstructorApplicationAdmin(admin.ModelAdmin):
     list_display = ('user', 'status', 'applied_at')
@@ -56,7 +52,6 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
     readonly_fields = ('user', 'total_amount', 'discount_amount', 'final_amount', 'status')
 
-# 5. Diğer Modülleri Kaydet
 admin.site.register(Category)
 admin.site.register(Module)
 admin.site.register(Lesson)
