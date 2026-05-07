@@ -1,11 +1,27 @@
 {% extends 'base.html' %}
-{% block title %}Sunucu Hatası - 500{% endblock %}
+{% load static %}
+
+{% block title %}Sunucu Hatası | KTÜ LMS{% endblock %}
 
 {% block content %}
-<div class="container text-center" style="margin-top: 100px; margin-bottom: 100px;">
-    <h1 class="display-1 fw-bold text-danger">500</h1>
-    <h2 class="mb-4">Sunucu Hatası</h2>
-    <p class="lead mb-5">Bizim tarafımızda beklenmedik bir şeyler ters gitti. Teknik ekibimiz bu hatayı kaydetti ve ilgileniyor.</p>
-    <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Ana Sayfaya Dön</a>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="text-center">
+        <i class="fa-solid fa-gear fa-spin text-danger mb-4" style="font-size: 6rem;"></i>
+
+        <h1 class="display-1 fw-bold text-dark">500</h1>
+        <h2 class="mb-4">Sunucu Tarafında Bir Hata Oluştu!</h2>
+
+        <p class="lead text-muted mb-5">
+            Beklenmeyen bir hata ile karşılaştık. Lütfen telaş yapmayın, teknik ekibimiz (veya sen) bu sorunu çözmek için çalışıyor.
+            <br>Sorun devam ederse lütfen yöneticinizle iletişime geçin.
+        </p>
+
+        <a href="{% url 'home' %}" class="btn btn-primary btn-lg px-5 rounded-pill shadow">
+            <i class="fa-solid fa-house me-2"></i>Ana Sayfaya Dön
+        </a>
+        <button onclick="window.history.back()" class="btn btn-outline-secondary btn-lg px-5 rounded-pill shadow ms-2">
+            <i class="fa-solid fa-arrow-left me-2"></i>Geri Dön
+        </button>
+    </div>
 </div>
 {% endblock %}
