@@ -26,27 +26,62 @@
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
 
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger shadow-sm mb-4">
+                            {% for error in form.non_field_errors %}
+                                <i class="fa-solid fa-circle-exclamation me-1"></i> {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     <div class="row">
                         <div class="col-md-8 mb-4">
                             <label class="form-label fw-bold text-dark">Kurs Başlığı</label>
                             {{ form.title }}
+
+                            {% if form.title.errors %}
+                                <div class="text-danger small mt-2 fw-bold">
+                                    {% for error in form.title.errors %}
+                                        <i class="fa-solid fa-circle-exclamation me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
                             <div class="form-text">Öğrencilerin ilgisini çekecek net bir başlık seçin.</div>
                         </div>
 
                         <div class="col-md-4 mb-4">
                             <label class="form-label fw-bold text-dark">Kategori</label>
                             {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="text-danger small mt-2 fw-bold">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>{{ form.category.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
+
                         <div class="mb-4 border-start border-4 border-info ps-3 bg-light p-2 rounded">
                             <label class="form-label fw-bold text-info"><i class="fa-solid fa-lightbulb me-1"></i>Aradığınızı bulamadınız mı?</label>
                             <p class="small text-muted mb-1">Eğer kursunuz mevcut kategorilere uymuyorsa, aşağıya yeni bir kategori yazın. Admin onayından sonra sisteme eklenecektir.</p>
-                            <input type="text" name="new_category_request" class="form-control" placeholder="Örn: Yapay Zeka, Müzik Prodüksiyonu...">
+
+                            {{ form.new_category_request }}
+
+                            {% if form.new_category_request.errors %}
+                                <div class="text-danger small mt-2 fw-bold">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>{{ form.new_category_request.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Kurs Hakkında Detaylı Bilgi</label>
                         {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger small mt-2 fw-bold">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i>{{ form.description.errors.0 }}
+                            </div>
+                        {% endif %}
                     </div>
 
                     <div class="row mb-5">
@@ -56,12 +91,22 @@
                                 <span class="input-group-text bg-light border-end-0">₺</span>
                                 {{ form.price }}
                             </div>
+                            {% if form.price.errors %}
+                                <div class="text-danger small mt-2 fw-bold">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>{{ form.price.errors.0 }}
+                                </div>
+                            {% endif %}
                             <div class="form-text">Ücretsiz yapmak için 0.00 bırakın.</div>
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold text-dark">Kapak Fotoğrafı</label>
                             {{ form.image }}
+                            {% if form.image.errors %}
+                                <div class="text-danger small mt-2 fw-bold">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>{{ form.image.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
 

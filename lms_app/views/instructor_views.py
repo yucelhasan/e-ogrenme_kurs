@@ -32,7 +32,9 @@ def dashboard_view(request):
 
 @login_required
 def add_course_view(request):
-    if request.user.role != 'instructor': return redirect('home')
+    if request.user.role != 'instructor':
+        return redirect('home')
+
     if request.method == 'POST':
         form = CourseForm(request.POST, request.FILES)
         if form.is_valid():
@@ -42,9 +44,14 @@ def add_course_view(request):
             course.save()
             create_log(request, "Kurs Eklendi",
                        f"{request.user.username}, '{course.title}' isimli kursu taslak olarak oluşturdu.")
+
+            messages.success(request, "Kursunuz taslak olarak başarıyla oluşturuldu.")
             return redirect('manage_curriculum', course_id=course.id)
+        else:
+            messages.error(request, "Kurs oluşturulamadı. Lütfen formdaki uyarıları dikkate alarak başlığı değiştirin.")
     else:
         form = CourseForm()
+
     return render(request, 'admin_panel/add_course.html', {'form': form})
 
 @login_required
