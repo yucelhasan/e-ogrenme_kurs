@@ -1,52 +1,79 @@
 {% extends 'base.html' %}
-
 {% block title %}Kayıt Ol - KTÜ LMS{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow border-0 mt-5">
-            <div class="card-body p-5">
-                <div class="text-center mb-4">
-                    <h2 class="fw-bold text-primary">Hesap Oluştur</h2>
-                    <p class="text-muted">KTÜ E-Öğrenme dünyasına katılın.</p>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+            <div class="mb-4">
+                <a href="{% url 'home' %}" class="text-decoration-none text-muted fw-bold transition-all hover-primary d-inline-flex align-items-center small text-uppercase" style="letter-spacing: 0.5px;">
+                    <i class="fa-solid fa-arrow-left-long me-2"></i>Ana Sayfaya Dön
+                </a>
+            </div>
+
+            <div class="modern-card border-0 overflow-hidden shadow-lg rounded-4">
+                <div class="bg-white p-5 pb-4 text-center border-bottom border-light">
+                    <div class="icon-shape shadow-sm mx-auto mb-4 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #198754, #12ca8e); color: white; border-radius: 50%; width: 80px; height: 80px; flex-shrink: 0;">
+                        <i class="fa-solid fa-user-plus fa-2x"></i>
+                    </div>
+                    <h2 class="fw-extrabold text-dark mb-2" style="letter-spacing: -1px;">Yeni Hesap Oluştur</h2>
+                    <p class="text-muted fw-medium px-4 mb-0">KTÜ E-Öğrenme topluluğuna katılmak için formu eksiksiz doldurun.</p>
                 </div>
 
-                {% if form.errors %}
-                    <div class="alert alert-warning shadow-sm small">
-                        <strong>Lütfen aşağıdaki hataları düzeltin:</strong>
-                        <ul class="mt-2 mb-0">
-                            {% for field in form %}
-                                {% for error in field.errors %}
-                                    <li>{{ field.label }}: {{ error }}</li>
-                                {% endfor %}
-                            {% endfor %}
-                            {% for error in form.non_field_errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
+                <div class="card-body p-4 p-md-5 bg-white">
+                    {% if form.errors %}
+                        <div class="alert alert-warning border-0 shadow-sm mb-4 rounded-4 small d-flex align-items-center">
+                            <i class="fa-solid fa-triangle-exclamation text-warning fs-5 me-3"></i>
+                            <div class="flex-grow-1">
+                                <strong class="d-block mb-1 text-dark fw-bold">Lütfen aşağıdaki hataları düzeltin:</strong>
+                                <ul class="mb-0 p-0" style="list-style-type: none;">
+                                    {% for field in form %}
+                                        {% for error in field.errors %}
+                                            <li class="fw-semibold">{{ field.label }}: {{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    {% for error in form.non_field_errors %}
+                                        <li class="fw-semibold">{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="form-container mb-4">
+                            {{ form.as_p }}
+                        </div>
+
+                        <div class="bg-light bg-opacity-50 rounded-4 p-4 d-flex align-items-start mb-5 border border-light shadow-xs-inset">
+                            <div class="d-flex align-items-center justify-content-center bg-primary text-white me-3 mt-1 rounded-circle flex-shrink-0" style="width: 32px; height: 32px;">
+                                <i class="fa-solid fa-file-contract fa-sm"></i>
+                            </div>
+                            <p class="mb-0 text-muted small fw-medium">
+                                Kayıt butonuna tıklayarak platformumuzun <a href="#" class="text-primary fw-extrabold text-decoration-none hover-underline">Kullanım Şartları</a> ve <a href="#" class="text-primary fw-extrabold text-decoration-none hover-underline">Gizlilik Politikası</a>'nı kabul etmiş sayılırsınız.
+                            </p>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg py-3 fw-extrabold shadow-lg border-0 rounded-3 transition-all d-flex align-items-center justify-content-center text-uppercase" style="background: linear-gradient(135deg, #198754, #12ca8e); letter-spacing: 1px; font-size: 0.95rem;">
+                                <i class="fa-solid fa-check-double me-2 fs-5"></i> Kayıt İşlemini Tamamla
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-5">
+                        <p class="text-muted small fw-medium">
+                            Zaten hesabınız var mı? <a href="{% url 'login' %}" class="text-primary fw-extrabold text-decoration-none hover-underline mx-1">
+                                <i class="fa-solid fa-check me-1"></i>Giriş Yapın
+                            </a>
+                        </p>
                     </div>
-                {% endif %}
-
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="mb-3 auth-form-labels">
-                        {{ form.as_p }}
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">
-                        <i class="fa-solid fa-user-plus me-2"></i>Kayıt İşlemini Tamamla
-                    </button>
-                </form>
-
-                <hr class="my-4">
-
-                <div class="text-center">
-                    <p class="mb-0 text-muted">Zaten hesabın var mı?
-                        <a href="{% url 'login' %}" class="text-primary fw-bold text-decoration-none">Giriş Yap</a>
-                    </p>
                 </div>
             </div>
+
+            <p class="text-center mt-4 text-muted x-small opacity-50 fw-semibold">© 2026 KTÜ LMS - Yazılım Mühendisliği Bölümü</p>
         </div>
     </div>
 </div>
@@ -57,27 +84,39 @@
         const expertiseInput = document.getElementById("expertiseInput");
 
         if (roleSelect && expertiseInput) {
-            // Django formu <p> etiketleri içinde render ettiği için kapsayıcı elementi buluyoruz
             const expertiseContainer = expertiseInput.closest('p');
+            // Stilini modernize et (Daha iyi ikon ve typography ile)
+            expertiseContainer.classList.add('bg-warning', 'bg-opacity-10', 'p-4', 'rounded-3', 'border-start', 'border-4', 'border-warning', 'mt-3', 'd-flex', 'align-items-start', 'gap-3');
+
+            const infoIcon = document.createElement('i');
+            infoIcon.classList.add('fa-solid', 'fa-magnifying-glass', 'text-warning', 'fs-5', 'mt-1');
+            expertiseContainer.prepend(infoIcon);
 
             function toggleExpertise() {
                 if (roleSelect.value === 'instructor') {
-                    // Eğitmen seçildiyse göster
-                    expertiseContainer.style.display = 'block';
+                    expertiseContainer.style.display = 'flex';
                     expertiseContainer.style.opacity = '1';
                 } else {
-                    // Diğer durumlarda gizle ve içini boşalt
                     expertiseContainer.style.display = 'none';
                     expertiseInput.value = '';
                 }
             }
-
-            // Sayfa ilk yüklendiğinde durumu kontrol et
             toggleExpertise();
-
-            // Dropdown menü değiştiğinde durumu tekrar kontrol et
             roleSelect.addEventListener('change', toggleExpertise);
         }
+    });
+</script>
+<script>
+    // Django form elemanlarına otomatik sınıf ekleme
+    document.addEventListener("DOMContentLoaded", function() {
+        const inputs = document.querySelectorAll('.form-container input, .form-container select, .form-container textarea');
+        inputs.forEach(input => {
+            if (input.type !== 'checkbox' && input.type !== 'radio') {
+                input.classList.add('form-control');
+            } else if (input.type === 'checkbox') {
+                input.classList.add('form-check-input');
+            }
+        });
     });
 </script>
 {% endblock %}

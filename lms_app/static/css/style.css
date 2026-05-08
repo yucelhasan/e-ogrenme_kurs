@@ -215,34 +215,79 @@ img.profile-avatar:not([src]) {
     color: #fff;
 }
 
+/* =========================================
+   6. PREMIUM FORM TASARIMI (MODERN INPUTS)
+   ========================================= */
+
 .form-container p {
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
 }
 
 .form-container label {
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #334155;
-    margin-bottom: 0.4rem;
     display: block;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #1e293b;
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.form-container input,
+/* Standart Django Inputlarını Modernleştir */
+.form-container input[type="text"],
+.form-container input[type="password"],
+.form-container input[type="email"],
+.form-container input[type="tel"],
+.form-container input[type="number"],
 .form-container select,
 .form-container textarea {
     display: block;
     width: 100%;
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    padding: 0.8rem 1.2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #334155;
     background-color: #f8fafc;
-    transition: all 0.2s ease;
+    background-clip: padding-box;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px; /* Jilet gibi yumuşak köşeler */
+    transition: all 0.2s ease-in-out;
 }
 
-.form-container input:focus {
-    outline: none;
+/* Odaklanma (Focus) Efekti */
+.form-container input:focus,
+.form-container select:focus,
+.form-container textarea:focus {
+    color: #0f172a;
     background-color: #fff;
     border-color: #0d6efd;
-    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+    outline: 0;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Django'nun Yardımcı Metinleri (Help Text) */
+.form-container .helptext {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+/* Hata Durumları */
+.form-container .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.5rem 0;
+    color: #dc3545;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.form-container .errorlist li::before {
+    content: "\f06a";
+    font-family: "Font Awesome 6 Free";
+    margin-right: 5px;
 }

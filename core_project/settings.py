@@ -2,6 +2,14 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
+LANGUAGE_CODE = 'tr'
+
+TIME_ZONE = 'Europe/Istanbul'
+
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
