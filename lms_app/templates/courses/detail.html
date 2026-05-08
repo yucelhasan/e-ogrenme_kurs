@@ -3,211 +3,239 @@
 {% block title %}{{ course.title }} - KTÜ LMS{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
+<div class="container py-4 mb-5">
+    <div class="row g-5">
         <div class="col-lg-8">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none">Ana Sayfa</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'courses' %}" class="text-decoration-none">Kurslar</a></li>
-                    <li class="breadcrumb-item active">{{ course.category.name|default:"Genel" }}</li>
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb bg-light bg-opacity-50 py-2 px-4 rounded-pill shadow-sm-inset d-inline-flex small fw-bold">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none text-muted hover-primary"><i class="fa-solid fa-house me-1"></i>Ana Sayfa</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'courses' %}" class="text-decoration-none text-muted hover-primary">Kurslar</a></li>
+                    <li class="breadcrumb-item active text-primary">{{ course.category.name|default:"Genel" }}</li>
                 </ol>
             </nav>
 
-            <h1 class="fw-bold mb-3">{{ course.title }}</h1>
-            <p class="text-muted lead mb-4">{{ course.description }}</p>
+            <h1 class="fw-extrabold mb-3 text-dark" style="letter-spacing: -1px;">{{ course.title }}</h1>
+            <p class="text-muted lead mb-5" style="font-size: 1.15rem; line-height: 1.7;">{{ course.description }}</p>
 
-            <div class="d-flex align-items-center mb-5 p-3 bg-white shadow-sm rounded border">
-                <div class="me-4 border-end pe-4">
-                    <i class="fa-solid fa-user-tie text-primary me-2"></i>
-                    <span class="text-muted">Eğitmen:</span>
-                    <strong class="ms-1">{{ course.instructor.get_full_name|default:course.instructor.username }}</strong>
-                    {% if course.instructor.expertise %}
-                        <br><small class="text-muted ms-4">({{ course.instructor.expertise }})</small>
-                    {% endif %}
+            <div class="modern-card border-0 shadow-sm rounded-4 p-4 mb-5 d-flex flex-wrap gap-4 align-items-center bg-white">
+                <div class="d-flex align-items-center pe-4 border-end border-light">
+                    <div class="icon-shape bg-primary bg-opacity-10 text-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="fa-solid fa-user-tie fa-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted x-small text-uppercase fw-bold d-block mb-1">Eğitmen</span>
+                        <strong class="text-dark">{{ course.instructor.get_full_name|default:course.instructor.username }}</strong>
+                        {% if course.instructor.expertise %}
+                            <div class="text-muted x-small">{{ course.instructor.expertise }}</div>
+                        {% endif %}
+                    </div>
                 </div>
-                <div>
-                    <i class="fa-solid fa-folder text-warning me-2"></i>
-                    <span class="text-muted">Kategori:</span>
-                    <strong class="ms-1">{{ course.category.name|default:"Belirtilmedi" }}</strong>
+                <div class="d-flex align-items-center">
+                    <div class="icon-shape bg-warning bg-opacity-10 text-warning rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="fa-solid fa-folder fa-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted x-small text-uppercase fw-bold d-block mb-1">Kategori</span>
+                        <strong class="text-dark">{{ course.category.name|default:"Belirtilmedi" }}</strong>
+                    </div>
                 </div>
             </div>
 
             {% if course.announcements.all %}
-            <div class="card border-warning mb-5 shadow-sm">
-                <div class="card-header bg-warning text-dark fw-bold">
-                    <i class="fa-solid fa-bullhorn me-2"></i> Eğitmen Duyuruları
-                </div>
-                <div class="card-body">
-                    {% for announcement in course.announcements.all %}
-                    <div class="mb-3 {% if not forloop.last %}border-bottom pb-3{% endif %}">
-                        <h6 class="fw-bold mb-1 text-dark">{{ announcement.title }}</h6>
-                        <p class="small text-muted mb-2"><i class="fa-regular fa-clock me-1"></i> {{ announcement.created_at|date:"d M Y" }}</p>
-                        <p class="mb-0">{{ announcement.content }}</p>
+            <div class="bg-warning bg-opacity-10 border-start border-4 border-warning rounded-4 p-4 mb-5 shadow-sm">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="fa-solid fa-bullhorn text-warning me-2"></i> Eğitmen Duyuruları
+                </h5>
+                {% for announcement in course.announcements.all %}
+                <div class="mb-3 {% if not forloop.last %}border-bottom border-warning border-opacity-25 pb-3{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold mb-0 text-dark">{{ announcement.title }}</h6>
+                        <span class="badge bg-warning text-dark rounded-pill shadow-xs"><i class="fa-regular fa-clock me-1"></i> {{ announcement.created_at|date:"d M Y" }}</span>
                     </div>
-                    {% endfor %}
+                    <p class="mb-0 text-muted small">{{ announcement.content }}</p>
                 </div>
+                {% endfor %}
             </div>
             {% endif %}
 
-            <h3 class="fw-bold mb-3 border-bottom pb-2">Kurs İçeriği</h3>
+            <h3 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-list-check text-primary me-2"></i> Kurs İçeriği</h3>
 
-            <div class="accordion shadow-sm mb-5" id="curriculumAccordion">
+            <div class="accordion custom-accordion mb-5" id="curriculumAccordion">
                 {% for module in course.modules.all %}
-                <div class="accordion-item border-0 border-bottom">
+                <div class="modern-card border-0 shadow-sm rounded-4 overflow-hidden mb-3">
                     <h2 class="accordion-header" id="heading{{ module.id }}">
-                        <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-bold bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ module.id }}">
-                            Bölüm {{ module.order }}: {{ module.title }}
+                        <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-bold bg-white text-dark py-4 px-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ module.id }}">
+                            <span class="badge bg-dark rounded-pill me-3">Bölüm {{ module.order }}</span>
+                            {{ module.title }}
                         </button>
                     </h2>
                     <div id="collapse{{ module.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#curriculumAccordion">
-                        <div class="accordion-body p-0">
+                        <div class="accordion-body p-0 border-top border-light">
                             <ul class="list-group list-group-flush">
                                 {% for lesson in module.lessons.all %}
-                                {% if is_enrolled or user.role == 'admin' or course.instructor == user %}
-                                <a href="{% url 'lesson_detail' course.slug lesson.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
-                                    <div>
-                                        <i class="fa-solid fa-circle-play text-success me-2"></i>
-                                        {{ lesson.title }}
-                                    </div>
-                                    <span class="badge bg-primary rounded-pill">
-                                        <i class="fa-solid fa-play me-1"></i>İzle
-                                    </span>
-                                </a>
-                                {% else %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center py-3 text-muted bg-light">
-                                    <div>
-                                        <i class="fa-solid fa-lock text-secondary me-2"></i>
-                                        {{ lesson.title }}
-                                    </div>
-                                    <span class="badge bg-secondary rounded-pill">
-                                        <i class="fa-regular fa-clock me-1"></i>{{ lesson.duration|default:"-" }}
-                                    </span>
-                                </li>
-                                {% endif %}
+                                    {% if is_enrolled or user.role == 'admin' or course.instructor == user %}
+                                    <a href="{% url 'lesson_detail' course.slug lesson.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 px-4 border-0 border-bottom border-light transition-all hover-translate">
+                                        <div class="d-flex align-items-center text-dark fw-medium small">
+                                            <i class="fa-solid fa-circle-play text-success fs-5 me-3"></i>
+                                            {{ lesson.title }}
+                                        </div>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2">
+                                            <i class="fa-solid fa-play me-1"></i>İzle
+                                        </span>
+                                    </a>
+                                    {% else %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center py-3 px-4 border-0 border-bottom border-light bg-light opacity-75">
+                                        <div class="d-flex align-items-center text-muted fw-medium small">
+                                            <i class="fa-solid fa-lock text-secondary fs-5 me-3"></i>
+                                            {{ lesson.title }}
+                                        </div>
+                                        <span class="badge bg-secondary rounded-pill px-3 py-2">
+                                            <i class="fa-regular fa-clock me-1"></i>{{ lesson.duration|default:"-" }}
+                                        </span>
+                                    </li>
+                                    {% endif %}
                                 {% empty %}
-                                <li class="list-group-item py-3 text-muted fst-italic">Bu bölüme henüz ders eklenmemiş.</li>
+                                    <li class="list-group-item py-4 text-center text-muted fst-italic small bg-light">Bu bölüme henüz ders eklenmemiş.</li>
                                 {% endfor %}
                             </ul>
                         </div>
                     </div>
                 </div>
                 {% empty %}
-                <div class="alert alert-info mt-3">
-                    <i class="fa-solid fa-info-circle me-2"></i>Bu kursa henüz bir müfredat eklenmemiş.
+                <div class="text-center py-5 bg-light rounded-4 border-dashed opacity-50">
+                    <i class="fa-solid fa-info-circle fa-3x mb-3 text-muted"></i>
+                    <p class="mb-0 fw-medium">Bu kursa henüz bir müfredat eklenmemiş.</p>
                 </div>
                 {% endfor %}
             </div>
 
-            <h3 class="fw-bold mb-3 border-bottom pb-2 mt-5">Öğrenci Değerlendirmeleri</h3>
+            <h3 class="fw-bold mb-4 text-dark mt-5"><i class="fa-solid fa-comments text-primary me-2"></i> Öğrenci Değerlendirmeleri</h3>
 
             {% if user.is_authenticated and is_enrolled %}
-                <div class="card shadow-sm mb-5 border-0 bg-light">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3">Kursu Değerlendirin</h5>
+                <div class="modern-card shadow-sm mb-5 border-0 bg-white overflow-hidden rounded-4">
+                    <div class="p-4 bg-primary bg-opacity-10 border-bottom border-primary border-opacity-10">
+                        <h5 class="fw-bold text-primary mb-0">Kursu Değerlendirin</h5>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
                         <form action="{% url 'add_review' course.slug %}" method="POST">
                             {% csrf_token %}
 
-                            <div class="mb-3">
-                                <label class="form-label fw-bold d-block">Puanınız</label>
-                                <div class="star-rating">
-                                    <input type="radio" id="star5" name="rating" value="5" required />
+                            <div class="mb-4">
+                                <div class="form-label fw-bold d-block text-dark small text-uppercase">Puanınız</div>
+                                <div class="custom-stars fs-4">
+                                    <input type="radio" id="star5" name="rating" value="5" required class="d-none" />
                                     <label for="star5" title="5 Yıldız"><i class="fa-solid fa-star"></i></label>
-
-                                    <input type="radio" id="star4" name="rating" value="4" />
+                                    <input type="radio" id="star4" name="rating" value="4" class="d-none" />
                                     <label for="star4" title="4 Yıldız"><i class="fa-solid fa-star"></i></label>
-
-                                    <input type="radio" id="star3" name="rating" value="3" />
+                                    <input type="radio" id="star3" name="rating" value="3" class="d-none" />
                                     <label for="star3" title="3 Yıldız"><i class="fa-solid fa-star"></i></label>
-
-                                    <input type="radio" id="star2" name="rating" value="2" />
+                                    <input type="radio" id="star2" name="rating" value="2" class="d-none" />
                                     <label for="star2" title="2 Yıldız"><i class="fa-solid fa-star"></i></label>
-
-                                    <input type="radio" id="star1" name="rating" value="1" />
+                                    <input type="radio" id="star1" name="rating" value="1" class="d-none" />
                                     <label for="star1" title="1 Yıldız"><i class="fa-solid fa-star"></i></label>
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Yorumunuz</label>
+                            <div class="form-container mb-4">
+                                <label class="form-label fw-bold text-dark small text-uppercase">Yorumunuz</label>
                                 {{ review_form.comment }}
                             </div>
-                            <button type="submit" class="btn btn-primary fw-bold px-4">
+                            <button type="submit" class="btn btn-primary fw-bold px-5 py-2 rounded-pill shadow-sm transition-all" style="background: linear-gradient(135deg, #0d6efd, #00c6ff); border:none;">
                                 <i class="fa-solid fa-paper-plane me-2"></i>Gönder
                             </button>
                         </form>
                     </div>
                 </div>
             {% elif not is_enrolled and user.is_authenticated %}
-                <div class="alert alert-warning shadow-sm">
-                    <i class="fa-solid fa-circle-info me-2"></i>Bu kursa yorum yapabilmek için öncelikle kayıt olmalısınız.
+                <div class="bg-warning bg-opacity-10 border-start border-4 border-warning rounded-4 p-4 mb-5 shadow-sm d-flex align-items-center">
+                    <i class="fa-solid fa-circle-info fa-2x text-warning me-3"></i>
+                    <p class="mb-0 fw-medium text-dark">Bu kursa yorum yapabilmek için öncelikle kayıt olmalısınız.</p>
                 </div>
             {% endif %}
 
             <div class="reviews-list mb-5">
-                {% for review in reviews %}
-                <div class="card mb-3 border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <strong class="text-primary">
-                                <i class="fa-solid fa-user-circle me-1"></i>
-                                <a href="{% url 'public_profile' review.student.username %}" class="text-decoration-none">{{ review.student.get_full_name|default:review.student.username }}</a>
-                            </strong>
-                            <span class="text-warning">
-                                {% for i in "12345"|make_list %}
-                                    {% if forloop.counter <= review.rating %}
-                                        <i class="fa-solid fa-star"></i>
-                                    {% else %}
-                                        <i class="fa-regular fa-star"></i>
-                                    {% endif %}
-                                {% endfor %}
-                            </span>
+                <div class="row g-3">
+                    {% for review in reviews %}
+                    <div class="col-md-6">
+                        <div class="modern-card p-4 border-0 shadow-sm h-100 rounded-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center me-2 shadow-xs" style="width: 40px; height: 40px;">
+                                        <i class="fa-solid fa-user-circle fa-lg"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="text-dark d-block small">
+                                            <a href="{% url 'public_profile' review.student.username %}" class="text-decoration-none text-dark hover-primary">{{ review.student.get_full_name|default:review.student.username }}</a>
+                                        </strong>
+                                        <span class="text-warning x-small">
+                                            {% for i in "12345"|make_list %}
+                                                {% if forloop.counter <= review.rating %}
+                                                    <i class="fa-solid fa-star"></i>
+                                                {% else %}
+                                                    <i class="fa-regular fa-star text-muted opacity-25"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mb-0 text-muted small">"{{ review.comment }}"</p>
                         </div>
-                        <p class="mb-0 text-muted">{{ review.comment }}</p>
                     </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5 opacity-50 bg-light rounded-4">
+                        <i class="fa-regular fa-comments fa-3x mb-3 text-muted"></i>
+                        <p class="mb-0 fw-medium text-dark">Henüz bu kurs için yorum yapılmamış. İlk değerlendiren siz olun!</p>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% empty %}
-                <div class="alert alert-secondary border-0 text-center py-4">
-                    <i class="fa-regular fa-comments fa-2x mb-2 text-muted"></i>
-                    <p class="mb-0">Henüz bu kurs için yorum yapılmamış. İlk değerlendiren siz olun!</p>
-                </div>
-                {% endfor %}
             </div>
         </div>
 
         <div class="col-lg-4">
-            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
-                <div class="card-body p-4 text-center">
+            <div class="modern-card border-0 shadow-lg sticky-top rounded-4 overflow-hidden" style="top: 20px; z-index: 10;">
+                <div class="card-body p-4 p-xl-5 text-center bg-white">
                     {% if course.price == 0 %}
-                        <h2 class="fw-bold text-success mb-3">ÜCRETSİZ</h2>
+                        <h2 class="fw-extrabold text-success mb-4 display-5">ÜCRETSİZ</h2>
                     {% else %}
-                        <h2 class="fw-bold mb-3">₺{{ course.price }}</h2>
+                        <h2 class="fw-extrabold mb-4 text-dark display-5">₺{{ course.price }}</h2>
                     {% endif %}
 
                     {% if user.is_authenticated %}
                         {% if is_enrolled %}
-                            <a href="{% url 'lesson_detail' course.slug course.modules.first.lessons.first.id|default:0 %}" class="btn btn-success btn-lg w-100 fw-bold shadow-sm rounded-pill mb-3">
+                            <a href="{% url 'lesson_detail' course.slug course.modules.first.lessons.first.id|default:0 %}" class="btn btn-success btn-lg w-100 fw-bold shadow-sm rounded-pill mb-4 py-3 transition-all" style="background: linear-gradient(135deg, #198754, #12ca8e); border:none;">
                                 <i class="fa-solid fa-play me-2"></i>Derse Devam Et
                             </a>
                         {% else %}
-                            <a href="{% url 'add_to_cart' course.slug %}" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm rounded-pill mb-3">
+                            <a href="{% url 'add_to_cart' course.slug %}" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm rounded-pill mb-4 py-3 transition-all" style="background: linear-gradient(135deg, #0d6efd, #00c6ff); border:none;">
                                 <i class="fa-solid fa-cart-plus me-2"></i> {% if course.price == 0 %}Ücretsiz Kayıt Ol{% else %}Sepete Ekle{% endif %}
                             </a>
                         {% endif %}
                     {% else %}
-                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-primary btn-lg w-100 fw-bold rounded-pill mb-3">
-                            Kayıt Olmak İçin Giriş Yap
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-dark btn-lg w-100 fw-bold rounded-pill mb-4 py-3 shadow-sm transition-all hover-translate">
+                            <i class="fa-solid fa-right-to-bracket me-2"></i> Kayıt Olmak İçin Giriş Yap
                         </a>
                     {% endif %}
 
-                    <ul class="list-unstyled text-start text-muted small mt-4 mb-0">
-                        <li class="mb-2"><i class="fa-solid fa-infinity me-2 text-primary"></i> Ömür boyu tam erişim</li>
-                        <li class="mb-2"><i class="fa-solid fa-mobile-screen-button me-2 text-primary"></i> Mobil ve TV'den erişim</li>
-                        <li><i class="fa-solid fa-certificate me-2 text-primary"></i> Bitirme sertifikası</li>
+                    <ul class="list-unstyled text-start text-muted small mt-4 mb-0 bg-light p-4 rounded-4">
+                        <li class="mb-3 d-flex align-items-center"><i class="fa-solid fa-infinity me-3 text-primary fs-5"></i> Ömür boyu tam erişim</li>
+                        <li class="mb-3 d-flex align-items-center"><i class="fa-solid fa-mobile-screen-button me-3 text-primary fs-5"></i> Mobil ve TV'den erişim</li>
+                        <li class="d-flex align-items-center"><i class="fa-solid fa-certificate me-3 text-primary fs-5"></i> Bitirme sertifikası</li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const textareas = document.querySelectorAll('.form-container textarea');
+        textareas.forEach(textarea => {
+            textarea.classList.add('form-control');
+            textarea.placeholder = "Görüşleriniz bizim için değerli...";
+            textarea.rows = 4;
+        });
+    });
+</script>
 {% endblock %}

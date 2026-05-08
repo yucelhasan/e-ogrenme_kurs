@@ -1,11 +1,14 @@
-from django.urls import path
+from django.urls import path, include, re_path
+from django.views.static import serve
+from django.conf import settings
+from django.contrib.auth import views as django_auth_views
+from django.shortcuts import render
+
 from .views import (
     cart_views, auth_views, course_views,
-    profile_views, instructor_views, lesson_views, social_views
+    profile_views, instructor_views, lesson_views, social_views,
+    assessment_views
 )
-from django.contrib.auth import views as django_auth_views
-from .views import assessment_views
-from django.shortcuts import render
 
 urlpatterns = [
     path('', course_views.home_view, name='home'),
@@ -14,6 +17,7 @@ urlpatterns = [
     path('kurs/<slug:slug>/kayit/', course_views.enroll_course_view, name='enroll_course'),
     path('kurs/<slug:slug>/yorum-yap/', course_views.add_review_view, name='add_review'),
     path('kurs/<slug:course_slug>/ders/<int:lesson_id>/', lesson_views.lesson_detail_view, name='lesson_detail'),
+
     path('register/', auth_views.register_view, name='register'),
     path('login/', auth_views.login_view, name='login'),
     path('logout/', auth_views.logout_view, name='logout'),
@@ -28,22 +32,29 @@ urlpatterns = [
     path('sifre-sifirla/tamamlandi/',
          django_auth_views.PasswordResetCompleteView.as_view(template_name='auth/password_reset_complete.html'),
          name='password_reset_complete'),
+
     path('profil/', profile_views.profile_view, name='profile'),
     path('profil/egitmen-basvurusu/', profile_views.apply_instructor_view, name='apply_instructor'),
     path('kullanici/<str:username>/', profile_views.public_profile_view, name='public_profile'),
+
     path('gelen-kutusu/', social_views.inbox_view, name='inbox'),
-    path('gelen-kutusu/yeni-mesaj/', social_views.send_message_direct_view, name='send_message_direct'),  # YENİ
+    path('gelen-kutusu/yeni-mesaj/', social_views.send_message_direct_view, name='send_message_direct'),
     path('kullanici/<str:username>/takip/', social_views.follow_user_view, name='follow_user'),
     path('kullanici/<str:username>/mesaj-gonder/', social_views.send_message_view, name='send_message'),
     path('kullanici-ara/', social_views.search_users_view, name='search_users'),
     path('sohbet/<str:username>/', social_views.chat_view, name='chat'),
     path('mesajlar/', social_views.inbox_view, name='inbox'),
+
     path('soru/<int:question_id>/cevapla/', lesson_views.add_answer_view, name='add_answer'),
+    path('cevap/<int:answer_id>/sil/', lesson_views.delete_answer_view, name='delete_answer'),
+
     path('instructor/course/edit/<int:course_id>/', instructor_views.edit_course_view, name='edit_course'),
     path('instructor/course/delete/<int:course_id>/', instructor_views.delete_course_view, name='delete_course'),
     path('instructor/module/delete/<int:module_id>/', instructor_views.delete_module_view, name='delete_module'),
     path('instructor/lesson/delete/<int:lesson_id>/', instructor_views.delete_lesson_view, name='delete_lesson'),
-    path('instructor/course/<int:course_id>/announcement/', instructor_views.create_announcement_view, name='create_announcement'),
+    path('instructor/course/<int:course_id>/announcement/', instructor_views.create_announcement_view,
+         name='create_announcement'),
+
     path('panel/', instructor_views.dashboard_view, name='dashboard'),
     path('panel/kurs-ekle/', instructor_views.add_course_view, name='add_course'),
     path('panel/kurs/<int:course_id>/mufredat/', instructor_views.manage_curriculum_view, name='manage_curriculum'),
@@ -51,35 +62,57 @@ urlpatterns = [
     path('panel/modul/<int:module_id>/ders-ekle/', instructor_views.add_lesson_view, name='add_lesson'),
     path('panel/kurs/<int:course_id>/onaya-gonder/', instructor_views.submit_course_view, name='submit_course'),
     path('panel/kurs/<int:course_id>/arsivle/', instructor_views.archive_course_view, name='archive_course'),
-    path('panel/kurs/<int:course_id>/duyuru-ekle/', instructor_views.create_announcement_view, name='create_announcement'),
+    path('panel/kurs/<int:course_id>/duyuru-ekle/', instructor_views.create_announcement_view,
+         name='create_announcement'),
     path('panel/kurs/<int:course_id>/quiz-ekle/', instructor_views.add_quiz_view, name='add_quiz'),
     path('panel/kurs/<int:course_id>/odev-ekle/', instructor_views.add_assignment_view, name='add_assignment'),
-    path('panel/quiz/<int:quiz_id>/sorular/', instructor_views.manage_quiz_questions_view, name='manage_quiz_questions'),
-    path('panel/odev/<int:assignment_id>/teslimler/', instructor_views.view_assignment_submissions_view, name='view_assignment_submissions'),
-    path('panel/teslim/<int:submission_id>/notlandir/', instructor_views.grade_submission_view, name='grade_submission'),
+    path('panel/quiz/<int:quiz_id>/sorular/', instructor_views.manage_quiz_questions_view,
+         name='manage_quiz_questions'),
+    path('panel/odev/<int:assignment_id>/teslimler/', instructor_views.view_assignment_submissions_view,
+         name='view_assignment_submissions'),
+    path('panel/teslim/<int:submission_id>/notlandir/', instructor_views.grade_submission_view,
+         name='grade_submission'),
+
     path('sistem-yonetimi/', instructor_views.admin_dashboard_view, name='admin_dashboard'),
     path('sistem-yonetimi/basvuru-onayla/<int:app_id>/<str:action>/', instructor_views.approve_application_view,
          name='approve_application'),
     path('sistem-yonetimi/kurs-onayla/<int:course_id>/<str:action>/', instructor_views.approve_course_view,
          name='approve_course'),
+    path('admin-panel/loglar/', instructor_views.admin_system_logs_view, name='admin_system_logs'),
+
     path('sepet/', cart_views.view_cart_view, name='view_cart'),
     path('sepet/ekle/<slug:slug>/', cart_views.add_to_cart_view, name='add_to_cart'),
     path('sepet/cikar/<int:item_id>/', cart_views.remove_from_cart_view, name='remove_from_cart'),
     path('sepet/odeme/', cart_views.checkout_view, name='checkout'),
+
     path('odev/<int:assignment_id>/teslim/', assessment_views.submit_assignment_view, name='submit_assignment'),
     path('quiz/<int:quiz_id>/coz/', assessment_views.take_quiz_view, name='take_quiz'),
-    path('admin-panel/loglar/', instructor_views.admin_system_logs_view, name='admin_system_logs'),
-    path('cevap/<int:answer_id>/sil/', lesson_views.delete_answer_view, name='delete_answer'),
 ]
+
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', serve, {
+        'document_root': settings.MEDIA_ROOT,
+    }),
+]
+
 
 def handler404(request, exception):
     return render(request, '404.html', status=404)
 
+
 def handler500(request):
     return render(request, '500.html', status=500)
+
 
 def handler403(request, exception):
     return render(request, '403.html', status=403)
 
+
 def handler400(request, exception):
     return render(request, '400.html', status=400)
+
+
+handler404 = handler404
+handler500 = handler500
+handler403 = handler403
+handler400 = handler400

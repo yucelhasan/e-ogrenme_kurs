@@ -26,6 +26,9 @@
             <button class="btn btn-white border shadow-sm fw-bold px-3 py-2 rounded-3 text-warning transition-all" data-bs-toggle="modal" data-bs-target="#addQuizModal">
                 <i class="fa-solid fa-clipboard-question me-2"></i>Quiz
             </button>
+            <a href="{% url 'create_announcement' course.id %}" class="btn btn-white border shadow-sm fw-bold px-3 py-2 rounded-3 text-secondary transition-all hover-translate">
+                <i class="fa-solid fa-bullhorn me-2"></i>Duyuru
+            </a>
             <button class="btn btn-white border shadow-sm fw-bold px-3 py-2 rounded-3 text-info transition-all" data-bs-toggle="modal" data-bs-target="#addAssignmentModal">
                 <i class="fa-solid fa-file-arrow-up me-2"></i>Ödev
             </button>
@@ -116,28 +119,37 @@
 
         <div class="col-lg-4">
             <div class="modern-card border-0 shadow-sm mb-4 border-start border-warning border-4">
-                <div class="p-4 bg-white h-100">
+                <div class="p-4 bg-white h-100 rounded-end-4">
                     <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-clipboard-question text-warning me-2"></i>Quizler</h6>
-                    {% for quiz in course.quizzes.all %}
-                        <div class="small fw-bold border-bottom py-2">{{ quiz.title }}</div>
-                    {% empty %}
-                        <div class="py-4 text-center text-muted small italic">Henüz quiz eklenmemiş.</div>
-                    {% endfor %}
+                    <div class="list-group list-group-flush">
+                        {% for quiz in course.quizzes.all %}
+                            <a href="{% url 'manage_quiz_questions' quiz.id %}" class="list-group-item list-group-item-action border-0 border-bottom border-light px-0 py-3 d-flex justify-content-between align-items-center transition-all hover-primary">
+                                <span class="small fw-bold text-dark"><i class="fa-solid fa-pen-nib text-muted me-2"></i>{{ quiz.title }}</span>
+                                <i class="fa-solid fa-chevron-right small text-muted"></i>
+                            </a>
+                        {% empty %}
+                            <div class="py-4 text-center text-muted small italic">Henüz quiz eklenmemiş.</div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
 
             <div class="modern-card border-0 shadow-sm border-start border-info border-4">
-                <div class="p-4 bg-white h-100">
+                <div class="p-4 bg-white h-100 rounded-end-4">
                     <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-file-signature text-info me-2"></i>Ödevler</h6>
-                    {% for assignment in course.assignments.all %}
-                        <div class="small fw-bold border-bottom py-2">{{ assignment.title }}</div>
-                    {% empty %}
-                        <div class="py-4 text-center text-muted small italic">Henüz ödev eklenmemiş.</div>
-                    {% endfor %}
+                    <div class="list-group list-group-flush">
+                        {% for assignment in course.assignments.all %}
+                            <a href="{% url 'view_assignment_submissions' assignment.id %}" class="list-group-item list-group-item-action border-0 border-bottom border-light px-0 py-3 d-flex justify-content-between align-items-center transition-all hover-primary">
+                                <span class="small fw-bold text-dark"><i class="fa-solid fa-file-lines text-muted me-2"></i>{{ assignment.title }}</span>
+                                <i class="fa-solid fa-chevron-right small text-muted"></i>
+                            </a>
+                        {% empty %}
+                            <div class="py-4 text-center text-muted small italic">Henüz ödev eklenmemiş.</div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 </div>
 
 <div class="modal fade" id="addModuleModal" tabindex="-1" aria-hidden="true">

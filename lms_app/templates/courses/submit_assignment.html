@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block title %}Ödev Teslimi - {{ assignment.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4 mb-5" style="max-width: 850px;">
+    
+    <div class="mb-4">
+        <a href="{% url 'course_detail' assignment.course.slug %}" class="text-decoration-none text-muted fw-bold transition-all hover-primary d-inline-flex align-items-center small text-uppercase" style="letter-spacing: 0.5px;">
+            <i class="fa-solid fa-arrow-left-long me-2"></i>Kursa Dön
+        </a>
+    </div>
+
+    <div class="modern-card border-0 shadow-lg rounded-4 overflow-hidden mb-4 bg-white">
+        <div class="p-4 p-md-5 text-white position-relative" style="background: linear-gradient(135deg, #0dcaf0, #0d6efd);">
+            <div class="position-absolute top-0 end-0 opacity-25 d-none d-md-block" style="transform: translate(15%, -15%); pointer-events: none;">
+                <i class="fa-solid fa-file-signature" style="font-size: 10rem;"></i>
+            </div>
+
+            <div class="position-relative z-1">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-white text-info rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 50px; height: 50px;">
+                        <i class="fa-solid fa-file-arrow-up fa-lg"></i>
+                    </div>
+                    <h6 class="text-white opacity-75 mb-0 fw-bold text-uppercase small" style="letter-spacing: 1px;">Ödev Teslim Paneli</h6>
+                </div>
+                <h2 class="fw-extrabold mb-2" style="letter-spacing: -0.5px;">{{ assignment.title }}</h2>
+                <p class="mb-0 fw-medium opacity-90"><i class="fa-solid fa-graduation-cap me-2"></i>{{ assignment.course.title }}</p>
+            </div>
+        </div>
+
+        <div class="p-4 p-md-5 bg-white border-bottom border-light">
+            <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-circle-info text-info me-2"></i>Ödev Talimatları</h6>
+            <div class="text-muted mb-0" style="line-height: 1.6;">
+                {{ assignment.description|linebreaks }}
+            </div>
+        </div>
+    </div>
+
+    {% if submission and submission.score is not None %}
+    <div class="modern-card border-0 shadow-lg rounded-4 overflow-hidden mb-4 bg-white border-start border-5 border-success">
+        <div class="p-4 p-md-5 text-white position-relative" style="background: linear-gradient(135deg, #198754, #12ca8e);">
+            <div class="position-absolute top-0 end-0 opacity-25 d-none d-md-block" style="transform: translate(15%, -15%); pointer-events: none;">
+                <i class="fa-solid fa-certificate" style="font-size: 10rem;"></i>
+            </div>
+
+            <div class="position-relative z-1">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-white text-success rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 50px; height: 50px;">
+                        <i class="fa-solid fa-award fa-lg"></i>
+                    </div>
+                    <h6 class="text-white opacity-75 mb-0 fw-bold text-uppercase small" style="letter-spacing: 1px;">Eğitmen Değerlendirmesi</h6>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <h2 class="fw-extrabold mb-0" style="letter-spacing: -0.5px;">Başarı Notu: {{ submission.score|floatformat:0 }}/100</h2>
+                    <span class="badge bg-white text-success rounded-pill px-3 py-2 fw-bold shadow-sm small">Tamamlandı</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 p-md-5 bg-white">
+            <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-comment-dots text-success me-2"></i>Eğitmen Geri Bildirimi</h6>
+            <div class="p-4 rounded-4 italic text-dark fw-medium" style="background-color: #f8f9fa; border-left: 5px solid #198754; line-height: 1.6;">
+                {% if submission.feedback %}
+                    "{{ submission.feedback }}"
+                {% else %}
+                    Eğitmeniniz puan verdi ancak yazılı bir geri bildirim bırakmadı.
+                {% endif %}
+            </div>
+            <div class="mt-4 text-end">
+                <p class="text-muted small fw-bold mb-0">
+                    <i class="fa-solid fa-calendar-check me-1"></i> Değerlendirme Tarihi: {{ submission.submitted_at|date:"d M Y" }}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="modern-card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+        {% if submission %}
+            <div class="p-4 bg-light bg-opacity-50 border-bottom border-light d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-box-archive text-primary me-2"></i>Gönderdiğiniz Dosya ve Yanıt</h6>
+                <span class="small text-muted fw-bold">{{ submission.submitted_at|date:"d M Y H:i" }}</span>
+            </div>
+
+            <div class="p-4">
+                {% if submission.text_response %}
+                    <div class="mb-4">
+                        <label class="small fw-bold text-uppercase text-muted d-block mb-2">Metin Yanıtınız:</label>
+                        <div class="p-3 bg-light rounded-3 small text-muted">{{ submission.text_response|linebreaks }}</div>
+                    </div>
+                {% endif %}
+
+                {% if submission.file %}
+                    <div class="mb-4">
+                        <a href="{{ submission.file.url }}" class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-bold" target="_blank">
+                            <i class="fa-solid fa-download me-2"></i>Yüklenen Dosyayı Görüntüle
+                        </a>
+                    </div>
+                {% endif %}
+
+                {% if submission.score is None %}
+                    <div class="border-top pt-4 mt-2">
+                        <h6 class="fw-bold text-dark mb-4 text-center text-uppercase small" style="letter-spacing: 1px;">Teslimatı Güncelle</h6>
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-container mb-4">
+                                <label class="form-label fw-bold small">Çözümünüzü Düzenleyin</label>
+                                {{ form.text_response }}
+                            </div>
+                            <div class="form-container mb-4">
+                                <label class="form-label fw-bold small">Yeni Dosya Seç (Eskisi silinir)</label>
+                                {{ form.file }}
+                            </div>
+                            <button type="submit" class="btn btn-warning w-100 fw-bold py-3 rounded-pill shadow-sm transition-all hover-translate">
+                                <i class="fa-solid fa-arrows-rotate me-2"></i>Değişiklikleri Kaydet
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info border-0 rounded-4 mb-0 d-flex align-items-center">
+                        <i class="fa-solid fa-lock me-3 fs-4"></i>
+                        <span class="small fw-bold">Ödeviniz notlandırıldığı için artık teslimat üzerinde değişiklik yapamazsınız.</span>
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="p-4 bg-primary bg-opacity-10 border-bottom border-primary border-opacity-10">
+                <h5 class="fw-bold text-primary mb-0"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Ödevinizi Gönderin</h5>
+            </div>
+            <div class="p-4 p-md-5">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-container mb-4">
+                        <label class="form-label fw-bold small text-uppercase">Çözümünüz / Notlarınız</label>
+                        {{ form.text_response }}
+                    </div>
+                    <div class="form-container mb-4">
+                        <label class="form-label fw-bold small text-uppercase">Dosya Yükle</label>
+                        {{ form.file }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold py-3 rounded-pill shadow-sm transition-all hover-translate" style="background: linear-gradient(135deg, #0d6efd, #00c6ff); border:none;">
+                        <i class="fa-solid fa-paper-plane me-2"></i>Ödevi Teslim Et
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const textareas = document.querySelectorAll('textarea');
+        textareas.forEach(t => {
+            t.classList.add('form-control', 'rounded-4', 'shadow-xs-inset');
+            t.placeholder = "Ödevinizle ilgili açıklamaları buraya yazabilirsiniz...";
+            t.rows = 5;
+        });
+
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(f => {
+            f.classList.add('form-control', 'rounded-pill', 'bg-white', 'p-2');
+        });
+    });
+</script>
+{% endblock %}

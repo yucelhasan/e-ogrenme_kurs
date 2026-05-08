@@ -1,93 +1,115 @@
 {% extends 'base.html' %}
-{% block title %}Sepetim - LMS{% endblock %}
+{% block title %}Sepetim - KTÜ LMS{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="fw-bold mb-4"><i class="fa-solid fa-cart-shopping me-2 text-primary"></i>Alışveriş Sepetim</h2>
+<div class="container py-4 mb-5">
+    <div class="d-flex align-items-center mb-4 pb-3 border-bottom border-light">
+        <div class="icon-shape bg-primary bg-opacity-10 text-primary rounded-circle me-3 flex-shrink-0" style="width: 50px; height: 50px;">
+            <i class="fa-solid fa-cart-shopping fa-lg"></i>
+        </div>
+        <h2 class="fw-extrabold text-dark mb-0" style="letter-spacing: -1px;">Alışveriş Sepetim</h2>
+    </div>
 
-    <div class="row">
+    <div class="row g-4 g-xl-5">
         <div class="col-lg-8">
             {% if items %}
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-body p-0">
-                        <ul class="list-group list-group-flush">
-                            {% for item in items %}
-                            <li class="list-group-item p-4 d-flex justify-content-between align-items-center">
-                                <div class="d-flex align-items-center">
-                                    {% if item.course.image %}
-                                        <img src="{{ item.course.image.url }}" alt="{{ item.course.title }}" class="rounded me-3 shadow-sm" style="width: 90px; height: 90px; object-fit: cover;">
-                                    {% else %}
-                                        <div class="rounded me-3 bg-secondary text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 90px; height: 90px;">
-                                            <i class="fa-solid fa-laptop-code fa-2x"></i>
-                                        </div>
-                                    {% endif %}
-                                    <div>
-                                        <h5 class="fw-bold mb-1">{{ item.course.title }}</h5>
-                                        <p class="text-muted small mb-0"><i class="fa-solid fa-user-tie me-1"></i> Eğitmen: {{ item.course.instructor.get_full_name|default:item.course.instructor.username }}</p>
+                <div class="d-flex flex-column gap-3">
+                    {% for item in items %}
+                    <div class="modern-card border-0 shadow-sm rounded-4 p-3 bg-white transition-all hover-translate">
+                        <div class="d-flex flex-column flex-sm-row align-items-sm-center">
+
+                            <div class="flex-shrink-0 mb-3 mb-sm-0 me-sm-4 position-relative">
+                                {% if item.course.image %}
+                                    <img src="{{ item.course.image.url }}" alt="{{ item.course.title }}" class="rounded-4 shadow-sm" style="width: 140px; height: 100px; object-fit: cover;">
+                                {% else %}
+                                    <div class="rounded-4 bg-light text-muted d-flex align-items-center justify-content-center shadow-sm" style="width: 140px; height: 100px;">
+                                        <i class="fa-solid fa-image fa-2x opacity-25"></i>
                                     </div>
+                                {% endif %}
+                                <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger shadow-sm">
+                                    <i class="fa-solid fa-fire me-1"></i>Seçim
+                                </span>
+                            </div>
+
+                            <div class="flex-grow-1">
+                                <h5 class="fw-bold mb-2 text-dark line-clamp-2">
+                                    <a href="{% url 'course_detail' item.course.slug %}" class="text-decoration-none text-dark hover-primary">{{ item.course.title }}</a>
+                                </h5>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px;">
+                                        <i class="fa-solid fa-user-tie x-small"></i>
+                                    </div>
+                                    <span class="text-muted small fw-medium">{{ item.course.instructor.get_full_name|default:item.course.instructor.username }}</span>
                                 </div>
-                                <div class="text-end">
-                                    <h4 class="fw-bold text-success mb-2">₺{{ item.course.price }}</h4>
-                                    <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-sm btn-outline-danger shadow-sm rounded-pill px-3">
-                                        <i class="fa-solid fa-trash me-1"></i> Kaldır
-                                    </a>
-                                </div>
-                            </li>
-                            {% endfor %}
-                        </ul>
+                            </div>
+
+                            <div class="text-sm-end mt-3 mt-sm-0 ms-sm-3 d-flex flex-row flex-sm-column align-items-center justify-content-between">
+                                <h4 class="fw-extrabold text-success mb-sm-3 mb-0">₺{{ item.course.price|floatformat:2 }}</h4>
+                                <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-light btn-sm text-danger shadow-xs rounded-pill px-3 py-2 fw-bold transition-all hover-shadow">
+                                    <i class="fa-solid fa-trash-can me-1"></i> Kaldır
+                                </a>
+                            </div>
+
+                        </div>
                     </div>
+                    {% endfor %}
                 </div>
             {% else %}
-                <div class="text-center py-5 bg-white rounded shadow-sm border-0">
-                    <i class="fa-solid fa-basket-shopping fa-5x text-muted mb-4 opacity-50"></i>
-                    <h4 class="fw-bold text-secondary">Sepetiniz şu an boş.</h4>
-                    <p class="text-muted">Binlerce kurs arasından size uygun olanı hemen bulun ve öğrenmeye başlayın!</p>
-                    <a href="{% url 'courses' %}" class="btn btn-primary mt-3 px-5 py-3 fw-bold shadow-sm rounded-pill">
-                        <i class="fa-solid fa-magnifying-glass me-2"></i>Kursları Keşfet
+                <div class="modern-card text-center py-5 px-4 bg-white rounded-4 shadow-sm border-0 h-100 d-flex flex-column align-items-center justify-content-center">
+                    <div class="icon-shape bg-light text-muted rounded-circle mb-4" style="width: 100px; height: 100px;">
+                        <i class="fa-solid fa-basket-shopping fa-3x opacity-50"></i>
+                    </div>
+                    <h3 class="fw-extrabold text-dark mb-2">Sepetiniz şu an boş</h3>
+                    <p class="text-muted fw-medium mb-4">Binlerce kurs arasından size uygun olanı hemen bulun ve öğrenmeye başlayın!</p>
+                    <a href="{% url 'courses' %}" class="btn btn-primary btn-lg px-5 py-3 fw-bold shadow-sm rounded-pill transition-all hover-translate d-inline-flex align-items-center" style="background: linear-gradient(135deg, #0d6efd, #00c6ff); border:none;">
+                        <i class="fa-solid fa-compass me-2"></i>Kursları Keşfet
                     </a>
                 </div>
             {% endif %}
         </div>
 
         <div class="col-lg-4">
-            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
-                <div class="card-body p-4">
-                    <h4 class="fw-bold border-bottom pb-3 mb-4">Sipariş Özeti</h4>
+            <div class="modern-card border-0 shadow-lg sticky-top rounded-4 overflow-hidden bg-white" style="top: 20px; z-index: 10;">
+                <div class="bg-primary bg-opacity-10 p-4 border-bottom border-primary border-opacity-10">
+                    <h5 class="fw-extrabold text-primary mb-0"><i class="fa-solid fa-receipt me-2"></i>Sipariş Özeti</h5>
+                </div>
 
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Ara Toplam:</span>
-                        <span class="fw-bold fs-5">₺{{ total_price }}</span>
+                <div class="card-body p-4 p-xl-5">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted fw-medium">Ara Toplam:</span>
+                        <span class="fw-bold fs-5 text-dark">₺{{ total_price|floatformat:2 }}</span>
                     </div>
 
                     {% if discount_amount > 0 %}
-                    <div class="d-flex justify-content-between mb-3 text-success">
-                        <span>İndirim (%{{ cart.coupon.discount_percent }}):</span>
-                        <span class="fw-bold fs-5">- ₺{{ discount_amount }}</span>
+                    <div class="d-flex justify-content-between align-items-center mb-3 text-success bg-success bg-opacity-10 p-2 rounded-3">
+                        <span class="fw-bold small"><i class="fa-solid fa-tags me-1"></i> İndirim (%{{ cart.coupon.discount_percent }}):</span>
+                        <span class="fw-bold fs-5">- ₺{{ discount_amount|floatformat:2 }}</span>
                     </div>
                     {% endif %}
 
-                    <div class="mt-4 mb-4 bg-light p-3 rounded">
-                        <label class="form-label fw-bold small text-muted"><i class="fa-solid fa-ticket me-2"></i>İndirim Kuponu</label>
+                    <div class="mt-4 mb-4 bg-light p-4 rounded-4 shadow-sm-inset">
+                        <label class="form-label fw-bold small text-uppercase text-muted mb-2"><i class="fa-solid fa-ticket me-2 text-warning"></i>İndirim Kuponu</label>
                         <form method="POST" action="">
                             {% csrf_token %}
-                            <div class="input-group shadow-sm">
-                                <input type="text" name="coupon_code" class="form-control border-primary" placeholder="Kodu girin...">
-                                <button class="btn btn-primary fw-bold" type="submit">Uygula</button>
+                            <div class="input-group">
+                                <input type="text" name="coupon_code" class="form-control rounded-start-pill border-light bg-white ps-4 shadow-sm" placeholder="Kodu girin...">
+                                <button class="btn btn-dark rounded-end-pill px-4 fw-bold shadow-sm" type="submit">Uygula</button>
                             </div>
                         </form>
                     </div>
 
-                    <div class="d-flex justify-content-between border-top border-2 pt-3 mb-4">
-                        <span class="fw-bold fs-5">Ödenecek Tutar:</span>
-                        <span class="fw-bold fs-3 text-primary">₺{{ final_price }}</span>
+                    <div class="d-flex justify-content-between align-items-end border-top border-light pt-4 mb-4">
+                        <span class="fw-bold text-dark mb-1">Ödenecek Tutar:</span>
+                        <span class="fw-extrabold display-6 text-primary" style="letter-spacing: -1px;">₺{{ final_price|floatformat:2 }}</span>
                     </div>
 
-                    <a href="{% url 'checkout' %}" class="btn btn-success btn-lg w-100 fw-bold shadow-sm rounded-pill py-3 {% if not items %}disabled{% endif %}">
-                        <i class="fa-solid fa-shield-halved me-2"></i> Güvenli Ödeme Yap
+                    <a href="{% url 'checkout' %}" class="btn btn-success btn-lg w-100 fw-bold shadow-sm rounded-pill py-3 transition-all hover-translate d-flex justify-content-center align-items-center {% if not items %}disabled{% endif %}" style="background: linear-gradient(135deg, #198754, #12ca8e); border:none;">
+                        <i class="fa-solid fa-shield-halved fs-5 me-2"></i> Güvenli Ödeme Yap
                     </a>
 
-                    <p class="text-center text-muted small mt-3 mb-0">
-                        <i class="fa-solid fa-lock me-1"></i> 256-bit SSL ile şifrelenmiştir.
+                    <p class="text-center text-muted x-small mt-4 mb-0 fw-medium">
+                        <i class="fa-solid fa-lock text-success me-1"></i> Tüm işlemleriniz 256-bit SSL ile şifrelenmektedir.
                     </p>
                 </div>
             </div>

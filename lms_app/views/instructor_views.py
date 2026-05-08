@@ -206,15 +206,23 @@ def view_assignment_submissions_view(request, assignment_id):
         'grade_form': GradeSubmissionForm()
     })
 
+
 @login_required
 def grade_submission_view(request, submission_id):
     if request.user.role != 'instructor': return redirect('home')
+
     submission = get_object_or_404(AssignmentSubmission, id=submission_id, assignment__course__instructor=request.user)
+
     if request.method == 'POST':
         form = GradeSubmissionForm(request.POST, instance=submission)
         if form.is_valid():
             form.save()
             messages.success(request, f"{submission.student.username} adlı öğrencinin ödevi notlandırıldı!")
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Hata ({field}): {error}")
+
     return redirect('view_assignment_submissions', assignment_id=submission.assignment.id)
 
 @login_required

@@ -2,33 +2,66 @@
 {% block title %}Duyuru Yap - {{ course.title }}{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container py-5 mb-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-secondary text-white py-3">
-                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-bullhorn me-2"></i>Yeni Duyuru Yayınla</h5>
-                </div>
-                <div class="card-body p-4">
-                    <div class="alert alert-info border-0 shadow-sm mb-4">
-                        <i class="fa-solid fa-circle-info me-2"></i><strong>{{ course.title }}</strong> kursuna kayıtlı olan tüm öğrenciler bu duyuruyu görebilecektir.
+        <div class="col-lg-8 col-md-10">
+            <div class="mb-4">
+                <a href="{% url 'manage_curriculum' course.id %}" class="text-decoration-none text-muted fw-bold transition-all hover-primary d-inline-flex align-items-center small text-uppercase" style="letter-spacing: 0.5px;">
+                    <i class="fa-solid fa-arrow-left-long me-2"></i>Müfredata Dön
+                </a>
+            </div>
+
+            <div class="modern-card border-0 overflow-hidden shadow-lg rounded-4 bg-white">
+                <div class="bg-white p-4 p-md-5 pb-4 text-center border-bottom border-light">
+                    <div class="icon-shape shadow-sm mx-auto mb-4 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border-radius: 50%; width: 80px; height: 80px; flex-shrink: 0;">
+                        <i class="fa-solid fa-bullhorn fa-2x"></i>
                     </div>
-                    
+                    <h2 class="fw-extrabold text-dark mb-2" style="letter-spacing: -1px;">Yeni Duyuru Yayınla</h2>
+                    <p class="text-muted fw-medium px-4 mb-0">Öğrencilerinize önemli güncellemeleri ve haberleri buradan duyurun.</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <div class="bg-info bg-opacity-10 border-start border-4 border-info rounded-4 p-4 mb-5 shadow-sm d-flex align-items-center">
+                        <i class="fa-solid fa-circle-info fa-2x text-info me-3"></i>
+                        <p class="mb-0 fw-medium text-dark small">
+                            <strong>{{ course.title }}</strong> kursuna kayıtlı olan tüm öğrenciler bu duyuruyu görebilecektir.
+                        </p>
+                    </div>
+
                     <form method="POST">
                         {% csrf_token %}
-                        <!-- Form alanlarını buraya basıyoruz -->
-                        {{ form.as_p }}
-                        
-                        <div class="d-flex justify-content-end mt-4">
-                            <a href="{% url 'manage_curriculum' course.id %}" class="btn btn-light fw-bold me-2 shadow-sm">İptal</a>
-                            <button type="submit" class="btn btn-secondary fw-bold shadow-sm">
-                                <i class="fa-solid fa-paper-plane me-1"></i> Yayınla
+                        <div class="form-container mb-5">
+                            {{ form.as_p }}
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 border-top border-light pt-4">
+                            <a href="{% url 'manage_curriculum' course.id %}" class="btn btn-light fw-bold rounded-pill px-4 py-3 shadow-sm transition-all hover-translate text-muted border border-light">
+                                İptal Et
+                            </a>
+                            <button type="submit" class="btn btn-warning fw-extrabold shadow-lg rounded-pill px-5 py-3 transition-all hover-translate d-flex align-items-center text-dark" style="background: linear-gradient(135deg, #fbbf24, #f59e0b); border:none; color: white !important;">
+                                <i class="fa-solid fa-paper-plane me-2"></i> Duyuruyu Yayınla
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const inputs = document.querySelectorAll('.form-container input, .form-container textarea');
+        inputs.forEach(input => {
+            input.classList.add('form-control');
+            if (input.tagName === 'TEXTAREA') {
+                input.rows = 5;
+                input.placeholder = "Duyuru detaylarını buraya yazın...";
+            } else if (input.type === 'text') {
+                input.placeholder = "Örn: Hafta Sonu Canlı Yayını Hakkında";
+            }
+        });
+    });
+</script>
 {% endblock %}

@@ -44,7 +44,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="text-muted small text-uppercase fw-bold">Değerlendirme</h6>
-                        <h3 class="fw-bold mb-0">{{ avg_rating|default:"4.8" }}</h3>
+                        <h3 class="fw-bold mb-0">{{ avg_rating|default:"4.8"|floatformat:1 }}</h3>
                     </div>
                     <div class="icon-shape bg-warning bg-opacity-10 text-warning">
                         <i class="fa-solid fa-star fa-xl"></i>
@@ -57,7 +57,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="text-muted small text-uppercase fw-bold">Kazanç</h6>
-                        <h3 class="fw-bold mb-0">₺{{ net_income|default:"0" }}</h3>
+                        <h3 class="fw-bold mb-0">₺{{ net_income|default:"0"|floatformat:2 }}</h3>
                     </div>
                     <div class="icon-shape bg-info bg-opacity-10 text-info">
                         <i class="fa-solid fa-wallet fa-xl"></i>
@@ -96,7 +96,7 @@
                         <span class="badge {% if course.status == 'published' %}bg-success{% else %}bg-warning{% endif %} rounded-pill mb-2">
                             {{ course.get_status_display }}
                         </span>
-                        <h5 class="fw-bold text-primary mb-0">₺{{ course.price }}</h5>
+                        <h5 class="fw-bold text-primary mb-0">₺{{ course.price|floatformat:2 }}</h5>
                     </div>
                     <h5 class="fw-bold mb-3 text-truncate">{{ course.title }}</h5>
 

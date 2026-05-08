@@ -291,3 +291,105 @@ img.profile-avatar:not([src]) {
     font-family: "Font Awesome 6 Free";
     margin-right: 5px;
 }
+
+/* =========================================
+   7. KURS DETAY VE İNTERAKTİF ELEMANLAR
+   ========================================= */
+
+/* Akıllı Akordeon (Accordion) Modernizasyonu */
+.custom-accordion .accordion-button:not(.collapsed) {
+    background-color: transparent;
+    color: #0d6efd;
+    box-shadow: none;
+}
+
+.custom-accordion .accordion-button:focus {
+    border-color: transparent;
+    box-shadow: none;
+}
+
+/* Hover Efektleri ve Yumuşak Geçişler */
+.hover-translate:hover {
+    transform: translateY(-2px);
+    background-color: #f8fafc !important;
+}
+
+.hover-primary:hover {
+    color: #0d6efd !important;
+}
+
+.transition-all {
+    transition: all 0.2s ease;
+}
+
+.custom-stars {
+    direction: rtl;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.custom-stars input[type="radio"] {
+    display: none;
+}
+
+.custom-stars label {
+    cursor: pointer;
+    color: #e2e8f0;
+    transition: color 0.2s ease;
+}
+
+/* Hover efekti */
+.custom-stars label:hover,
+.custom-stars label:hover ~ label {
+    color: #ffc107;
+}
+
+/* Seçili yıldızlar */
+.custom-stars input[type="radio"]:checked ~ label {
+    color: #ffc107;
+}
+
+/* =========================================
+   8. ANA SAYFA VE YARDIMCI SINIFLAR
+   ========================================= */
+
+/* Metin Gradyan Efekti */
+.text-gradient {
+    background: -webkit-linear-gradient(135deg, #0d6efd, #00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+/* Uzun metinleri 2 satırla sınırlandırır ve sonuna "..." koyar */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Font ağırlığı asistanı */
+.fw-extrabold {
+    font-weight: 800 !important;
+}
+
+/* Modal açıkken arka plandaki hover efektlerini devre dışı bırak */
+body.modal-open .modern-card,
+body.modal-open .hover-translate,
+body.modal-open tr {
+    transform: none !important;
+    transition: none !important;
+}
+
+/* Tablo satırlarında transform (kayma) efektini stabilize et */
+tr.transition-all {
+    transition: background-color 0.2s ease-in-out !important; /* Sadece renk değişsin, satır zıplamasın */
+    transform: none !important;
+}
+
+tr.transition-all:hover {
+    background-color: rgba(13, 110, 253, 0.02); /* Çok hafif bir mavi tonu */
+}
