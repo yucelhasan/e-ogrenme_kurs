@@ -1,36 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
-    
-    // ==========================================
-    // 1. DJANGO UYARI MESAJLARINI OTOMATİK GİZLEME
-    // ==========================================
+
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
-        // 4 saniye bekle
         setTimeout(() => {
-            // Yumuşak geçiş için CSS ayarları
             alert.style.transition = "opacity 0.5s ease, transform 0.5s ease";
             alert.style.opacity = "0";
             alert.style.transform = "translateY(-10px)";
             
-            // Animasyon bitince elementi sayfadan tamamen sil (0.5 saniye sonra)
             setTimeout(() => {
                 alert.remove();
             }, 500);
         }, 4000);
     });
 
-
-    // ==========================================
-    // 2. DERS İZLEME EKRANI - YAN MENÜ (MÜFREDAT) AÇ/KAPAT
-    // ==========================================
     const sidebarBtn = document.getElementById('toggle-sidebar-btn');
     const sidebar = document.getElementById('curriculum-sidebar');
     
     if (sidebarBtn && sidebar) {
         sidebarBtn.addEventListener('click', () => {
             sidebar.classList.toggle('active');
-            
-            // Menü durumuna göre buton içeriğini değiştir
+
             if (sidebar.classList.contains('active')) {
                 sidebarBtn.innerHTML = '<i class="fas fa-times"></i> Menüyü Kapat';
             } else {
@@ -39,11 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-    // ==========================================
-    // 3. ŞİFRE GÜVENLİĞİ KONTROLÜ (KAYIT EKRANI)
-    // ==========================================
-    // Not: Django varsayılan olarak şifre alanlarına 'id_password' veya 'id_password1' IDsini verir.
     const passwordInput = document.getElementById('id_password') || document.getElementById('id_password1');
     const passwordFeedback = document.getElementById('password-feedback'); 
     
@@ -63,11 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-    // ==========================================
-    // 4. SİLME İŞLEMLERİ İÇİN ONAY PENCERESİ
-    // ==========================================
-    // HTML'de class="confirm-delete" olan tüm butonlara/linklere uygulanır
     const deleteButtons = document.querySelectorAll('.confirm-delete');
     
     deleteButtons.forEach(btn => {
@@ -81,11 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-
-    // ==========================================
-    // 5. YUMUŞAK KAYDIRMA (SMOOTH SCROLL)
-    // ==========================================
-    // Sayfa içi linklere (örn: href="#reviews") tıklandığında aniden atlamak yerine yumuşakça kayar
     const scrollLinks = document.querySelectorAll('a[href^="#"]');
     
     scrollLinks.forEach(link => {
@@ -106,25 +80,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-
-    // ==========================================
-    // 6. OTOMATİK ÇIKIŞ (INACTIVITY TIMER)
-    // ==========================================
-    // APP_CONFIG objesi base.html'den geliyorsa ve kullanıcı giriş yapmışsa çalışır
     if (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.isAuthenticated) {
         
-        const timeoutDuration = 1800 * 1000; // 30 dakika (milisaniye cinsinden)
+        const timeoutDuration = 1800 * 1000;
         let inactivityTimer;
 
         function resetTimer() {
             clearTimeout(inactivityTimer);
             inactivityTimer = setTimeout(() => {
-                // Süre dolduğunda HTML'den aldığımız güvenli URL'e yönlendir
-                window.location.href = APP_CONFIG.logoutUrl; 
+                window.location.href = APP_CONFIG.logoutUrl;
             }, timeoutDuration);
         }
 
-        // Kullanıcının hareketlerini dinle
         window.onload = resetTimer;
         document.onmousemove = resetTimer;
         document.onkeypress = resetTimer;

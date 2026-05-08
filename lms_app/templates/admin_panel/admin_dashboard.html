@@ -2,48 +2,72 @@
 {% block title %}Sistem Yönetimi - LMS{% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
-    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
-        <h2 class="fw-bold mb-0 text-primary"><i class="fa-solid fa-crown me-2"></i>Sistem Yönetim ve Onay Merkezi</h2>
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
         <div>
-            <a href="{% url 'admin_system_logs' %}" class="btn btn-dark shadow-sm me-2"><i class="fa-solid fa-clock-rotate-left me-2"></i>Sistem Logları</a>
-            <a href="/admin/" target="_blank" class="btn btn-outline-dark shadow-sm"><i class="fa-solid fa-database me-2"></i>Gelişmiş Veritabanı Paneli</a>
+            <h2 class="fw-bold mb-1 text-dark">
+                <i class="fa-solid fa-crown text-primary me-2"></i>Sistem Yönetim Merkezi
+            </h2>
+            <p class="text-muted mb-0">Platformdaki onay bekleyen işlemleri ve sistem kayıtlarını yönetin.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'admin_system_logs' %}" class="btn btn-dark shadow-sm rounded-3 fw-medium">
+                <i class="fa-solid fa-clock-rotate-left me-2"></i>Sistem Logları
+            </a>
+            <a href="/admin/" target="_blank" class="btn btn-outline-dark shadow-sm rounded-3 fw-medium">
+                <i class="fa-solid fa-database me-2"></i>Veritabanı Paneli
+            </a>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-warning text-dark py-3 fw-bold">
-                    <i class="fa-solid fa-chalkboard-user me-2"></i>Bekleyen Eğitmen Başvuruları ({{ pending_applications|length }})
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="modern-card p-0 overflow-hidden border-0 h-100">
+                <div class="bg-warning bg-opacity-10 p-4 border-bottom border-warning border-opacity-25 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-dark mb-0 fs-6 text-uppercase" style="letter-spacing: 0.5px;">
+                        <i class="fa-solid fa-chalkboard-user text-warning me-2 fa-lg"></i>Eğitmen Başvuruları
+                    </h5>
+                    <span class="badge bg-warning text-dark rounded-pill px-3 shadow-sm">{{ pending_applications|length }}</span>
                 </div>
+
                 <div class="card-body p-0">
                     <div class="list-group list-group-flush">
                         {% for app in pending_applications %}
-                        <div class="list-group-item p-3">
-                            <h6 class="fw-bold text-primary">{{ app.user.first_name }} {{ app.user.last_name }} ({{ app.user.username }})</h6>
-                            <p class="small text-muted mb-2"><strong>Uzmanlık:</strong> {{ app.expertise }}</p>
-                            <p class="small mb-3"><i class="fa-regular fa-clock me-1"></i>{{ app.applied_at|date:"d M Y H:i" }}</p>
+                        <div class="list-group-item p-4 border-bottom border-light">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h6 class="fw-bold text-primary mb-1">{{ app.user.first_name }} {{ app.user.last_name }}</h6>
+                                    <span class="text-muted small">@{{ app.user.username }}</span>
+                                </div>
+                                <span class="text-muted x-small bg-light p-1 px-2 rounded">
+                                    <i class="fa-regular fa-clock me-1"></i>{{ app.applied_at|date:"d M H:i" }}
+                                </span>
+                            </div>
+                            <p class="small text-muted mb-3 p-2 bg-light rounded-3">
+                                <strong>Uzmanlık:</strong> {{ app.expertise }}
+                            </p>
                             <div class="d-flex gap-2">
-                                <form action="{% url 'approve_application' app.id 'approve' %}" method="POST" class="w-50">
+                                <form action="{% url 'approve_application' app.id 'approve' %}" method="POST" class="flex-grow-1">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-success w-100 fw-bold">
+                                    <button type="submit" class="btn btn-sm btn-success w-100 fw-bold rounded-2">
                                         <i class="fa-solid fa-check me-1"></i>Onayla
                                     </button>
                                 </form>
-
-                                <form action="{% url 'approve_application' app.id 'reject' %}" method="POST" class="w-50">
+                                <form action="{% url 'approve_application' app.id 'reject' %}" method="POST" class="flex-grow-1">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-bold">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-bold rounded-2">
                                         <i class="fa-solid fa-times me-1"></i>Reddet
                                     </button>
                                 </form>
                             </div>
                         </div>
                         {% empty %}
-                        <div class="p-4 text-center text-muted">
-                            <i class="fa-solid fa-check-double fa-2x mb-2 text-success"></i>
-                            <p class="mb-0">Bekleyen eğitmen başvurusu bulunmuyor.</p>
+                        <div class="p-5 text-center text-muted">
+                            <div class="bg-success bg-opacity-10 d-inline-flex p-3 rounded-circle mb-3">
+                                <i class="fa-solid fa-check-double text-success fa-2x"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark">Her Şey Güncel</h6>
+                            <p class="mb-0 small">Bekleyen eğitmen başvurusu bulunmuyor.</p>
                         </div>
                         {% endfor %}
                     </div>
@@ -51,67 +75,77 @@
             </div>
         </div>
 
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-info text-white py-3 fw-bold">
-                    <i class="fa-solid fa-video me-2"></i>Yayına Çıkmayı Bekleyen Kurslar ({{ pending_courses|length }})
+        <div class="col-lg-6">
+            <div class="modern-card p-0 overflow-hidden border-0 h-100">
+                <div class="bg-info bg-opacity-10 p-4 border-bottom border-info border-opacity-25 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-dark mb-0 fs-6 text-uppercase" style="letter-spacing: 0.5px;">
+                        <i class="fa-solid fa-video text-info me-2 fa-lg"></i>Kurs Onayları
+                    </h5>
+                    <span class="badge bg-info text-white rounded-pill px-3 shadow-sm">{{ pending_courses|length }}</span>
                 </div>
+
                 <div class="card-body p-0">
                     <div class="list-group list-group-flush">
                         {% for course in pending_courses %}
-                        <div class="list-group-item p-3">
-                            <h6 class="fw-bold">{{ course.title }}</h6>
-                            <p class="small text-muted mb-2">
-                                <strong>Eğitmen:</strong> {{ course.instructor.username }} | <strong>Fiyat:</strong> ₺{{ course.price }}
-                            </p>
+                        <div class="list-group-item p-4 border-bottom border-light">
+                            <h6 class="fw-bold text-dark mb-1">{{ course.title }}</h6>
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <span class="badge bg-light text-dark fw-normal border">@{{ course.instructor.username }}</span>
+                                <span class="badge bg-success bg-opacity-10 text-success fw-bold">₺{{ course.price }}</span>
+                            </div>
                             <div class="d-flex gap-2">
-                                <form action="{% url 'approve_course' course.id 'approve' %}" method="POST" class="w-50">
+                                <form action="{% url 'approve_course' course.id 'approve' %}" method="POST" class="flex-grow-1">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-success w-100 fw-bold">
+                                    <button type="submit" class="btn btn-sm btn-success w-100 fw-bold rounded-2">
                                         <i class="fa-solid fa-thumbs-up me-1"></i>Yayına Al
                                     </button>
                                 </form>
-
-                                <form action="{% url 'approve_course' course.id 'reject' %}" method="POST" class="w-50">
+                                <form action="{% url 'approve_course' course.id 'reject' %}" method="POST" class="flex-grow-1">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-bold">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-bold rounded-2">
                                         <i class="fa-solid fa-thumbs-down me-1"></i>Reddet
                                     </button>
                                 </form>
                             </div>
                         </div>
                         {% empty %}
-                        <div class="p-4 text-center text-muted">
-                            <i class="fa-solid fa-check-double fa-2x mb-2 text-success"></i>
-                            <p class="mb-0">Onay bekleyen yeni kurs bulunmuyor.</p>
+                        <div class="p-5 text-center text-muted">
+                            <div class="bg-success bg-opacity-10 d-inline-flex p-3 rounded-circle mb-3">
+                                <i class="fa-solid fa-check-double text-success fa-2x"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark">Temiz Liste</h6>
+                            <p class="mb-0 small">Onay bekleyen yeni kurs bulunmuyor.</p>
                         </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="row mt-2">
         <div class="col-12">
-            <div class="card shadow border-0 bg-dark text-white">
-                <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-center p-4">
-                    <div class="d-flex align-items-center mb-3 mb-md-0">
-                        <div class="bg-white text-dark rounded-circle d-flex justify-content-center align-items-center me-4 shadow-sm" style="width: 60px; height: 60px;">
-                            <i class="fa-solid fa-shield-halved fa-2x"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold mb-1">Sistem Kayıtları (Loglar)</h5>
-                            <p class="mb-0 text-light opacity-75 small">Kullanıcı girişleri, kayıtlar ve sistemdeki tüm kritik işlemleri detaylıca inceleyin.</p>
+            <div class="modern-card bg-dark text-white p-4 border-0 shadow position-relative overflow-hidden">
+                <div class="position-absolute top-50 end-0 translate-middle-y opacity-10 pe-4 d-none d-md-block" style="transform: scale(2.5);">
+                    <i class="fa-solid fa-shield-halved fa-10x"></i>
+                </div>
+
+                <div class="row align-items-center position-relative z-1">
+                    <div class="col-md-auto mb-3 mb-md-0">
+                        <div class="bg-white bg-opacity-10 p-3 rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 70px; height: 70px;">
+                            <i class="fa-solid fa-shield-halved fa-2x text-white"></i>
                         </div>
                     </div>
-                    <a href="{% url 'admin_system_logs' %}" class="btn btn-info px-4 py-2 fw-bold rounded-pill shadow-sm text-nowrap">
-                        Logları Görüntüle <i class="fa-solid fa-arrow-right ms-2"></i>
-                    </a>
+                    <div class="col">
+                        <h4 class="fw-bold mb-1">Sistem Kayıtları (Loglar)</h4>
+                        <p class="mb-0 text-white-50" style="font-size: 0.95rem;">Kullanıcı girişleri, kayıtlar ve sistemdeki tüm kritik işlemleri detaylıca inceleyin.</p>
+                    </div>
+                    <div class="col-md-auto mt-3 mt-md-0">
+                        <a href="{% url 'admin_system_logs' %}" class="btn btn-info px-4 py-2 fw-bold rounded-pill text-dark shadow-sm">
+                            Logları Görüntüle <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 {% endblock %}

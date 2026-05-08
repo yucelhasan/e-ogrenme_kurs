@@ -3,153 +3,155 @@
 
 {% block content %}
 <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-4">
         <div>
-            <h3 class="fw-bold text-primary mb-1"><i class="fa-solid fa-list-check me-2"></i>Müfredat Yönetimi</h3>
-            <p class="text-muted mb-0"><strong>{{ course.title }}</strong> kursuna içerik ekliyorsunuz.</p>
+            <div class="d-flex align-items-center mb-1">
+                <div class="d-flex align-items-center justify-content-center shadow-sm me-3"
+                     style="background: linear-gradient(135deg, #0d6efd, #0a58ca); color: white; border-radius: 50%; width: 55px; height: 55px; min-width: 55px; flex-shrink: 0;">
+                    <i class="fa-solid fa-layer-group fa-lg"></i>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0 text-dark" style="letter-spacing: -0.5px;">Müfredat Yönetimi</h2>
+                    <p class="text-muted mb-0 small">
+                        <span class="text-primary fw-bold">{{ course.title }}</span> kursu içeriklerini buradan düzenleyin.
+                    </p>
+                </div>
+            </div>
         </div>
-        <div>
-            <button class="btn btn-outline-primary fw-bold me-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#addModuleModal">
-                <i class="fa-solid fa-folder-plus me-1"></i> Bölüm
+
+        <div class="d-flex gap-2 align-items-center">
+            <button class="btn btn-white border shadow-sm fw-bold px-3 py-2 rounded-3 text-primary transition-all" data-bs-toggle="modal" data-bs-target="#addModuleModal">
+                <i class="fa-solid fa-folder-plus me-2"></i>Bölüm
             </button>
-            <button class="btn btn-outline-warning fw-bold me-2 text-dark shadow-sm" data-bs-toggle="modal" data-bs-target="#addQuizModal">
-                <i class="fa-solid fa-clipboard-question me-1"></i> Quiz
+            <button class="btn btn-white border shadow-sm fw-bold px-3 py-2 rounded-3 text-warning transition-all" data-bs-toggle="modal" data-bs-target="#addQuizModal">
+                <i class="fa-solid fa-clipboard-question me-2"></i>Quiz
             </button>
-            <button class="btn btn-outline-info fw-bold me-2 text-dark shadow-sm" data-bs-toggle="modal" data-bs-target="#addAssignmentModal">
-                <i class="fa-solid fa-file-arrow-up me-1"></i> Ödev
+            <button class="btn btn-white border shadow-sm fw-bold px-3 py-2 rounded-3 text-info transition-all" data-bs-toggle="modal" data-bs-target="#addAssignmentModal">
+                <i class="fa-solid fa-file-arrow-up me-2"></i>Ödev
             </button>
-            <a href="{% url 'submit_course' course.id %}" class="btn btn-success fw-bold shadow-sm">
-                <i class="fa-solid fa-paper-plane me-1"></i> Onaya Gönder
+            <a href="{% url 'submit_course' course.id %}" class="btn btn-primary shadow-lg fw-bold px-4 py-2 rounded-3 border-0 ms-2 transition-all" style="background: linear-gradient(135deg, #198754, #146c43);">
+                <i class="fa-solid fa-paper-plane me-2"></i>Onaya Gönder
             </a>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row g-4">
         <div class="col-lg-8">
             {% for module in course.modules.all %}
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
-
-                        <h5 class="mb-0 fw-bold d-flex align-items-center">
-                            Bölüm {{ module.order }}: {{ module.title }}
-                            <a href="{% url 'delete_module' module.id %}" class="btn btn-sm btn-outline-danger border-0 ms-3" title="Bu bölümü sil" onclick="return confirm('DİKKAT: Bu bölümü silerseniz içindeki TÜM DERSLER de kalıcı olarak silinir! Emin misiniz?')">
-                                <i class="fa-solid fa-trash-can"></i>
+                <div class="modern-card border-0 shadow-sm mb-4 overflow-hidden">
+                    <div class="p-4 bg-light bg-opacity-50 border-bottom d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-dark rounded-pill me-3 px-3">{{ module.order }}</span>
+                            <h5 class="mb-0 fw-bold text-dark">{{ module.title }}</h5>
+                            <a href="{% url 'delete_module' module.id %}" class="btn btn-link text-danger p-0 ms-3 transition-all" title="Bölümü Sil" onclick="return confirm('Bölüm silinecek. Emin misiniz?')">
+                                <i class="fa-solid fa-trash-can small"></i>
                             </a>
-                        </h5>
-
-                        <button class="btn btn-sm btn-light fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addLessonModal{{ module.id }}">
-                            <i class="fa-solid fa-file-video me-1 text-danger"></i> Yeni Ders Ekle
+                        </div>
+                        <button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addLessonModal{{ module.id }}">
+                            <i class="fa-solid fa-plus me-1"></i> Yeni Ders
                         </button>
                     </div>
 
-                    <ul class="list-group list-group-flush">
+                    <div class="list-group list-group-flush">
                         {% for lesson in module.lessons.all %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                <div>
-                                    <i class="fa-solid fa-circle-play text-primary me-2"></i>
-                                    <strong>{{ lesson.title }}</strong>
-                                    {% if lesson.duration %}<small class="text-muted ms-2"><i class="fa-regular fa-clock me-1"></i>{{ lesson.duration }}</small>{% endif %}
-                                </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center p-3 px-4 border-light border-0 border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <span class="badge bg-success rounded-pill me-3 shadow-sm">Yayına Hazır</span>
-                                    <a href="{% url 'delete_lesson' lesson.id %}" class="btn btn-sm btn-outline-danger border-0" title="Dersi Sil" onclick="return confirm('Bu dersi kalıcı olarak silmek istediğinize emin misiniz?')">
-                                        <i class="fa-solid fa-xmark fs-5"></i>
+                                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px;">
+                                        <i class="fa-solid fa-play fa-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold small text-dark">{{ lesson.title }}</h6>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill fw-bold" style="font-size: 0.65rem;">YAYINDA</span>
+                                    <a href="{% url 'delete_lesson' lesson.id %}" class="text-muted hover-danger transition-all">
+                                        <i class="fa-solid fa-xmark"></i>
                                     </a>
                                 </div>
-                            </li>
+                            </div>
                         {% empty %}
-                            <li class="list-group-item text-center text-muted py-4 fst-italic bg-light border-0">
-                                <i class="fa-solid fa-arrow-up text-secondary me-2"></i>Bu bölüme henüz ders eklenmedi. Sağ üstten ders ekleyebilirsiniz.
-                            </li>
+                            <div class="p-5 text-center bg-white">
+                                <i class="fa-solid fa-arrow-up-from-bracket fa-2x text-muted opacity-25 mb-3"></i>
+                                <p class="text-muted small mb-0 fw-medium">Henüz ders eklenmedi.</p>
+                            </div>
                         {% endfor %}
-                    </ul>
+                    </div>
                 </div>
 
                 <div class="modal fade" id="addLessonModal{{ module.id }}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content border-0 shadow">
-                            <div class="modal-header bg-danger text-white">
-                                <h5 class="modal-title fw-bold"><i class="fa-solid fa-file-video me-2"></i>"{{ module.title }}" İçin Ders Ekle</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg rounded-4">
+                            <div class="modal-header border-0 p-4 pb-0">
+                                <h5 class="fw-bold text-dark mb-0">Yeni Ders Ekle</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <form action="{% url 'add_lesson' module.id %}" method="POST">
                                 {% csrf_token %}
                                 <div class="modal-body p-4">
                                     {{ lesson_form.as_p }}
                                 </div>
-                                <div class="modal-footer bg-light">
-                                    <button type="submit" class="btn btn-danger fw-bold shadow-sm"><i class="fa-solid fa-save me-1"></i>Dersi Kaydet</button>
+                                <div class="modal-footer border-0 p-4 pt-0">
+                                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-3">Dersi Kaydet</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
-
             {% empty %}
-                <div class="text-center py-5 border rounded bg-white shadow-sm border-dashed">
-                    <i class="fa-solid fa-box-open fa-4x text-muted mb-3 opacity-25"></i>
-                    <h4 class="fw-bold text-secondary">Müfredatınız tamamen boş!</h4>
-                    <p class="text-muted">Kursa ders ekleyebilmek için öncelikle yukarıdan yeni bir "Bölüm" oluşturmalısınız.</p>
+                <div class="modern-card border-0 shadow-sm overflow-hidden mb-4">
+                    <div class="card-body p-5 text-center bg-white">
+                        <div class="mb-4">
+                            <i class="fa-solid fa-box-open fa-3x text-muted opacity-25"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-2">Müfredatınız tamamen boş!</h4>
+                        <p class="text-muted mb-4">Yeni bir bölüm oluşturarak başlayın.</p>
+                        <button class="btn btn-outline-primary fw-bold px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#addModuleModal">
+                            İlk Bölümü Şimdi Oluştur
+                        </button>
+                    </div>
                 </div>
             {% endfor %}
         </div>
 
         <div class="col-lg-4">
-            <div class="card shadow-sm border-0 mb-4 border-warning border-start border-4">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-clipboard-question text-warning me-2"></i>Kursa Ait Quizler</h5>
-                </div>
-                <ul class="list-group list-group-flush">
+            <div class="modern-card border-0 shadow-sm mb-4 border-start border-warning border-4">
+                <div class="p-4 bg-white h-100">
+                    <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-clipboard-question text-warning me-2"></i>Quizler</h6>
                     {% for quiz in course.quizzes.all %}
-                        <li class="list-group-item p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <strong>{{ quiz.title }}</strong>
-                                <a href="{% url 'manage_quiz_questions' quiz.id %}" class="btn btn-sm btn-outline-warning fw-bold">Yönet</a>
-                            </div>
-                            <small class="text-muted d-block"><i class="fa-solid fa-check-double me-1"></i>Geçme Notu: {{ quiz.passing_score }}</small>
-                        </li>
+                        <div class="small fw-bold border-bottom py-2">{{ quiz.title }}</div>
                     {% empty %}
-                        <li class="list-group-item text-muted fst-italic py-3 text-center bg-light border-0">Henüz quiz eklenmemiş.</li>
+                        <div class="py-4 text-center text-muted small italic">Henüz quiz eklenmemiş.</div>
                     {% endfor %}
-                </ul>
+                </div>
             </div>
 
-            <div class="card shadow-sm border-0 mb-4 border-info border-start border-4">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-file-signature text-info me-2"></i>Kursa Ait Ödevler</h5>
-                </div>
-                <ul class="list-group list-group-flush">
+            <div class="modern-card border-0 shadow-sm border-start border-info border-4">
+                <div class="p-4 bg-white h-100">
+                    <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-file-signature text-info me-2"></i>Ödevler</h6>
                     {% for assignment in course.assignments.all %}
-                        <li class="list-group-item p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <strong>{{ assignment.title }}</strong>
-                                <a href="{% url 'view_assignment_submissions' assignment.id %}" class="btn btn-sm btn-outline-info fw-bold">Teslimler</a>
-                            </div>
-                            <small class="text-muted d-block"><i class="fa-regular fa-clock me-1"></i>Son Teslim: {{ assignment.due_date|date:"d M Y H:i" }}</small>
-                        </li>
+                        <div class="small fw-bold border-bottom py-2">{{ assignment.title }}</div>
                     {% empty %}
-                        <li class="list-group-item text-muted fst-italic py-3 text-center bg-light border-0">Henüz ödev eklenmemiş.</li>
+                        <div class="py-4 text-center text-muted small italic">Henüz ödev eklenmemiş.</div>
                     {% endfor %}
-                </ul>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="addModuleModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title fw-bold"><i class="fa-solid fa-folder-plus me-2"></i>Yeni Bölüm Ekle</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 p-4 pb-0">
+                <h5 class="fw-bold text-dark mb-0">Yeni Bölüm Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="{% url 'add_module' course.id %}" method="POST">
                 {% csrf_token %}
-                <div class="modal-body p-4">
-                    {{ module_form.as_p }}
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="submit" class="btn btn-primary fw-bold shadow-sm"><i class="fa-solid fa-save me-1"></i>Bölümü Kaydet</button>
+                <div class="modal-body p-4">{{ module_form.as_p }}</div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-3">Bölümü Kaydet</button>
                 </div>
             </form>
         </div>
@@ -157,19 +159,17 @@
 </div>
 
 <div class="modal fade" id="addQuizModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title fw-bold"><i class="fa-solid fa-clipboard-question me-2"></i>Yeni Quiz Ekle</h5>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 p-4 pb-0">
+                <h5 class="fw-bold text-dark mb-0">Yeni Quiz Ekle</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="{% url 'add_quiz' course.id %}" method="POST">
                 {% csrf_token %}
-                <div class="modal-body p-4">
-                    {{ quiz_form.as_p }}
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="submit" class="btn btn-warning fw-bold shadow-sm">Quizi Kaydet</button>
+                <div class="modal-body p-4">{{ quiz_form.as_p }}</div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="submit" class="btn btn-warning w-100 py-2 fw-bold rounded-3">Quiz Oluştur</button>
                 </div>
             </form>
         </div>
@@ -177,22 +177,26 @@
 </div>
 
 <div class="modal fade" id="addAssignmentModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-info text-dark">
-                <h5 class="modal-title fw-bold"><i class="fa-solid fa-file-arrow-up me-2"></i>Yeni Ödev Ekle</h5>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 p-4 pb-0">
+                <h5 class="fw-bold text-dark mb-0">Yeni Ödev Ekle</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="{% url 'add_assignment' course.id %}" method="POST">
                 {% csrf_token %}
-                <div class="modal-body p-4">
-                    {{ assignment_form.as_p }}
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="submit" class="btn btn-info fw-bold text-white shadow-sm">Ödevi Kaydet</button>
+                <div class="modal-body p-4">{{ assignment_form.as_p }}</div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="submit" class="btn btn-info w-100 py-2 fw-bold rounded-3 text-white">Ödevi Kaydet</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<style>
+    .btn-white:hover { background-color: #f8fafc !important; transform: translateY(-2px); }
+    .transition-all { transition: all 0.2s ease-in-out; }
+    .italic { font-style: italic; }
+</style>
 {% endblock %}
