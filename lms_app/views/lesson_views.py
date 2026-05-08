@@ -9,6 +9,8 @@ from lms_app.services.progress_services import mark_lesson_as_completed
 from lms_app.services.certificate_services import check_and_generate_certificate
 from lms_app.services.system_services import create_log
 from lms_app.services.interaction_services import create_question, create_answer
+from django.shortcuts import get_object_or_404
+from lms_app.models.interactions import Answer
 
 
 @login_required
@@ -62,3 +64,21 @@ def add_answer_view(request, question_id):
             messages.success(request, "Cevabınız eklendi.")
 
     return redirect('lesson_detail', course_slug=question.lesson.module.course.slug, lesson_id=question.lesson.id)
+
+@login_required
+def delete_answer_view(request, answer_id):
+    answer = get_object_or_404(Answer, id=answer_id)
+    course = answer.question.lesson.module.course
+    
+    # Yetki kontrolü: Yorumun sahibi, kurs eğitmeni veya admin silebilir
+    is_author = (request.user == answer.user)
+    is_instructor = (request.user == course.instructor)
+    is_admin = (request.user.role == 'admin')
+    
+    if is_author or is_instructor or is_admin:
+        answer.delete()
+        messages.success(request, "Yorum başarıyla silindi.")
+    else:
+        messages.error(request, "Bu yorumu silme yetkiniz bulunmuyor.")
+        
+    return redirect('lesson_detail', course_slug=course.slug, lesson_id=answer.question.lesson.id)
