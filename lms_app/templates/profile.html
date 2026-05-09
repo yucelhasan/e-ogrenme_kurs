@@ -72,14 +72,15 @@
             <div class="modern-card border-0 mb-4 overflow-hidden">
                 <div class="p-4 bg-white border-bottom d-flex justify-content-between align-items-center">
                     <h6 class="mb-0 fw-bold text-dark">
-                        <i class="fa-solid fa-user-group text-primary me-2"></i>Arkadaşlarım
+                        <i class="fa-solid fa-user-group text-primary me-2"></i>Takip Edilenler
                     </h6>
-                    <span class="badge bg-primary rounded-pill small" style="font-size: 0.6rem;">{{ friends|length }}</span>
+                    <span class="badge bg-primary rounded-pill small" style="font-size: 0.6rem;">{{ user.following.count }}</span>
                 </div>
                 <div class="p-4">
-                    {% if friends %}
+                    {% if user.following.all %}
                         <div class="d-flex flex-column gap-3">
-                            {% for friend in friends %}
+                            {% for connection in user.following.all %}
+                            {% with friend=connection.following %}
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center overflow-hidden">
                                     <div class="flex-shrink-0 me-2">
@@ -98,12 +99,13 @@
                                 </div>
                                 <a href="{% url 'public_profile' friend.username %}" class="btn btn-xs btn-outline-primary rounded-pill py-0 px-2 x-small fw-bold">Gör</a>
                             </div>
+                            {% endwith %}
                             {% endfor %}
                         </div>
                     {% else %}
                         <div class="text-center py-3">
-                            <p class="text-muted x-small italic mb-2">Henüz ekli bir arkadaşınız yok.</p>
-                            <a href="{% url 'search_users' %}" class="text-primary x-small fw-bold text-decoration-none">Yeni arkadaşlar bul <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.5rem;"></i></a>
+                            <p class="text-muted x-small italic mb-2">Henüz kimseyi takip etmiyorsunuz.</p>
+                            <a href="{% url 'search_users' %}" class="text-primary x-small fw-bold text-decoration-none">Yeni kişiler bul <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.5rem;"></i></a>
                         </div>
                     {% endif %}
                 </div>
@@ -235,17 +237,22 @@
                             <h6 class="fw-bold text-dark mb-4">
                                 <i class="fa-solid fa-medal text-info me-2"></i>Kazanılan Rozetler
                             </h6>
+
                             {% if my_badges %}
                                 <div class="d-flex flex-wrap gap-2">
                                     {% for badge in my_badges %}
-                                        <div class="badge-item p-2 rounded-circle shadow-sm bg-light d-flex align-items-center justify-content-center" title="{{ badge.name }}: {{ badge.description }}" style="width: 48px; height: 48px; border: 1px solid rgba(0,0,0,0.05);">
-                                            <i class="{{ badge.icon }} fa-lg text-{{ badge.bg|cut:'bg-' }}"></i>
+                                        <div class="badge-item p-2 rounded-circle shadow-sm {{ badge.bg }} d-flex align-items-center justify-content-center transition-all hover-translate" data-bs-toggle="tooltip" title="{{ badge.name }}: {{ badge.description }}" style="width: 55px; height: 55px; border: 2px solid rgba(255,255,255,0.5);">
+                                            <i class="{{ badge.icon }} fa-xl"></i>
                                         </div>
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                <p class="text-center text-muted x-small py-4 italic">Rozet kazanmak için derslere katılın!</p>
+                                <div class="text-center bg-light rounded-4 p-4 mt-3 border">
+                                    <i class="fa-solid fa-medal fa-3x text-muted opacity-25 mb-2"></i>
+                                    <p class="text-muted small fw-medium mb-0">Rozet kazanmak için kursları tamamlayın veya değerlendirme yapın!</p>
+                                </div>
                             {% endif %}
+
                         </div>
                     </div>
                 </div>
@@ -289,5 +296,16 @@
     .x-small { font-size: 0.65rem; }
     .transition-all { transition: all 0.2s ease; }
     .btn-xs { padding: 0.1rem 0.4rem; font-size: 0.6rem; }
+    /* Rozetlerin üzerindeki tooltip için cursor */
+    .badge-item { cursor: help; }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+</script>
 {% endblock %}
