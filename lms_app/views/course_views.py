@@ -8,6 +8,8 @@ from lms_app.selectors.interaction_selectors import get_course_reviews, check_us
 from lms_app.services.enrollment_services import enroll_user_to_course
 from lms_app.services.system_services import create_log
 from lms_app.services.interaction_services import process_add_review
+from django.shortcuts import get_object_or_404
+from lms_app.models.interactions import Review
 
 
 def home_view(request):
@@ -104,3 +106,18 @@ def course_list_view(request):
         'max_price': max_price_str,
         'sort_by': sort_by
     })
+
+@login_required
+def delete_review_view(request, review_id):
+    # İlgili değerlendirmeyi veritabanından çekiyoruz
+    review = get_object_or_404(Review, id=review_id)
+
+    # Güvenlik kontrolü: Sadece yorumu yapan öğrenci (veya yetkili admin) silebilir
+    if request.user == review.student or request.user.is_superuser:
+        course_slug = review.course.slug
+        review.delete()
+        messages.success(request, "Değerlendirmeniz başarıyla silindi.")
+        return redirect('course_detail', slug=course_slug)
+    else:
+        messages.error(request, "Bu değerlendirmeyi silme yetkiniz yok.")
+        return redirect('course_detail', slug=review.course.slug)

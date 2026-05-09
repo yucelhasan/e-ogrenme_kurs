@@ -17,6 +17,7 @@ urlpatterns = [
     path('kurs/<slug:slug>/kayit/', course_views.enroll_course_view, name='enroll_course'),
     path('kurs/<slug:slug>/yorum-yap/', course_views.add_review_view, name='add_review'),
     path('kurs/<slug:course_slug>/ders/<int:lesson_id>/', lesson_views.lesson_detail_view, name='lesson_detail'),
+    path('yorum/<int:review_id>/sil/', course_views.delete_review_view, name='delete_review'),
 
     path('register/', auth_views.register_view, name='register'),
     path('login/', auth_views.login_view, name='login'),
