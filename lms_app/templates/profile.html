@@ -55,7 +55,6 @@
                     </h6>
                 </div>
                 <div class="p-4">
-                    <p class="text-muted x-small mb-3">Diğer öğrencileri veya eğitmenleri bulmak için arama yapın.</p>
                     <form method="GET" action="{% url 'search_users' %}">
                         <div class="input-group border rounded-pill overflow-hidden bg-light shadow-sm">
                             <span class="input-group-text bg-transparent border-0 ps-3">
@@ -67,6 +66,46 @@
                             Hemen Ara
                         </button>
                     </form>
+                </div>
+            </div>
+
+            <div class="modern-card border-0 mb-4 overflow-hidden">
+                <div class="p-4 bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold text-dark">
+                        <i class="fa-solid fa-user-group text-primary me-2"></i>Arkadaşlarım
+                    </h6>
+                    <span class="badge bg-primary rounded-pill small" style="font-size: 0.6rem;">{{ friends|length }}</span>
+                </div>
+                <div class="p-4">
+                    {% if friends %}
+                        <div class="d-flex flex-column gap-3">
+                            {% for friend in friends %}
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center overflow-hidden">
+                                    <div class="flex-shrink-0 me-2">
+                                        {% if friend.profile_picture %}
+                                            <img src="{{ friend.profile_picture.url }}" class="rounded-circle shadow-xs" style="width: 35px; height: 35px; object-fit: cover;">
+                                        {% else %}
+                                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center shadow-xs" style="width: 35px; height: 35px;">
+                                                <i class="fa-solid fa-user text-muted" style="font-size: 0.8rem;"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="overflow-hidden">
+                                        <h6 class="fw-bold mb-0 text-truncate text-dark small" style="max-width: 130px;">@{{ friend.username }}</h6>
+                                        <span class="text-muted x-small d-block">{{ friend.get_role_display }}</span>
+                                    </div>
+                                </div>
+                                <a href="{% url 'public_profile' friend.username %}" class="btn btn-xs btn-outline-primary rounded-pill py-0 px-2 x-small fw-bold">Gör</a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-3">
+                            <p class="text-muted x-small italic mb-2">Henüz ekli bir arkadaşınız yok.</p>
+                            <a href="{% url 'search_users' %}" class="text-primary x-small fw-bold text-decoration-none">Yeni arkadaşlar bul <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.5rem;"></i></a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -211,7 +250,7 @@
                     </div>
                 </div>
             </div>
-            </div>
+        </div>
     </div>
 </div>
 
@@ -245,8 +284,10 @@
 <style>
     .hover-translate:hover { transform: translateY(-3px); }
     .shadow-sm-inset { box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); }
+    .shadow-xs { box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     .italic { font-style: italic; }
     .x-small { font-size: 0.65rem; }
     .transition-all { transition: all 0.2s ease; }
+    .btn-xs { padding: 0.1rem 0.4rem; font-size: 0.6rem; }
 </style>
 {% endblock %}
