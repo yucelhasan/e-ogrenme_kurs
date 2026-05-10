@@ -67,6 +67,7 @@ urlpatterns = [
     path('panel/quiz/<int:quiz_id>/sorular/', instructor_views.manage_quiz_questions_view, name='manage_quiz_questions'),
     path('panel/odev/<int:assignment_id>/teslimler/', instructor_views.view_assignment_submissions_view, name='view_assignment_submissions'),
     path('panel/teslim/<int:submission_id>/notlandir/', instructor_views.grade_submission_view, name='grade_submission'),
+path('panel/kurs/<int:course_id>/ogrenciler/', instructor_views.course_students_view, name='course_students'),
 
     # --- ADMİN PANELİ ---
     path('sistem-yonetimi/', instructor_views.admin_dashboard_view, name='admin_dashboard'),

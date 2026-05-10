@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.db.models import Sum
 from django.utils.text import slugify
 
+from lms_app.models.enrollements import Enrollment
 from lms_app.forms.course_forms import CourseForm, ModuleForm, LessonForm
 from lms_app.models import Course, InstructorApplication, CustomUser, Module, Lesson, Category
 from lms_app.models.ecommerce import OrderItem
@@ -300,3 +301,16 @@ def delete_lesson_view(request, lesson_id):
     create_log(request, "Ders Silme", f"'{lesson_title}' dersi müfredattan kaldırıldı.")
     messages.info(request, "Ders başarıyla silindi.")
     return redirect('manage_curriculum', course_id=course_id)
+
+@login_required
+def course_students_view(request, course_id):
+    if request.user.role != 'instructor':
+        return redirect('home')
+
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    enrollments = Enrollment.objects.filter(course=course).select_related('student').order_by('-enrolled_at')
+
+    return render(request, 'admin_panel/course_students.html', {
+        'course': course,
+        'enrollments': enrollments
+    })
