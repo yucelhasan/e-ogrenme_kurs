@@ -67,6 +67,7 @@ urlpatterns = [
          name='create_announcement'),
     path('panel/kurs/<int:course_id>/quiz-ekle/', instructor_views.add_quiz_view, name='add_quiz'),
     path('panel/kurs/<int:course_id>/odev-ekle/', instructor_views.add_assignment_view, name='add_assignment'),
+    path('panel/kurs/<int:course_id>/ogrenciler/', instructor_views.course_students_view, name='course_students'),
     path('panel/quiz/<int:quiz_id>/sorular/', instructor_views.manage_quiz_questions_view,
          name='manage_quiz_questions'),
     path('panel/odev/<int:assignment_id>/teslimler/', instructor_views.view_assignment_submissions_view,
