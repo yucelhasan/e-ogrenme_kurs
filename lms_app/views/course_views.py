@@ -1,13 +1,15 @@
-# lms_app/views/course_views.py
-
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from lms_app.models import Course, Enrollment, Review
 from lms_app.forms.interaction_forms import ReviewForm
+from lms_app.selectors.course_selectors import get_active_courses, get_course_detail, get_all_categories, get_published_course_by_slug
+from lms_app.selectors.enrollment_selectors import check_enrollment
+from lms_app.selectors.interaction_selectors import get_course_reviews, check_user_reviewed_course
 from lms_app.services.enrollment_services import enroll_user_to_course
-from lms_app.selectors.course_selectors import get_active_courses, get_course_detail, get_all_categories
-from lms_app.services.system_services import create_log  # YENİ: Log servisi eklendi
+from lms_app.services.system_services import create_log
+from lms_app.services.interaction_services import process_add_review
+from django.shortcuts import get_object_or_404
+from lms_app.models.interactions import Review
 
 
 def home_view(request):
@@ -18,13 +20,9 @@ def home_view(request):
 def course_detail_view(request, slug):
     course = get_course_detail(slug)
 
-    # Kullanıcının kursa kayıtlı olup olmadığını kontrol et
-    is_enrolled = False
-    if request.user.is_authenticated:
-        is_enrolled = Enrollment.objects.filter(student=request.user, course=course).exists()
+    is_enrolled = check_enrollment(request.user, course)
 
-    # Kursa ait yorumları çek
-    reviews = Review.objects.filter(course=course).select_related('student').order_by('-id')
+    reviews = get_course_reviews(course)
     review_form = ReviewForm()
 
     return render(request, 'courses/detail.html', {
@@ -38,10 +36,9 @@ def course_detail_view(request, slug):
 @login_required
 def enroll_course_view(request, slug):
     if request.method == 'POST':
-        course = get_object_or_404(Course, slug=slug, status='published')
+        course = get_published_course_by_slug(slug)
         success, message = enroll_user_to_course(request.user, course)
         if success:
-            # YENİ: Kayıt işlemi başarılı olduğunda log tut
             create_log(request, "Direkt Kursa Kayıt",
                        f"{request.user.username}, '{course.title}' kursuna başarıyla kayıt oldu.")
             messages.success(request, message)
@@ -52,30 +49,20 @@ def enroll_course_view(request, slug):
 
 @login_required
 def add_review_view(request, slug):
-    course = get_object_or_404(Course, slug=slug, status='published')
+    course = get_published_course_by_slug(slug)
 
-    # 1. KURAL: Kullanıcı bu kursa kayıtlı mı?
-    if not Enrollment.objects.filter(student=request.user, course=course).exists():
+    if not check_enrollment(request.user, course):
         messages.error(request, "Bu kursa yorum yapabilmek için kayıt olmalısınız.")
         return redirect('course_detail', slug=slug)
 
-    # 2. KURAL: Daha önce yorum yapmış mı?
-    if Review.objects.filter(student=request.user, course=course).exists():
+    if check_user_reviewed_course(request.user, course):
         messages.warning(request, "Bu kursa zaten bir değerlendirme yaptınız.")
         return redirect('course_detail', slug=slug)
 
     if request.method == 'POST':
         form = ReviewForm(request.POST)
         if form.is_valid():
-            review = form.save(commit=False)
-            review.course = course
-            review.student = request.user
-            review.save()
-
-            # YENİ: Kursa yorum yapıldığında log tut
-            create_log(request, "Kurs Değerlendirmesi",
-                       f"{request.user.username}, '{course.title}' kursuna yorum ve puan bıraktı.")
-
+            process_add_review(request, course, form)
             messages.success(request, "Değerlendirmeleriniz başarıyla eklendi, teşekkür ederiz!")
         else:
             messages.error(request, "Lütfen yıldız seçtiğinizden ve yorum yazdığınızdan emin olun.")
@@ -84,14 +71,12 @@ def add_review_view(request, slug):
 
 
 def course_list_view(request):
-    # 1. URL'den gelen değerleri yakala
     search_query = request.GET.get('q', '')
     category_slug = request.GET.get('category', '')
     min_price_str = request.GET.get('min_price', '')
     max_price_str = request.GET.get('max_price', '')
     sort_by = request.GET.get('sort', 'newest')
 
-    # 2. Fiyat string'lerini (metin) güvenli bir şekilde sayıya (float) çevir
     try:
         min_price = float(min_price_str) if min_price_str else None
     except ValueError:
@@ -102,7 +87,6 @@ def course_list_view(request):
     except ValueError:
         max_price = None
 
-    # 3. Selector'a değerleri yolla ve filtrelenmiş veriyi al
     courses = get_active_courses(
         search_query=search_query,
         category_slug=category_slug,
@@ -111,10 +95,8 @@ def course_list_view(request):
         sort_by=sort_by
     )
 
-    # 4. Formdaki seçenekler için kategorileri çek
     categories = get_all_categories()
 
-    # 5. HTML'e tüm değerleri geri gönder (Kullanıcı formu gönderdiğinde seçtiği değerler kaybolmasın diye)
     return render(request, 'courses/list.html', {
         'courses': courses,
         'categories': categories,
@@ -124,3 +106,18 @@ def course_list_view(request):
         'max_price': max_price_str,
         'sort_by': sort_by
     })
+
+@login_required
+def delete_review_view(request, review_id):
+    # İlgili değerlendirmeyi veritabanından çekiyoruz
+    review = get_object_or_404(Review, id=review_id)
+
+    # Güvenlik kontrolü: Sadece yorumu yapan öğrenci (veya yetkili admin) silebilir
+    if request.user == review.student or request.user.is_superuser:
+        course_slug = review.course.slug
+        review.delete()
+        messages.success(request, "Değerlendirmeniz başarıyla silindi.")
+        return redirect('course_detail', slug=course_slug)
+    else:
+        messages.error(request, "Bu değerlendirmeyi silme yetkiniz yok.")
+        return redirect('course_detail', slug=review.course.slug)

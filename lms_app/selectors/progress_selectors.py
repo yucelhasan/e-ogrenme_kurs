@@ -8,20 +8,17 @@ def get_course_progress(user, course):
     """
     Öğrencinin belirli bir kurstaki % kaç ilerlediğini hesaplayıp getirir.
     """
-    # 1. Kurstaki toplam ders sayısını bul
     total_lessons = Lesson.objects.filter(module__course=course).count()
 
     if total_lessons == 0:
-        return 0  # Kursta henüz ders yoksa ilerleme %0'dır
+        return 0
 
-    # 2. Öğrencinin bu kursta 'tamamlandı' (is_completed=True) olarak işaretlediği dersleri bul
     completed_lessons = LessonProgress.objects.filter(
         student=user,
         lesson__module__course=course,
         is_completed=True
     ).count()
 
-    # 3. Yüzdeyi hesapla ve tam sayı olarak döndür
     progress_percentage = (completed_lessons / total_lessons) * 100
     return int(progress_percentage)
 
@@ -31,7 +28,6 @@ def get_user_enrolled_courses_with_progress(user):
     Öğrenci profili için: Öğrencinin kayıtlı olduğu tüm kursları ve ilerleme yüzdelerini liste olarak getirir.
     (student_views.py veya profile_views.py içerisinde kullanılabilir)
     """
-    # Öğrencinin kayıtlı olduğu kursları getir (N+1 problemini önlemek için select_related kullanıyoruz)
     enrollments = Enrollment.objects.filter(student=user).select_related('course', 'course__category')
 
     courses_with_progress = []
@@ -47,3 +43,19 @@ def get_user_enrolled_courses_with_progress(user):
         })
 
     return courses_with_progress
+
+
+def get_recent_lesson_progress(user, days):
+    from django.utils import timezone
+    from datetime import timedelta
+    from lms_app.models import LessonProgress
+
+    if not user.is_authenticated:
+        return []
+
+    today = timezone.now().date()
+    return LessonProgress.objects.filter(
+        student=user,
+        is_completed=True,
+        completed_at__gte=today - timedelta(days=days)
+    )

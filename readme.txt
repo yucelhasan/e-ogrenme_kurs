@@ -1,83 +1,107 @@
-# 🎓 KTÜ LMS (E-Öğrenme Platformu)
+🎉 Uygulama artık `http://127.0.0.1:8000/` adresinde çalışmaktadır. Yönetim paneli için `http://127.0.0.1:800GitHub depona (repository) doğrudan yükleyebileceğin, projeyi inceleyen hocalara veya diğer geliştiricilere "Bu ekip bu işi gerçekten biliyor" dedirtecek, **Markdown (`.md`)** formatında tam kapsamlı ve profesyonel bir `README.md` dosyası hazırladım. 
 
-Bu proje, eğitmenlerin kurs oluşturup yayınlayabildiği, öğrencilerin ise bu kurslara kayıt olup eğitim alabildiği uçtan uca bir E-Öğrenme (LMS - Learning Management System) platformudur.
+Aşağıdaki metni kopyalayıp GitHub'daki `README.md` dosyanın içine yapıştırman yeterlidir (Markdown formatında olduğu için GitHub'da ikonlar, kod blokları ve başlıklarla çok şık görünecektir):
+```markdown
+# 🎓 KTÜ LMS - Gelişmiş E-Öğrenme ve Kurs Yönetim Platformu
 
-Proje, standart Django MVC yapısının ötesine geçerek **Katmanlı Mimari (Layered Architecture)** ve **Dikey Dilimleme (Vertical Slicing)** prensipleriyle geliştirilmiş olup, yüksek performans ve sürdürülebilirlik hedeflenmiştir.
+![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
+![Django](https://img.shields.io/badge/Django-Secure-green.svg)
+![Architecture](https://img.shields.io/badge/Architecture-MVC-orange.svg)
+![Deployment](https://img.shields.io/badge/Deployment-AWS_EC2-yellow.svg)
 
-## 🚀 Kullanılan Teknolojiler
+Bu proje, İleri Web Uygulamaları dersi kapsamında **MVC (Model-View-Template)** mimarisi baz alınarak geliştirilmiş kapsamlı bir E-Öğrenme (LMS) ve Kurs Yönetim Sistemidir. Öğrencilerin, eğitmenlerin ve yöneticilerin farklı yetki ve arayüzlerle etkileşime girdiği; e-ticaret, ölçme-değerlendirme, sosyal iletişim ve gelişmiş güvenlik katmanlarını barındıran modern bir web uygulamasıdır.
 
-* **Backend:** Python, Django 5.0
-* **Frontend:** HTML5, CSS3, Bootstrap 5.3, FontAwesome 6.4
-* **Veritabanı:** AWS RDS (Microsoft SQL Server)
-* **Veritabanı Sürücüsü:** `mssql-django`, `pyodbc`
+---
 
-## 🏗️ Mimari Yapı (Layered Architecture)
+## 🌟 Temel Özellikler
 
-Proje, "Fat Controller" (Şişman View) anti-pattern'inden kaçınmak için sorumlulukların ayrıldığı profesyonel bir klasör yapısına sahiptir:
+Uygulama, Rol Bazlı Yetkilendirme (Role-Based Access Control) prensibiyle 3 ana kullanıcı tipine hizmet vermektedir:
 
-* `models/`: Veritabanı şemalarının ve kısıtlamalarının bulunduğu veri katmanı.
-* `selectors/`: `select_related` ve `prefetch_related` kullanılarak **N+1 sorgu problemlerinin çözüldüğü**, veritabanından veri çekme işlemlerinin yapıldığı katman.
-* `services/`: (Hazırlık aşamasında) İş mantığının (kayıt olma, ilerleme kaydetme) yürütüleceği katman.
-* `forms/`: Veri doğrulama ve kullanıcı arayüzü form bileşenlerinin tanımlandığı katman.
-* `views/`: Gelen istekleri (Request) alıp ilgili selector veya formlara yönlendiren ve şablonları (Template) döndüren "Trafik Polisi" katmanı.
+### 🧑‍🎓 Öğrenci (Student) Özellikleri
+*   **Gelişmiş Profil & E-Ticaret:** Kursları sepete ekleme, indirim kuponu kullanma ve güvenli ödeme simülasyonu.
+*   **İnteraktif Öğrenme:** Video dersleri (YouTube Embed entegrasyonu) izleme ve ders ilerleme (progress) takibi.
+*   **Ölçme ve Değerlendirme:** Kurs sonu Quiz'lerini çözme ve Eğitmenlere ödev (Assignment) teslim etme.
+*   **Sosyal Etkileşim:** Diğer kullanıcılarla takipleşme/arkadaş olma, özel mesajlaşma ve kurslara yıldızlı yorum/değerlendirme bırakma.
 
-## ✨ Şu Ana Kadar Tamamlanan Özellikler
+### 👨‍🏫 Eğitmen (Instructor) Özellikleri
+*   **Kurs & Müfredat Yönetimi (CRUD):** Kurs oluşturma, düzenleme, arşivleme. Modül ve ders içeriklerini hiyerarşik olarak yönetme.
+*   **Dinamik Kategori Sistemi:** Listede bulunmayan kategoriler için sistem yöneticisine yeni kategori önerme.
+*   **Öğrenci Yönetimi:** Öğrenci ödevlerini inceleme, notlandırma ve kursa kayıtlı öğrencilere toplu duyuru (Announcement) gönderme.
+*   **Finansal Takip:** Eğitmen paneli (Dashboard) üzerinden toplam öğrenci sayısını, brüt ve komisyon kesilmiş net geliri görüntüleme.
 
-### 1. Kullanıcı ve Yetki Yönetimi
-* `CustomUser` modeli ile Özelleştirilmiş Kullanıcı Rolleri (Öğrenci, Eğitmen, Admin).
-* Güvenli Kayıt Ol (Register), Giriş Yap (Login) ve Çıkış Yap (Logout) işlemleri.
-* Kullanıcı Profil Sayfası ve profil fotoğrafı yükleme/güncelleme (Bootstrap Modal ile).
+### 🛡️ Admin (Yönetici) Özellikleri
+*   **Onay Mekanizması:** Yeni eğitmenlik başvurularını ve taslak aşamasından çıkan kursları inceleme, onaylama veya reddetme.
+*   **Sistem Logları:** Platformdaki tüm kritik eylemleri (kurs silme, onaylama vb.) `SystemLog` paneli üzerinden anlık takip etme.
 
-### 2. Kurs ve İçerik Yönetimi
-* Ana sayfada en yeni ve aktif kursların dinamik listelenmesi.
-* Tüm Kurslar sayfasında **Arama (Search)** altyapısı (Kurs başlığı ve açıklamasına göre).
-* Gelişmiş Slug yapısı ve UUID destekli benzersiz link üretimi.
+---
 
-### 3. Eğitmen Paneli (Dashboard)
-* Sadece `instructor` (Eğitmen) ve `admin` rolüne sahip kullanıcıların erişebildiği özel panel.
-* Eğitmenlerin kendi oluşturdukları kursları listelemesi ve durumlarını (Yayında/Taslak) görmesi.
-* Resim yükleme destekli, detaylı **Yeni Kurs Ekleme** formu.
+## 🔐 Güvenlik Katmanı
+Proje, web güvenlik standartlarına (OWASP) uygun olarak aşağıdaki korumalarla donatılmıştır:
+*   **Brute-Force Koruması:** Kaba kuvvet saldırılarını engellemek için başarısız giriş denemesi sınırlandırması ve oturum (session) zaman aşımı kontrolü.
+*   **Veri Güvenliği:** Parolaların PBKDF2 algoritması ile hashlenmesi, tüm formlarda CSRF token kullanımı ve XSS/SQL Injection önlemleri.
+*   **İzole Hata Sayfaları:** Sistem zafiyetlerini ve konfigürasyon detaylarını gizlemek adına projelendirilmiş özel `400`, `403`, `404` ve `500` hata sayfaları.
 
-## 🛠️ Kurulum ve Çalıştırma
+---
 
-Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin:
+## 🛠️ Kullanılan Teknolojiler
+*   **Backend:** Python, Django Framework (MVC Mimari Yapısı)
+*   **Frontend:** HTML5, CSS3, JavaScript, Bootstrap 5, SweetAlert2
+*   **Veritabanı:** SQLite / PostgreSQL (12+ İlişkili Tablo)
+*   **Medya Yönetimi:** Pillow (Profil ve kurs kapak resimleri için)
+*   **Sunucu & Deployment:** Amazon Web Services (AWS) EC2 (Ubuntu t2.micro), Gunicorn & Nginx
 
-**1. Depoyu Klonlayın ve Klasöre Girin**
-```bash
-git clone <repository_url>
-cd e-ogrenme_kurs
+---
+
+## 🚀 Kurulum ve Çalıştırma Adımları (Lokal Geliştirme)
+
+Projeyi kendi bilgisayarınızda çalıştırmak için aşağıdaki adımları sırasıyla terminalinizde uygulayın:
+
+**1. Repoyu Klonlayın**
+git clone https://github.com/KULLANICI_ADIN/REPO_ADIN.git
+cd REPO_ADIN
+
+---
+
+# Windows İçin:
+python -m venv venv
+venv\Scripts\activate
+
+---
 
 2. Sanal Ortam (Virtual Environment) Oluşturun ve Aktif Edin
-python -m venv venv
-# Windows için:
-venv\Scripts\activate
-# Mac/Linux için:
+# macOS / Linux İçin:
+python3 -m venv venv
 source venv/bin/activate
 
-3. Gerekli Paketleri Yükleyin
+---
+
+3. Bağımlılıkları (Requirements) Yükleyin
 pip install -r requirements.txt
 
-4. Çevresel Değişkenleri (.env) Ayarlayın
-Proje ana dizininde bir .env dosyası oluşturun ve aşağıdaki bilgileri kendi AWS RDS bilgilerinize göre doldurun:
-SECRET_KEY=senin_django_gizli_anahtarin
-DEBUG=True
-DB_HOST=senin_aws_rds_endpoint_adresin
-DB_NAME=lms_db
-DB_USER=veritabani_kullanici_adin
-DB_PASSWORD=veritabani_sifren
+---
 
-5. Veritabanını Hazırlayın ve Migrasyonları Uygulayın
-Eğer veritabanı henüz oluşturulmadıysa:
-python db_olustur.py
-
-Ardından tabloları oluşturun:
+4. Veritabanı Göçlerini (Migrations) Uygulayın
 python manage.py makemigrations
 python manage.py migrate
 
-6. Projeyi Çalıştırın
+---
+
+5. Yönetici (Admin) Hesabı Oluşturun
+python manage.py createsuperuser
+(Sizden istenen kullanıcı adı, email ve şifre bilgilerini girin)
+
+---
+
+6. Geliştirme Sunucusunu Başlatın
 python manage.py runserver
 
-Tarayıcınızdan http://127.0.0.1:8000/ adresine giderek projeyi görüntüleyebilirsiniz.
+---
 
+👥 Geliştirici Ekip
+Bu proje, aşağıdaki ekip üyeleri tarafından iş bölümü yapılarak geliştirilmiştir:
 
-Geliştirici Ekip: Hasan Yücel, Hüseyin Şahin, Muhammet Zahit Aydın
+Hasan Yücel: MVC iskeleti, Veritabanı Mimarisi, E-Ticaret Modülü, Kurs/Müfredat CRUD işlemleri, Sistem Logları.
+
+Muhammet Zahit Aydın: Admin Onay Paneli, Quiz ve Ödev (Assessment) Sistemleri, Sertifika Algoritması, Güvenlik (CSRF/Session) Optimizasyonları.
+
+Hüseyin Şahin: UI/UX Tasarım ve Mobil Uyumluluk, Özel Hata Sayfaları, Mesajlaşma ve Sosyal Etkileşim Modülleri, Şifre Sıfırlama Sistemleri.

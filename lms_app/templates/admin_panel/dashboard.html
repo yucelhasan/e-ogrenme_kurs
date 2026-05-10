@@ -104,13 +104,10 @@
                         <a href="{% url 'manage_curriculum' course.id %}" class="btn btn-outline-primary btn-sm flex-grow-1 fw-bold">
                             <i class="fa-solid fa-list-check me-1"></i> Müfredat
                         </a>
-                        <a href="{% url 'course_students' course.id %}" class="btn btn-outline-info btn-sm fw-bold" title="Öğrencileri Gör">
-                            <i class="fa-solid fa-users"></i>
-                        </a>
-                        <a href="{% url 'edit_course' course.id %}" class="btn btn-light btn-sm fw-bold" title="Düzenle">
+                        <a href="{% url 'edit_course' course.id %}" class="btn btn-light btn-sm fw-bold">
                             <i class="fa-solid fa-pen"></i>
                         </a>
-                        <a href="{% url 'delete_course' course.id %}" class="btn btn-light btn-sm text-danger confirm-delete" title="Sil">
+                        <a href="{% url 'delete_course' course.id %}" class="btn btn-light btn-sm text-danger confirm-delete">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </div>

@@ -10,10 +10,14 @@ class Category(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.name, allow_unicode=True)
-            if not base_slug:
-                base_slug = f"kategori-{uuid.uuid4().hex[:8]}"
-            self.slug = base_slug
+            base_slug = slugify(self.title)
+            unique_slug = base_slug
+
+            while Course.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{base_slug}-{uuid.uuid4().hex[:6]}"
+
+            self.slug = unique_slug
+
         super().save(*args, **kwargs)
 
     def __str__(self):

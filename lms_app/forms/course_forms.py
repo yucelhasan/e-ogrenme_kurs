@@ -1,5 +1,6 @@
 from django import forms
 from lms_app.models import Course, Module, Lesson
+from django.utils.text import slugify
 
 
 class CourseForm(forms.ModelForm):
@@ -17,8 +18,24 @@ class CourseForm(forms.ModelForm):
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
 
+    def clean_title(self):
+        title = self.cleaned_data.get('title')
+
+        if title:
+            slug = slugify(title)
+
+            existing_courses = Course.objects.filter(slug=slug)
+
+            if self.instance and self.instance.pk:
+                existing_courses = existing_courses.exclude(pk=self.instance.pk)
+
+            if existing_courses.exists():
+                raise forms.ValidationError(
+                    "Bu başlığa sahip bir kurs zaten sistemde mevcut. Lütfen farklı bir başlık belirleyiniz.")
+
+        return title
+
     def __init__(self, *args, **kwargs):
-        # View'dan gönderilen 'user' bilgisini yakalayıp formdan koparıyoruz ki Django hata vermesin
         kwargs.pop('user', None)
         super(CourseForm, self).__init__(*args, **kwargs)
 
@@ -27,12 +44,10 @@ class CourseForm(forms.ModelForm):
         category = cleaned_data.get('category')
         new_category = cleaned_data.get('new_category_request')
 
-        # KURAL 1: Eğitmen ne bir kategori seçmiş ne de yeni bir tane yazmışsa hata ver.
         if not category and not new_category:
             raise forms.ValidationError(
                 "Lütfen listeden bir kategori seçin veya bulamadıysanız yeni bir kategori önerin.")
 
-        # KURAL 2: Eğitmen hem listeden kategori seçmiş hem de yeni kategori yazmışsa, listedekini baz al ve yazdığını temizle.
         if category and new_category:
             cleaned_data['new_category_request'] = None
 

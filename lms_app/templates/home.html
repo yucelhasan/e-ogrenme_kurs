@@ -1,49 +1,100 @@
 {% extends 'base.html' %}
-{% load static %} {% block content %}
-<div class="p-5 mb-4 bg-light rounded-3 shadow-sm text-center">
-    <h1 class="display-5 fw-bold text-primary">E-Öğrenme Platformuna Hoş Geldiniz!</h1>
-    {% if not user.is_authenticated %}
-    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
-        <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4 gap-3">Giriş Yap</a>
-        <a href="{% url 'register' %}" class="btn btn-outline-secondary btn-lg px-4">Kayıt Ol</a>
-    </div>
-    {% endif %}
-</div>
+{% load static %}
+{% block title %}Ana Sayfa - KTÜ LMS{% endblock %}
 
-<div class="container mt-5">
-    <h2 class="mb-4 fw-bold border-bottom pb-2">Öne Çıkan Kurslar</h2>
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+{% block content %}
+<div class="container py-4 mb-5">
 
-        {% for course in courses %}
-        <div class="col">
-            <div class="card h-100 shadow-sm">
-                {% if course.image %}
-                    <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}" style="height: 200px; object-fit: cover;">
-                {% else %}
-                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center text-white" style="height: 200px;">
-                        <i class="fa-solid fa-image fa-3x"></i>
-                    </div>
-                {% endif %}
+    <div class="modern-card rounded-4 shadow-sm p-4 p-md-5 mb-5 position-relative overflow-hidden border-0" style="background-color: #ffffff; background-image: radial-gradient(at top right, #f8fafc 0%, #ffffff 50%);">
 
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">{{ course.title }}</h5>
-                    <p class="card-text text-muted small">{{ course.category.name|default:"Kategori Yok" }}</p>
-                    <p class="card-text">{{ course.description|truncatewords:15 }}</p>
+        <div class="position-absolute top-0 end-0 d-none d-md-block" style="color: #0d6efd; opacity: 0.03; transform: translate(15%, -15%); pointer-events: none;">
+            <i class="fa-solid fa-graduation-cap" style="font-size: 22rem;"></i>
+        </div>
+
+        <div class="row align-items-center position-relative z-1">
+            <div class="col-lg-8">
+                <h1 class="display-5 fw-extrabold text-dark mb-3" style="letter-spacing: -1px; line-height: 1.2;">
+                    Geleceğinize Yön Verin, <br>
+                    <span style="background: linear-gradient(135deg, #0a58ca, #0d6efd); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Şimdi Öğrenmeye Başlayın!</span>
+                </h1>
+                <p class="lead text-muted mb-4 fw-medium" style="max-width: 600px;">
+                    KTÜ E-Öğrenme Platformu ile alanında uzman eğitmenlerden ders alın, becerilerinizi geliştirin ve kariyerinizde bir adım öne geçin.
+                </p>
+                <div class="d-flex flex-wrap gap-3 mt-2">
+                    <a href="{% url 'courses' %}" class="btn btn-primary btn-lg px-4 py-3 fw-bold rounded-pill shadow-sm transition-all d-flex align-items-center hover-translate" style="background: linear-gradient(135deg, #0a58ca, #0d6efd); border: none;">
+                        <i class="fa-solid fa-compass me-2 fs-5"></i>Kursları Keşfet
+                    </a>
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4 py-3 fw-bold rounded-pill transition-all d-flex align-items-center shadow-sm hover-translate border border-light">
+                        <i class="fa-solid fa-user-plus me-2 text-primary"></i>Kayıt Ol
+                    </a>
+                    {% endif %}
                 </div>
-                <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
-                    <span class="fw-bold text-success">
-                        {% if course.price == 0 %}Ücretsiz{% else %}₺{{ course.price }}{% endif %}
-                    </span>
-                    <a href="{% url 'course_detail' course.slug %}" class="btn btn-sm btn-outline-primary">İncele</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-end mb-4 border-bottom border-light pb-3">
+        <h3 class="fw-extrabold text-dark mb-0"><i class="fa-solid fa-fire text-danger me-2"></i>Öne Çıkan Kurslar</h3>
+        <a href="{% url 'courses' %}" class="text-decoration-none fw-bold text-primary hover-primary small text-uppercase" style="letter-spacing: 0.5px;">Tümünü Gör <i class="fa-solid fa-arrow-right-long ms-1"></i></a>
+    </div>
+
+    <div class="row g-4">
+        {% for course in courses %}
+        <div class="col-lg-4 col-md-6">
+            <div class="modern-card border-0 shadow-sm rounded-4 overflow-hidden h-100 d-flex flex-column transition-all hover-translate">
+
+                <div class="position-relative bg-light" style="height: 200px;">
+                    {% if course.image %}
+                        <img src="{{ course.image.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ course.title }}">
+                    {% else %}
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted opacity-25">
+                            <i class="fa-solid fa-image fa-4x"></i>
+                        </div>
+                    {% endif %}
+
+                    <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge bg-white text-primary shadow-sm rounded-pill px-3 py-2 fw-bold x-small">
+                            {{ course.category.name|default:"Genel" }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 d-flex flex-column bg-white">
+                    <h5 class="fw-bold text-dark mb-2 line-clamp-2" title="{{ course.title }}">{{ course.title }}</h5>
+                    <p class="text-muted small mb-4 line-clamp-2">{{ course.description }}</p>
+
+                    <div class="mt-auto">
+                        <div class="d-flex align-items-center mb-3 border-top border-light pt-3">
+                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-2 flex-shrink-0" style="width: 32px; height: 32px;">
+                                <i class="fa-solid fa-user-tie fa-sm"></i>
+                            </div>
+                            <span class="text-dark small fw-bold text-truncate">{{ course.instructor.get_full_name|default:course.instructor.username|default:"Eğitmen" }}</span>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between">
+                            {% if course.price == 0 %}
+                                <span class="fs-5 fw-extrabold text-success">Ücretsiz</span>
+                            {% else %}
+                                <span class="fs-5 fw-extrabold text-dark">₺{{ course.price }}</span>
+                            {% endif %}
+
+                            <a href="{% url 'course_detail' course.slug %}" class="btn btn-sm btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm transition-all" style="background: linear-gradient(135deg, #0d6efd, #00c6ff); border:none;">
+                                İncele
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         {% empty %}
-        <div class="col-12">
-            <div class="alert alert-info text-center">Henüz yayında olan bir kurs bulunmamaktadır.</div>
+        <div class="col-12 text-center py-5 bg-white rounded-4 shadow-sm border-0 mb-5">
+            <i class="fa-solid fa-box-open fa-4x text-muted opacity-25 mb-3"></i>
+            <h5 class="fw-bold text-dark">Henüz kurs bulunmuyor</h5>
+            <p class="text-muted small fw-medium">Yakında yeni kurslar eklenecektir, takipte kalın!</p>
         </div>
         {% endfor %}
-
     </div>
+
 </div>
 {% endblock %}

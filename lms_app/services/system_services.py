@@ -1,9 +1,6 @@
-# lms_app/services/system_services.py
 from lms_app.models import SystemLog
 
 def create_log(request, action, details=None):
-    """Sistemdeki önemli olayları veritabanına kaydeder."""
-    # Kullanıcının IP adresini al
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[0]

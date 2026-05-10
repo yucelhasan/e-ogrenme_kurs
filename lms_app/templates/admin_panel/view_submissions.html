@@ -2,95 +2,119 @@
 {% block title %}Ödev Teslimleri - {{ assignment.title }}{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold text-info"><i class="fa-solid fa-file-signature me-2"></i>Teslimler: {{ assignment.title }}</h3>
-        <a href="{% url 'manage_curriculum' assignment.course.id %}" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left me-1"></i>Müfredata Dön</a>
+<div class="container py-4 mb-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-3">
+        <div class="d-flex align-items-center">
+            <div class="icon-shape bg-info bg-opacity-10 text-info rounded-circle me-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 55px; height: 55px;">
+                <i class="fa-solid fa-file-signature fa-xl"></i>
+            </div>
+            <div>
+                <h2 class="fw-extrabold text-dark mb-0" style="letter-spacing: -0.5px;">{{ assignment.title }}</h2>
+                <p class="text-muted mb-0 small fw-medium">Bu ödeve gelen tüm öğrenci teslimatlarını buradan notlandırın.</p>
+            </div>
+        </div>
+        <a href="{% url 'manage_curriculum' assignment.course.id %}" class="btn btn-light border-light fw-bold shadow-sm rounded-pill px-4 transition-all hover-translate">
+            <i class="fa-solid fa-arrow-left me-2"></i>Müfredata Dön
+        </a>
     </div>
 
-    <div class="card shadow-sm border-0">
+    <div class="modern-card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+                <thead class="bg-light">
                     <tr>
-                        <th>Öğrenci</th>
-                        <th>Teslim Tarihi</th>
-                        <th>Dosya / Metin</th>
-                        <th>Durum / Not</th>
-                        <th>İşlem</th>
+                        <th class="ps-4 py-3 border-0 text-uppercase small fw-bold text-muted">Öğrenci</th>
+                        <th class="py-3 border-0 text-uppercase small fw-bold text-muted">Teslim Tarihi</th>
+                        <th class="py-3 border-0 text-uppercase small fw-bold text-muted">Dosya / Metin</th>
+                        <th class="py-3 border-0 text-uppercase small fw-bold text-muted text-center">Durum / Not</th>
+                        <th class="pe-4 py-3 border-0 text-uppercase small fw-bold text-muted text-end">İşlem</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for sub in submissions %}
-                    <tr>
-                        <td>
+                    <tr style="transition: background-color 0.2s ease;">
+                        <td class="ps-4 py-4">
                             <div class="d-flex align-items-center">
-                                {% if sub.student.profile_picture %}
-                                    <img src="{{ sub.student.profile_picture.url }}" class="rounded-circle me-2" style="width:40px; height:40px; object-fit:cover;">
-                                {% else %}
-                                    <i class="fa-solid fa-circle-user fa-2x text-secondary me-2"></i>
-                                {% endif %}
-                                <strong>{{ sub.student.username }}</strong>
+                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3 fw-bold shadow-xs" style="width: 40px; height: 40px;">
+                                    {{ sub.student.username|make_list|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark">@{{ sub.student.username }}</div>
+                                    <div class="x-small text-muted">{{ sub.student.email|default:"Öğrenci" }}</div>
+                                </div>
                             </div>
                         </td>
-                        <td><small>{{ sub.submitted_at|date:"d M Y H:i" }}</small></td>
+                        <td class="text-muted small fw-medium">
+                            {{ sub.submitted_at|date:"d M Y" }} <br>
+                            <span class="opacity-50">{{ sub.submitted_at|date:"H:i" }}</span>
+                        </td>
                         <td>
                             {% if sub.file %}
-                                <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-download me-1"></i>İndir</a>
+                                <a href="{{ sub.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-xs transition-all hover-translate">
+                                    <i class="fa-solid fa-download me-1"></i> İndir
+                                </a>
                             {% endif %}
                             {% if sub.text_response %}
-                                <button type="button" class="btn btn-sm btn-outline-secondary ms-1" data-bs-toggle="modal" data-bs-target="#textModal{{ sub.id }}">Metni Gör</button>
+                                <button type="button" class="btn btn-sm btn-light rounded-pill px-3 ms-1 shadow-xs border transition-all hover-translate" data-bs-toggle="modal" data-bs-target="#textModal{{ sub.id }}">
+                                    <i class="fa-solid fa-eye me-1"></i> Metin
+                                </button>
                             {% endif %}
                         </td>
-                        <td>
-                            {% if sub.score is not None %}
-                                <span class="badge bg-success fs-6">{{ sub.score }} / 100</span>
+                        <td class="text-center">
+                            {% if sub.score != None %}
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 fw-bold border border-success border-opacity-10">
+                                    {{ sub.score|floatformat:0 }} / 100
+                                </span>
                             {% else %}
-                                <span class="badge bg-warning text-dark">Bekliyor</span>
+                                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-2 fw-bold border border-warning border-opacity-10">
+                                    Bekliyor
+                                </span>
                             {% endif %}
                         </td>
-                        <td>
-                            <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#gradeModal{{ sub.id }}">Not Ver / Güncelle</button>
+                        <td class="pe-4 text-end">
+                            <button class="btn btn-primary btn-sm rounded-pill px-3 fw-bold shadow-sm transition-all hover-translate" data-bs-toggle="modal" data-bs-target="#gradeModal{{ sub.id }}">
+                                <i class="fa-solid fa-marker me-1"></i> Notlandır
+                            </button>
                         </td>
                     </tr>
 
-                    {% if sub.text_response %}
                     <div class="modal fade" id="textModal{{ sub.id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header bg-light">
-                                    <h5 class="modal-title">{{ sub.student.username }} - Ödev Metni</h5>
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg rounded-4">
+                                <div class="modal-header border-bottom border-light p-4">
+                                    <h5 class="fw-bold mb-0">Ödev Cevabı: {{ sub.student.username }}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
-                                <div class="modal-body">
-                                    <p style="white-space: pre-wrap;">{{ sub.text_response }}</p>
+                                <div class="modal-body p-4 bg-light bg-opacity-50">
+                                    <div class="p-4 bg-white rounded-4 shadow-sm border border-light" style="white-space: pre-wrap; line-height: 1.6;">
+                                        {{ sub.text_response }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {% endif %}
 
                     <div class="modal fade" id="gradeModal{{ sub.id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content border-0">
-                                <div class="modal-header bg-primary text-white">
-                                    <h5 class="modal-title fw-bold">Notlandır: {{ sub.student.username }}</h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                                <div class="p-4 text-white text-center" style="background: linear-gradient(135deg, #0d6efd, #00c6ff);">
+                                    <h5 class="fw-bold mb-0">Not Ver: {{ sub.student.username }}</h5>
                                 </div>
                                 <form action="{% url 'grade_submission' sub.id %}" method="POST">
                                     {% csrf_token %}
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold">Verilen Not</label>
-                                            <input type="number" name="score" class="form-control" value="{{ sub.score|default_if_none:'' }}" required min="0" max="100">
+                                    <div class="modal-body p-4 p-md-5">
+                                        <div class="form-container mb-4">
+                                            <label class="form-label fw-bold small text-uppercase">Başarı Notu (0-100)</label>
+                                            <input type="number" name="score" class="form-control shadow-xs-inset" value="{{ sub.score|default:'' }}" required min="0" max="100">
                                         </div>
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold">Geri Bildirim (Opsiyonel)</label>
-                                            <textarea name="feedback" class="form-control" rows="3">{{ sub.feedback|default_if_none:'' }}</textarea>
+                                        <div class="form-container">
+                                            <label class="form-label fw-bold small text-uppercase">Geri Bildirim</label>
+                                            <textarea name="feedback" class="form-control shadow-xs-inset" rows="4" placeholder="Öğrenciye tavsiyelerinizi yazın...">{{ sub.feedback|default:'' }}</textarea>
                                         </div>
                                     </div>
-                                    <div class="modal-footer bg-light">
-                                        <button type="submit" class="btn btn-success fw-bold w-100">Notu Kaydet</button>
+                                    <div class="p-4 bg-light border-top d-flex gap-2">
+                                        <button type="button" class="btn btn-light fw-bold rounded-pill flex-grow-1" data-bs-dismiss="modal">Vazgeç</button>
+                                        <button type="submit" class="btn btn-success fw-bold rounded-pill px-5 shadow-sm">Notu Kaydet</button>
                                     </div>
                                 </form>
                             </div>
@@ -99,7 +123,12 @@
 
                     {% empty %}
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-4">Bu ödev için henüz bir teslim yapılmamış.</td>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="opacity-25 mb-3">
+                                <i class="fa-solid fa-folder-open fa-3x"></i>
+                            </div>
+                            <h6 class="text-muted fw-bold">Henüz hiç teslimat yapılmamış.</h6>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -107,4 +136,15 @@
         </div>
     </div>
 </div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.02) !important;
+    }
+    body.modal-open .modern-card,
+    body.modal-open .hover-translate {
+        transform: none !important;
+        transition: none !important;
+    }
+</style>
 {% endblock %}

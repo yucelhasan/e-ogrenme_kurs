@@ -1,50 +1,92 @@
 {% extends 'base.html' %}
-
 {% block title %}Giriş Yap - KTÜ LMS{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card shadow-lg p-4">
-            <h2 class="text-center text-primary mb-4 fw-bold">Giriş Yap</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-8">
+            <div class="mb-4">
+                <a href="{% url 'home' %}" class="text-decoration-none text-muted fw-bold transition-all hover-primary d-inline-flex align-items-center small text-uppercase" style="letter-spacing: 0.5px;">
+                    <i class="fa-solid fa-arrow-left-long me-2"></i>Ana Sayfaya Dön
+                </a>
+            </div>
 
-            {% if form.errors or messages %}
-                <div class="alert alert-danger shadow-sm">
-                    <ul class="mb-0">
-                        {% for field in form %}
-                            {% for error in field.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        {% endfor %}
-                        {% for error in form.non_field_errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-
-            <form method="POST">
-                {% csrf_token %}
-                <div class="mb-3">
-                    {{ form.as_p }}
+            <div class="modern-card border-0 overflow-hidden shadow-lg rounded-4">
+                <div class="bg-white p-5 pb-4 text-center border-bottom border-light">
+                    <div class="icon-shape shadow-sm mx-auto mb-4 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #0d6efd, #00c6ff); color: white; border-radius: 50%; width: 80px; height: 80px; flex-shrink: 0;">
+                        <i class="fa-solid fa-shield-cat fa-2x"></i>
+                    </div>
+                    <h2 class="fw-extrabold text-dark mb-2" style="letter-spacing: -1px;">Hoş Geldiniz</h2>
+                    <p class="text-muted fw-medium px-4 mb-0">Eğitim yolculuğunuza devam etmek için bilgilerinizi girerek giriş yapın.</p>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="remember_me" id="rememberMe">
-        <label class="form-check-label text-muted" for="rememberMe">
-            Beni Hatırla
-        </label>
-    </div>
-    <a href="{% url 'password_reset' %}" class="text-decoration-none small text-primary fw-bold">Şifremi Unuttum</a>
-</div>
-                <button type="submit" class="btn btn-primary w-100 mt-2 py-2 fw-bold">Giriş Yap</button>
-            </form>
+                <div class="card-body p-4 p-md-5 bg-white">
+                    {% if form.errors or messages %}
+                        <div class="alert alert-danger border-0 shadow-sm mb-4 rounded-4 small d-flex align-items-center">
+                            <i class="fa-solid fa-circle-exclamation text-danger fs-5 me-3"></i>
+                            <div class="flex-grow-1">
+                                <ul class="mb-0 p-0" style="list-style-type: none;">
+                                    {% for field in form %}
+                                        {% for error in field.errors %}
+                                            <li class="fw-bold">{{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    {% for error in form.non_field_errors %}
+                                        <li class="fw-bold">{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
 
-            <p class="text-center mt-4">
-                Hesabın yok mu? <a href="{% url 'register' %}" class="text-decoration-none fw-bold">Hemen Kayıt Ol</a>
-            </p>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="form-container mb-4">
+                            {{ form.as_p }}
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-5">
+                            <div class="form-check d-flex align-items-center">
+                                <input class="form-check-input mt-0" type="checkbox" name="remember_me" id="rememberMe">
+                                <label class="form-check-label text-muted small fw-semibold ms-2" for="rememberMe">Beni Hatırla</label>
+                            </div>
+                            <a href="{% url 'password_reset' %}" class="text-decoration-none small text-primary fw-bold hover-underline">
+                                <i class="fa-solid fa-key me-1"></i>Şifremi Unuttum
+                            </a>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg py-3 fw-extrabold shadow-lg border-0 rounded-3 transition-all d-flex align-items-center justify-content-center text-uppercase" style="background: linear-gradient(135deg, #0d6efd, #00c6ff); letter-spacing: 1px; font-size: 0.95rem;">
+                                <i class="fa-solid fa-check-circle me-2 fs-5"></i> Sisteme Giriş Yap
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-5">
+                        <p class="text-muted small fw-medium">
+                            Hesabınız yok mu? <a href="{% url 'register' %}" class="text-primary fw-extrabold text-decoration-none hover-underline mx-1">
+                                <i class="fa-solid fa-user-plus me-1"></i>Hemen Kayıt Olun
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-center mt-4 text-muted x-small opacity-50 fw-semibold">© 2026 KTÜ LMS - Yazılım Mühendisliği Bölümü</p>
         </div>
     </div>
 </div>
+<script>
+    // Django form elemanlarına otomatik sınıf ekleme
+    document.addEventListener("DOMContentLoaded", function() {
+        const inputs = document.querySelectorAll('.form-container input, .form-container select, .form-container textarea');
+        inputs.forEach(input => {
+            if (input.type !== 'checkbox' && input.type !== 'radio') {
+                input.classList.add('form-control');
+            } else if (input.type === 'checkbox') {
+                input.classList.add('form-check-input');
+            }
+        });
+    });
+</script>
 {% endblock %}

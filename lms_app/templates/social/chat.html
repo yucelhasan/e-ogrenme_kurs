@@ -1,53 +1,112 @@
 {% extends 'base.html' %}
+{% block title %}{{ other_user.username }} ile Sohbet - LMS{% endblock %}
+
 {% block content %}
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow border-0" style="height: 75vh;">
-                <div class="card-header bg-primary text-white py-3 d-flex align-items-center">
-                    <i class="fa-solid fa-user-circle fa-2x me-2"></i>
-                    <h5 class="mb-0 fw-bold">{{ other_user.username }} ile Sohbet</h5>
-                </div>
+<div class="container py-4 mb-5" style="max-width: 900px;">
 
-                <div class="card-body overflow-auto bg-light" id="chat-box" style="display: flex; flex-direction: column; gap: 10px;">
-                    {% for msg in chat_messages %}
-                        {% if msg.sender == request.user %}
-                            <div class="align-self-end bg-success text-white p-3 rounded-3 shadow-sm" style="max-width: 75%;">
-                                {{ msg.content }}
-                                <div class="text-end small opacity-75 mt-1" style="font-size: 0.7rem;">{{ msg.created_at|date:"H:i" }}</div>
-                            </div>
-                        {% else %}
-                            <div class="align-self-start bg-white p-3 rounded-3 shadow-sm border" style="max-width: 75%;">
-                                {{ msg.content }}
-                                <div class="text-start small text-muted mt-1" style="font-size: 0.7rem;">{{ msg.created_at|date:"H:i" }}</div>
-                            </div>
-                        {% endif %}
-                    {% empty %}
-                        <div class="text-center text-muted mt-5">
-                            <i class="fa-regular fa-comments fa-3x mb-2 opacity-50"></i>
-                            <p>Henüz mesajlaşmadınız. Bir "Merhaba" deyin!</p>
-                        </div>
-                    {% endfor %}
-                </div>
+    <div class="modern-card border-0 shadow-sm rounded-4 overflow-hidden bg-white d-flex flex-column" style="height: 75vh; max-height: 800px;">
 
-                <div class="card-footer bg-white p-3">
-                    <form method="POST" action="">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            <input type="text" name="content" class="form-control" placeholder="Bir mesaj yazın..." autocomplete="off" required>
-                            <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-paper-plane"></i></button>
-                        </div>
-                    </form>
-                </div>
+        <div class="p-3 p-md-4 text-white d-flex align-items-center position-sticky top-0 shadow-sm" style="background: linear-gradient(135deg, #0dcaf0, #0d6efd); z-index: 10;">
+            <a href="{% url 'inbox' %}" class="text-white text-opacity-75 transition-all me-3 text-decoration-none hover-white" title="Gelen Kutusuna Dön">
+                <i class="fa-solid fa-arrow-left fa-lg"></i>
+            </a>
+
+            <div class="position-relative me-3">
+                {% if other_user.profile_picture %}
+                    <img src="{{ other_user.profile_picture.url }}" class="rounded-circle border border-2 border-white shadow-sm" style="width: 45px; height: 45px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;">
+                        <i class="fa-solid fa-user fa-lg"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <h5 class="mb-0 fw-bold" style="letter-spacing: -0.5px;">{{ other_user.username }}</h5>
+                <small class="text-white text-opacity-75 fw-medium" style="font-size: 0.75rem;">{{ other_user.get_role_display }}</small>
             </div>
         </div>
+
+        <div class="p-4 flex-grow-1 overflow-auto" id="chat-box" style="background-color: #f0f2f5; display: flex; flex-direction: column; gap: 8px;">
+            {% for msg in chat_messages %}
+
+                {% ifchanged msg.created_at|date:"d F Y" %}
+                <div class="text-center my-3 w-100 position-relative">
+                    <span class="bg-white text-muted fw-bold rounded-pill px-3 py-1 shadow-sm border border-light" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                        {{ msg.created_at|date:"d F Y" }}
+                    </span>
+                </div>
+                {% endifchanged %}
+
+                {% if msg.sender == request.user %}
+                    <div class="align-self-end text-white shadow-sm p-3 mb-1" style="background-color: #198754; max-width: 75%; border-radius: 1rem; border-top-right-radius: 0.1rem;">
+                        <div class="text-break fw-medium" style="font-size: 0.95rem; line-height: 1.4;">{{ msg.content }}</div>
+                        <div class="text-end opacity-75 mt-1 d-flex justify-content-end align-items-center gap-1" style="font-size: 0.65rem;">
+                            {{ msg.created_at|date:"H:i" }}
+                            {% if msg.is_read %}
+                                <i class="fa-solid fa-check-double text-info" title="Okundu"></i>
+                            {% else %}
+                                <i class="fa-solid fa-check text-white text-opacity-75" title="Gönderildi"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="align-self-start bg-white text-dark shadow-sm p-3 mb-1 border border-light" style="max-width: 75%; border-radius: 1rem; border-top-left-radius: 0.1rem;">
+                        <div class="text-break fw-medium" style="font-size: 0.95rem; line-height: 1.4;">{{ msg.content }}</div>
+                        <div class="text-start text-muted mt-1 fw-bold" style="font-size: 0.65rem;">
+                            {{ msg.created_at|date:"H:i" }}
+                        </div>
+                    </div>
+                {% endif %}
+
+            {% empty %}
+                <div class="text-center text-muted my-auto pb-5">
+                    <div class="bg-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3 shadow-sm" style="width: 80px; height: 80px;">
+                        <i class="fa-regular fa-comments fa-2x text-primary opacity-75"></i>
+                    </div>
+                    <h6 class="fw-bold text-dark">Sohbete Başla</h6>
+                    <p class="small opacity-75">Henüz mesajlaşmadınız. Bir "Merhaba" deyin!</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="p-3 bg-white border-top border-light shadow-sm">
+            <form method="POST" action="" class="d-flex align-items-center gap-2">
+                {% csrf_token %}
+                <input type="text" name="content" class="form-control rounded-pill bg-light border-0 px-4 py-3 shadow-xs-inset custom-chat-input" placeholder="Bir mesaj yazın..." autocomplete="off" required autofocus>
+                <button type="submit" class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm flex-shrink-0 transition-all hover-scale" style="width: 50px; height: 50px; background: linear-gradient(135deg, #0d6efd, #0a58ca); border:none;">
+                    <i class="fa-solid fa-paper-plane fa-lg"></i>
+                </button>
+            </form>
+        </div>
+
     </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var chatBox = document.getElementById("chat-box");
-        chatBox.scrollTop = chatBox.scrollHeight;
+        if (chatBox) {
+            // Sayfa yüklendiğinde mesajların en sonuna kaydır
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
     });
 </script>
+
+<style>
+    /* İkon geçiş efektleri ve form input tasarımları */
+    .hover-white:hover { color: white !important; opacity: 1 !important; transform: translateX(-3px); }
+    .hover-scale:hover { transform: scale(1.05); }
+
+    .custom-chat-input:focus {
+        background-color: #fff !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1) !important;
+    }
+
+    /* Modern Kaydırma Çubuğu (Scrollbar) - Sadece chat box için */
+    #chat-box::-webkit-scrollbar { width: 6px; }
+    #chat-box::-webkit-scrollbar-track { background: transparent; }
+    #chat-box::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.15); border-radius: 10px; }
+    #chat-box::-webkit-scrollbar-thumb:hover { background-color: rgba(0,0,0,0.25); }
+</style>
 {% endblock %}

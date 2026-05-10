@@ -1,9 +1,7 @@
-# lms_app/models/assessments.py
 from django.db import models
 from .users import CustomUser
 from .courses import Course
 
-# --- QUİZ SİSTEMİ MODELLERİ ---
 class Quiz(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='quizzes')
     title = models.CharField(max_length=200, verbose_name="Quiz Başlığı")
@@ -35,7 +33,6 @@ class QuizAttempt(models.Model):
     is_passed = models.BooleanField(verbose_name="Geçti mi?")
     attempted_at = models.DateTimeField(auto_now_add=True)
 
-# --- ÖDEVLENDİRME SİSTEMİ MODELLERİ ---
 class Assignment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='assignments')
     title = models.CharField(max_length=200, verbose_name="Ödev Başlığı")
