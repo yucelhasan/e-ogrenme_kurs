@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block title %}Güvenli Ödeme - LMS{% endblock %}
+
+{% block content %}
+<div class="container py-4 mb-5" style="max-width: 1000px;">
+    
+    <div class="text-center mb-5">
+        <h2 class="fw-extrabold text-dark mb-2"><i class="fa-solid fa-lock text-success me-2"></i>Güvenli Ödeme</h2>
+        <p class="text-muted">Lütfen ödeme işlemini tamamlamak için kart bilgilerinizi giriniz.</p>
+    </div>
+
+    <div class="row g-4 g-xl-5 flex-column-reverse flex-lg-row">
+        
+        <div class="col-lg-7">
+            <div class="modern-card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+                <div class="bg-light p-4 border-bottom border-light d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-dark mb-0">Kart Bilgileri</h5>
+                    <div class="d-flex gap-2 text-muted">
+                        <i class="fa-brands fa-cc-visa fa-2x"></i>
+                        <i class="fa-brands fa-cc-mastercard fa-2x"></i>
+                    </div>
+                </div>
+                
+                <div class="p-4 p-md-5">
+                    <form id="checkoutForm" method="POST" action="">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Kart Üzerindeki İsim</label>
+                            <input type="text" id="cardName" class="form-control form-control-lg bg-light border-0 shadow-xs-inset" placeholder="AD SOYAD" required autocomplete="cc-name">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Kart Numarası</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0 text-muted"><i class="fa-regular fa-credit-card"></i></span>
+                                <input type="text" id="cardNumber" class="form-control form-control-lg bg-light border-0 shadow-xs-inset" placeholder="0000 0000 0000 0000" maxlength="19" required autocomplete="cc-number" inputmode="numeric">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <label class="form-label fw-bold small text-muted text-uppercase">Son Kul. Tarihi</label>
+                                <input type="text" id="cardExpiry" class="form-control form-control-lg bg-light border-0 shadow-xs-inset" placeholder="AA/YY" maxlength="5" required autocomplete="cc-exp" inputmode="numeric">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold small text-muted text-uppercase">CVV</label>
+                                <div class="input-group">
+                                    <input type="password" id="cardCvv" class="form-control form-control-lg bg-light border-0 shadow-xs-inset" placeholder="123" maxlength="3" required autocomplete="cc-csc" inputmode="numeric">
+                                    <span class="input-group-text bg-light border-0 text-muted" data-bs-toggle="tooltip" title="Kartınızın arkasındaki 3 haneli güvenlik kodu."><i class="fa-solid fa-circle-question"></i></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="saveCard" name="save_card" checked>
+                            <label class="form-check-label text-muted small fw-medium" for="saveCard">
+                                Sonraki alışverişlerim için kartımı güvenle kaydet
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow-sm rounded-pill py-3 transition-all hover-translate d-flex justify-content-center align-items-center" style="background: linear-gradient(135deg, #198754, #12ca8e); border:none;">
+                            ₺{{ final_price|floatformat:2 }} Tutarını Öde
+                            <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </button>
+                        <p class="text-center text-muted x-small mt-3 mb-0">
+                            <i class="fa-solid fa-shield-halved text-success me-1"></i> Kart bilgileriniz sunucularımızda saklanmaz. 256-bit SSL ile korunmaktadır.
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="modern-card border-0 shadow-sm rounded-4 bg-light overflow-hidden position-sticky" style="top: 20px;">
+                <div class="p-4 border-bottom border-light">
+                    <h5 class="fw-bold text-dark mb-0">Sipariş Özeti</h5>
+                </div>
+                <div class="p-4">
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        {% for item in items %}
+                        <div class="d-flex align-items-center">
+                            {% if item.course.image %}
+                                <img src="{{ item.course.image.url }}" class="rounded-3 shadow-xs me-3" style="width: 60px; height: 45px; object-fit: cover;">
+                            {% else %}
+                                <div class="rounded-3 bg-white text-muted d-flex align-items-center justify-content-center shadow-xs me-3" style="width: 60px; height: 45px;">
+                                    <i class="fa-solid fa-image opacity-25"></i>
+                                </div>
+                            {% endif %}
+                            <div class="flex-grow-1 overflow-hidden">
+                                <h6 class="fw-bold small text-dark text-truncate mb-0">{{ item.course.title }}</h6>
+                            </div>
+                            <div class="ms-3 fw-bold text-success small">₺{{ item.course.price|floatformat:2 }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="border-top border-light pt-3">
+                        <div class="d-flex justify-content-between mb-2 small text-muted">
+                            <span>Ara Toplam</span>
+                            <span>₺{{ total_price|floatformat:2 }}</span>
+                        </div>
+                        {% if discount_amount > 0 %}
+                        <div class="d-flex justify-content-between mb-2 small text-success fw-bold">
+                            <span>İndirim (%{{ cart.coupon.discount_percent }})</span>
+                            <span>- ₺{{ discount_amount|floatformat:2 }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between mt-3 pt-3 border-top border-light">
+                            <span class="fw-bold text-dark">Toplam</span>
+                            <span class="fw-extrabold fs-4 text-primary">₺{{ final_price|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="otpModal" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-body p-4 p-md-5 text-center">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                    <i class="fa-solid fa-mobile-screen-button fa-2x"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-2">3D Secure Doğrulama</h4>
+                <p class="text-muted small mb-4">Sistemde kayıtlı cep telefonu numaranıza bankanız tarafından gönderilen 6 haneli doğrulama kodunu giriniz.</p>
+
+                <div class="d-flex justify-content-center gap-2 mb-4 otp-inputs" dir="ltr">
+                    <input type="text" inputmode="numeric" class="form-control form-control-lg text-center fw-bold border-2 rounded-3" maxlength="1" style="width: 45px; height: 55px; font-size: 1.5rem;" autofocus>
+                    <input type="text" inputmode="numeric" class="form-control form-control-lg text-center fw-bold border-2 rounded-3" maxlength="1" style="width: 45px; height: 55px; font-size: 1.5rem;">
+                    <input type="text" inputmode="numeric" class="form-control form-control-lg text-center fw-bold border-2 rounded-3" maxlength="1" style="width: 45px; height: 55px; font-size: 1.5rem;">
+                    <input type="text" inputmode="numeric" class="form-control form-control-lg text-center fw-bold border-2 rounded-3" maxlength="1" style="width: 45px; height: 55px; font-size: 1.5rem;">
+                    <input type="text" inputmode="numeric" class="form-control form-control-lg text-center fw-bold border-2 rounded-3" maxlength="1" style="width: 45px; height: 55px; font-size: 1.5rem;">
+                    <input type="text" inputmode="numeric" class="form-control form-control-lg text-center fw-bold border-2 rounded-3" maxlength="1" style="width: 45px; height: 55px; font-size: 1.5rem;">
+                </div>
+
+                <div class="text-muted small fw-bold mb-4">Kalan Süre: <span id="otpTimer" class="text-danger">03:00</span></div>
+
+                <button type="button" id="verifyOtpBtn" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold shadow-sm mb-3">Doğrula ve Öde</button>
+                <button type="button" class="btn btn-light w-100 rounded-pill fw-bold" data-bs-dismiss="modal">İşlemi İptal Et</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

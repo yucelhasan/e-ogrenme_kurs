@@ -65,7 +65,6 @@ def remove_from_cart_view(request, item_id):
     messages.warning(request, "Kurs sepetinizden çıkarıldı.")
     return redirect('view_cart')
 
-
 @login_required
 def checkout_view(request):
     cart = get_user_cart(request.user)
@@ -75,7 +74,22 @@ def checkout_view(request):
         messages.warning(request, "Sepetiniz boş. Ödeme yapmak için önce kurs eklemelisiniz.")
         return redirect('courses')
 
-    process_checkout(request, cart, items)
+    total_price = sum(item.course.price for item in items)
+    discount_amount = 0
+    if cart.coupon and total_price > 0:
+        discount_amount = (total_price * cart.coupon.discount_percent) / 100
+    final_price = total_price - discount_amount
 
-    messages.success(request, "🎉 Tebrikler! Ödemeniz başarıyla alındı ve kurslara kayıt oldunuz. İyi öğrenmeler!")
-    return redirect('profile')
+    if request.method == 'POST':
+
+        process_checkout(request, cart, items)
+        messages.success(request, "🎉 Tebrikler! Ödemeniz başarıyla alındı ve kurslara kayıt oldunuz. İyi öğrenmeler!")
+        return redirect('profile')
+
+    return render(request, 'ecommerce/checkout.html', {
+        'cart': cart,
+        'items': items,
+        'total_price': total_price,
+        'discount_amount': discount_amount,
+        'final_price': final_price
+    })

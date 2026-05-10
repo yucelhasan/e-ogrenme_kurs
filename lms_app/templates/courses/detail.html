@@ -160,11 +160,11 @@
                         <div class="modern-card p-4 border-0 shadow-sm h-100 rounded-4">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div class="d-flex align-items-center">
-                                    <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center me-2 shadow-xs" style="width: 40px; height: 40px;">
+                                    <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center me-3 shadow-xs" style="width: 45px; height: 45px;">
                                         <i class="fa-solid fa-user-circle fa-lg"></i>
                                     </div>
                                     <div>
-                                        <strong class="text-dark d-block small">
+                                        <strong class="text-dark d-block small mb-1">
                                             <a href="{% url 'public_profile' review.student.username %}" class="text-decoration-none text-dark hover-primary">{{ review.student.get_full_name|default:review.student.username }}</a>
                                         </strong>
                                         <span class="text-warning x-small">
@@ -178,36 +178,15 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center me-2 shadow-xs" style="width: 40px; height: 40px;">
-                                            <i class="fa-solid fa-user-circle fa-lg"></i>
-                                        </div>
-                                        <div>
-                                            <strong class="text-dark d-block small">
-                                                <a href="{% url 'public_profile' review.student.username %}" class="text-decoration-none text-dark hover-primary">{{ review.student.get_full_name|default:review.student.username }}</a>
-                                            </strong>
-                                            <span class="text-warning x-small">
-                                                {% for i in "12345"|make_list %}
-                                                    {% if forloop.counter <= review.rating %}
-                                                        <i class="fa-solid fa-star"></i>
-                                                    {% else %}
-                                                        <i class="fa-regular fa-star text-muted opacity-25"></i>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    
-                                    {% if request.user == review.student %}
-                                    <form action="{% url 'delete_review' review.id %}" method="POST" class="m-0" onsubmit="return confirm('Bu değerlendirmeyi silmek istediğinize emin misiniz?');">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm text-danger border-0 bg-transparent" title="Değerlendirmeyi Sil">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>
-                                    {% endif %}
-                                    </div>
+
+                                {% if request.user == review.student %}
+                                <form action="{% url 'delete_review' review.id %}" method="POST" class="m-0" onsubmit="return confirm('Bu değerlendirmeyi silmek istediğinize emin misiniz?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm text-danger border-0 bg-transparent" title="Değerlendirmeyi Sil">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
                             </div>
                             <p class="mb-0 text-muted small">"{{ review.comment }}"</p>
                         </div>
