@@ -45,6 +45,7 @@
 
                         <div class="form-container mb-4">
                             {{ form.as_p }}
+                            <div id="password-feedback" class="small mt-2 fw-bold transition-all text-center"></div>
                         </div>
 
                         <div class="bg-light bg-opacity-50 rounded-4 p-4 d-flex align-items-start mb-5 border border-light shadow-xs-inset">
@@ -107,7 +108,7 @@
     });
 </script>
 <script>
-    // Django form elemanlarına otomatik sınıf ekleme
+    // Django form elemanlarına otomatik sınıf ekleme ve şifre kutusunu yakalama
     document.addEventListener("DOMContentLoaded", function() {
         const inputs = document.querySelectorAll('.form-container input, .form-container select, .form-container textarea');
         inputs.forEach(input => {
@@ -117,6 +118,14 @@
                 input.classList.add('form-check-input');
             }
         });
+
+        // Şifre geri bildirim kutusunu doğrudan input'un altına taşıma (daha şık durması için)
+        const passwordInput = document.getElementById('id_password') || document.getElementById('id_password1');
+        const passwordFeedback = document.getElementById('password-feedback');
+        if (passwordInput && passwordFeedback) {
+            // Feedback div'ini input'un bulunduğu p etiketinin hemen altına taşı
+            passwordInput.parentNode.appendChild(passwordFeedback);
+        }
     });
 </script>
 {% endblock %}
